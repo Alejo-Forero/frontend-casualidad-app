@@ -1,0 +1,7 @@
+organization=sonar-projects-sw
+projectKey=GabrielUPTCHE_frontend-casualidad-app
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.85848
+dashboardUrl=https://sonarcloud.io/dashboard?id=GabrielUPTCHE_frontend-casualidad-app
+ceTaskId=AZ2wfpGKtAGinEy93EKy
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZ2wfpGKtAGinEy93EKy

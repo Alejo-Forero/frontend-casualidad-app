@@ -1,0 +1,5 @@
+<testExecutions version="1">
+<file path="src\app\app.spec.ts">
+<testCase name="App should create the app" duration="29" />
+</file>
+</testExecutions>
