@@ -23,7 +23,7 @@ jobs:
           cache: 'npm'
 
       - name: Run tests with coverage
-        run: npm run test
+        run: npm run test:ci
 
       - name: Build project
         run: npm run build
