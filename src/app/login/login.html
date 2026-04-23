@@ -3,7 +3,7 @@
     <section class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-surface-container">
         <div class="absolute inset-0 z-0">
             <img class="w-full h-full object-cover"
-                data-alt="Modern minimalist office workspace with warm sunlight"
+                alt="Modern minimalist office workspace with warm sunlight"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1JgoRhgV7qozIs953rC98BCTE7m7th11lSfXrMqeWMkFQN0UhQaTsbUivFabKOiv4hV9-qMCzyWEyOkM1c_qk89egaRwj9SRJNKLiH6042gPc1W3VrKm6yfCWW5zsOeWQDJ4l_nYR9HxmCVgoMHmY0rr6KF5PVJuDYYRdPLK1n__4eEFhvntxiBDrOled0t1w8TI4ce7d_3OOjM0Xxg2dORw60aT95oWKg04rYBk19hYpglBGeCL5jaEvFxk1ytTtAcQ0XUSAI2o" />
             <div class="absolute inset-0 bg-primary/20 mix-blend-multiply"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
@@ -142,7 +142,7 @@
 <!-- Modal de ayuda -->
 @if (showHelpModal) {
     <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" tabindex="0" role="button" (click)="toggleHelpModal()" (keydown.enter)="toggleHelpModal()"></div>
+        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="toggleHelpModal()" (keydown.enter)="toggleHelpModal()"></div>
         <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden modal-fade-in">
             <div class="h-2 w-full bg-gradient-to-r from-primary to-primary-container"></div>
             <div class="p-8 text-center">
@@ -177,7 +177,7 @@
 <!-- Modal de error de credenciales -->
 @if (showErrorModal) {
     <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" tabindex="0" role="button" (click)="closeErrorModal()" (keydown.enter)="closeErrorModal()"></div>
+        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeErrorModal()" (keydown.enter)="closeErrorModal()"></div>
         <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden modal-fade-in">
             <div class="h-2 w-full bg-gradient-to-r from-error to-error-container"></div>
             <div class="p-8 text-center">

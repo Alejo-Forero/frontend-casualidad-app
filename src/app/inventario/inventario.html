@@ -164,7 +164,7 @@
 <!-- Delete Article Confirmation Modal -->
 @if (showDeleteModal && selectedProduct) {
     <div class="fixed inset-0 z-[80] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" tabindex="0" role="button" (click)="closeDeleteModal()" (keydown.enter)="closeDeleteModal()"></div>
+        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeDeleteModal()" (keydown.enter)="closeDeleteModal()"></div>
         <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
             <div class="h-2 w-full bg-gradient-to-r from-error to-error-container"></div>
             <div class="p-8 text-center">
@@ -196,7 +196,7 @@
 <!-- Success Delete Modal -->
 @if (showSuccessModal) {
     <div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" tabindex="0" role="button" (click)="closeSuccessModal()" (keydown.enter)="closeSuccessModal()"></div>
+        <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" (click)="closeSuccessModal()" (keydown.enter)="closeSuccessModal()"></div>
         <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
             <div class="h-2 w-full bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
             <div class="p-8 text-center">

@@ -76,27 +76,27 @@
                 <thead>
                     <tr class="bg-zinc-50/50">
                         <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
-                            tabindex="0" role="button" (click)="handleSort('id')" (keydown.enter)="handleSort('id')">
+                            (click)="handleSort('id')" (keydown.enter)="handleSort('id')">
                             ID Pedido
                             <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'id' ? 'text-primary' : 'opacity-40'">{{ getSortIcon('id') }}</span>
                         </th>
                         <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
-                            tabindex="0" role="button" (click)="handleSort('cliente')" (keydown.enter)="handleSort('cliente')">
+                            (click)="handleSort('cliente')" (keydown.enter)="handleSort('cliente')">
                             Cliente
                             <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'cliente' ? 'text-primary' : 'opacity-40'">{{ getSortIcon('cliente') }}</span>
                         </th>
                         <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
-                            tabindex="0" role="button" (click)="handleSort('estado')" (keydown.enter)="handleSort('estado')">
+                            (click)="handleSort('estado')" (keydown.enter)="handleSort('estado')">
                             Estado
                             <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'estado' ? 'text-primary' : 'opacity-40'">{{ getSortIcon('estado') }}</span>
                         </th>
                         <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
-                            tabindex="0" role="button" (click)="handleSort('fecha')" (keydown.enter)="handleSort('fecha')">
+                            (click)="handleSort('fecha')" (keydown.enter)="handleSort('fecha')">
                             Fecha de entrega
                             <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'fecha' ? 'text-primary' : 'opacity-40'">{{ getSortIcon('fecha') }}</span>
                         </th>
                         <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
-                            tabindex="0" role="button" (click)="handleSort('saldo')" (keydown.enter)="handleSort('saldo')">
+                            (click)="handleSort('saldo')" (keydown.enter)="handleSort('saldo')">
                             Saldo
                             <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'saldo' ? 'text-primary' : 'opacity-40'">{{ getSortIcon('saldo') }}</span>
                         </th>
@@ -157,7 +157,7 @@
 <!-- Delete Order Confirmation Modal -->
 @if (showDeleteModal && selectedOrder) {
     <div class="fixed inset-0 z-[80] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" tabindex="0" role="button" (click)="closeDeleteModal()" (keydown.enter)="closeDeleteModal()"></div>
+        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeDeleteModal()" (keydown.enter)="closeDeleteModal()"></div>
         <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
             <div class="h-2 w-full bg-gradient-to-r from-error to-error-container"></div>
             <div class="p-8 text-center">
@@ -190,7 +190,7 @@
 <!-- Success Delete Modal -->
 @if (showSuccessModal) {
     <div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" tabindex="0" role="button" (click)="closeSuccessModal()" (keydown.enter)="closeSuccessModal()"></div>
+        <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" (click)="closeSuccessModal()" (keydown.enter)="closeSuccessModal()"></div>
         <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
             <div class="h-2 w-full bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
             <div class="p-8 text-center">

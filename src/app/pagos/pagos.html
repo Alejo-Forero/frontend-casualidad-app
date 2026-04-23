@@ -147,7 +147,7 @@
 <!-- View Payment Modal -->
 @if (showViewModal && selectedPayment) {
     <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-background/20 backdrop-blur-sm">
-        <div class="absolute inset-0" tabindex="0" role="button" (click)="closeViewModal()" (keydown.enter)="closeViewModal()"></div>
+        <div class="absolute inset-0" (click)="closeViewModal()" (keydown.enter)="closeViewModal()"></div>
         <div class="relative w-full max-w-2xl bg-surface-container-lowest rounded-2xl shadow-[0px_24px_48px_rgba(45,47,47,0.12)] overflow-hidden flex flex-col animate-[dropdownFadeIn_0.2s_ease-out]">
             <!-- Modal Header -->
             <div class="px-8 pt-8 pb-4 flex justify-between items-start">
@@ -229,7 +229,7 @@
 <!-- Delete Payment Confirmation Modal -->
 @if (showDeleteModal && selectedPayment) {
     <div class="fixed inset-0 z-[110] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" tabindex="0" role="button" (click)="closeDeleteModal()" (keydown.enter)="closeDeleteModal()"></div>
+        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeDeleteModal()" (keydown.enter)="closeDeleteModal()"></div>
         <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
             <div class="h-2 w-full bg-gradient-to-r from-error to-error-container"></div>
             <div class="p-8 text-center">
@@ -260,7 +260,7 @@
 <!-- Success Delete Modal -->
 @if (showSuccessModal) {
     <div class="fixed inset-0 z-[120] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" tabindex="0" role="button" (click)="closeSuccessModal()" (keydown.enter)="closeSuccessModal()"></div>
+        <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" (click)="closeSuccessModal()" (keydown.enter)="closeSuccessModal()"></div>
         <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
             <div class="h-2 w-full bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
             <div class="p-8 text-center">

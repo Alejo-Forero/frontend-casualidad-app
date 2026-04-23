@@ -127,7 +127,7 @@
 @if (showProductsModal && selectedClient) {
     <div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-on-surface/40 backdrop-blur-sm" tabindex="0" role="button" (click)="closeProductsModal()" (keydown.enter)="closeProductsModal()"></div>
+        <div class="absolute inset-0 bg-on-surface/40 backdrop-blur-sm" (click)="closeProductsModal()" (keydown.enter)="closeProductsModal()"></div>
         <!-- Modal Window -->
         <div class="relative bg-surface-container-lowest w-full max-w-4xl rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden flex flex-col max-h-[85vh] animate-[dropdownFadeIn_0.2s_ease-out]">
             <!-- Modal Header -->
@@ -169,7 +169,7 @@
 @if (showDeleteModal && selectedClient) {
     <div class="fixed inset-0 z-[90] flex items-center justify-center p-4">
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" tabindex="0" role="button" (click)="closeDeleteModal()" (keydown.enter)="closeDeleteModal()"></div>
+        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeDeleteModal()" (keydown.enter)="closeDeleteModal()"></div>
         <!-- Modal Container -->
         <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
             <!-- Top Accent Glow - Red for danger -->
