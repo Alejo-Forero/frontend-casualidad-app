@@ -1,0 +1,213 @@
+<div class="p-10 space-y-10 max-w-7xl mx-auto animate-[dropdownFadeIn_0.3s_ease-out]">
+    <!-- Page Header -->
+    <div class="flex flex-col gap-2">
+        <h1 class="text-4xl font-extrabold tracking-tighter text-on-surface">Gestión de Pedidos</h1>
+        <p class="text-on-surface-variant max-w-2xl font-medium">Visualiza y controla el ciclo de vida de tus ventas. Desde la formalización hasta la entrega final al cliente.</p>
+    </div>
+
+    <!-- Quick Action Cards (Bento Grid Style) -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Action 1 -->
+        <div class="group relative bg-surface-container-lowest p-6 rounded-xl overflow-hidden hover:bg-primary transition-all duration-300 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] cursor-pointer">
+            <div class="relative z-10 flex flex-col h-full justify-between gap-8">
+                <div class="flex justify-between items-start">
+                    <span class="material-symbols-outlined text-primary group-hover:text-white text-4xl">assignment_add</span>
+                    <span class="material-symbols-outlined text-zinc-300 group-hover:text-white/50">north_east</span>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold group-hover:text-white transition-colors">Registrar Pedido</h3>
+                    <p class="text-sm text-on-surface-variant group-hover:text-white/80 mt-1">Ingresa una nueva solicitud de cliente al sistema.</p>
+                </div>
+            </div>
+            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <span class="material-symbols-outlined text-[120px]">assignment_add</span>
+            </div>
+        </div>
+
+        <!-- Action 2 -->
+        <div class="group relative bg-surface-container-lowest p-6 rounded-xl overflow-hidden hover:bg-primary transition-all duration-300 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] cursor-pointer">
+            <div class="relative z-10 flex flex-col h-full justify-between gap-8">
+                <div class="flex justify-between items-start">
+                    <span class="material-symbols-outlined text-primary group-hover:text-white text-4xl">verified</span>
+                    <span class="material-symbols-outlined text-zinc-300 group-hover:text-white/50">north_east</span>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold group-hover:text-white transition-colors">Formalizar Pedido</h3>
+                    <p class="text-sm text-on-surface-variant group-hover:text-white/80 mt-1">Valida pagos y autoriza el inicio de producción.</p>
+                </div>
+            </div>
+            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <span class="material-symbols-outlined text-[120px]">verified</span>
+            </div>
+        </div>
+
+        <!-- Action 3 -->
+        <div class="group relative bg-surface-container-lowest p-6 rounded-xl overflow-hidden hover:bg-primary transition-all duration-300 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] cursor-pointer">
+            <div class="relative z-10 flex flex-col h-full justify-between gap-8">
+                <div class="flex justify-between items-start">
+                    <span class="material-symbols-outlined text-primary group-hover:text-white text-4xl">category</span>
+                    <span class="material-symbols-outlined text-zinc-300 group-hover:text-white/50">north_east</span>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold group-hover:text-white transition-colors">Gestionar productos</h3>
+                    <p class="text-sm text-on-surface-variant group-hover:text-white/80 mt-1">Ajusta cantidades y especificaciones de pedidos.</p>
+                </div>
+            </div>
+            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <span class="material-symbols-outlined text-[120px]">category</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Table Section -->
+    <section class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_12px_32px_rgba(45,47,47,0.06)]">
+        <div class="px-8 py-6 flex justify-between items-center bg-white border-b border-zinc-100">
+            <h2 class="text-xl font-bold text-on-surface">Historial de Pedidos</h2>
+            <div class="relative hidden lg:block">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-sm">search</span>
+                <input [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+                    class="bg-surface-container border-none rounded-full py-2 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-orange-600/40 focus:bg-surface-container-lowest transition-all"
+                    placeholder="Buscar pedidos..." type="text" />
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-zinc-50/50">
+                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
+                            (click)="handleSort('id')">
+                            ID Pedido
+                            <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'id' ? 'text-primary' : 'opacity-40'">{{ getSortIcon('id') }}</span>
+                        </th>
+                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
+                            (click)="handleSort('cliente')">
+                            Cliente
+                            <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'cliente' ? 'text-primary' : 'opacity-40'">{{ getSortIcon('cliente') }}</span>
+                        </th>
+                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
+                            (click)="handleSort('estado')">
+                            Estado
+                            <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'estado' ? 'text-primary' : 'opacity-40'">{{ getSortIcon('estado') }}</span>
+                        </th>
+                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
+                            (click)="handleSort('fecha')">
+                            Fecha de entrega
+                            <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'fecha' ? 'text-primary' : 'opacity-40'">{{ getSortIcon('fecha') }}</span>
+                        </th>
+                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
+                            (click)="handleSort('saldo')">
+                            Saldo
+                            <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'saldo' ? 'text-primary' : 'opacity-40'">{{ getSortIcon('saldo') }}</span>
+                        </th>
+                        <th class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100 text-right">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-100">
+                    @for (order of paginatedOrders; track order.id) {
+                        <tr class="hover:bg-orange-50/30 transition-colors group">
+                            <td class="px-8 py-5 text-sm font-bold text-primary">#{{ order.code || order.id }}</td>
+                            <td class="px-8 py-5">
+                                <span class="text-sm font-semibold text-on-surface">{{ order.clientName }}</span>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold" [ngClass]="statusMap[order.status].css">
+                                    {{ statusMap[order.status].text }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-5 text-sm text-on-surface-variant font-medium">{{ order.deliveryDate | date:'mediumDate' }}</td>
+                            <td class="px-8 py-5 text-sm font-bold text-on-surface">{{ order.pendingBalance | currency:'USD' }}</td>
+                            <td class="px-8 py-5 text-right">
+                                <div class="flex items-center justify-end gap-2">
+                                    <button class="p-2 text-zinc-400 hover:text-primary transition-colors" title="Ver detalle">
+                                        <span class="material-symbols-outlined text-xl">visibility</span>
+                                    </button>
+                                    <button class="p-2 text-zinc-400 hover:text-secondary transition-colors" title="Editar">
+                                        <span class="material-symbols-outlined text-xl">edit</span>
+                                    </button>
+                                    <button (click)="openDeleteModal(order)" class="p-2 text-zinc-400 hover:text-error transition-colors" title="Eliminar">
+                                        <span class="material-symbols-outlined text-xl">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    @if (paginatedOrders.length === 0) {
+                        <tr>
+                            <td colspan="6" class="px-8 py-10 text-center text-on-surface-variant">
+                                No se encontraron pedidos registrados en el sistema.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Shared Pagination Component -->
+        <app-pagination 
+            [totalItems]="filteredOrders.length" 
+            [pageSize]="pageSize" 
+            [currentPage]="currentPage"
+            itemName="pedidos"
+            (pageChange)="onPageChange($event)">
+        </app-pagination>
+    </section>
+</div>
+
+<!-- Delete Order Confirmation Modal -->
+@if (showDeleteModal && selectedOrder) {
+    <div class="fixed inset-0 z-[80] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeDeleteModal()"></div>
+        <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
+            <div class="h-2 w-full bg-gradient-to-r from-error to-error-container"></div>
+            <div class="p-8 text-center">
+                <div class="relative mb-6 flex justify-center">
+                    <div class="absolute inset-0 bg-error/10 rounded-full scale-150 blur-xl"></div>
+                    <div class="relative w-20 h-20 bg-gradient-to-br from-error to-error-container rounded-full flex items-center justify-center shadow-lg">
+                        <span class="material-symbols-outlined text-white text-4xl">delete_forever</span>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-extrabold text-on-surface tracking-tight mb-3 font-headline">¿Eliminar pedido?</h2>
+                <p class="text-on-surface-variant text-base leading-relaxed font-body">
+                    ¿Estás seguro de que deseas eliminar el pedido <span class="font-bold text-primary">#{{ selectedOrder.code || selectedOrder.id }}</span> 
+                    de <span class="font-bold">{{ selectedOrder.clientName }}</span>? 
+                    Esta acción <span class="text-error font-bold">no se puede deshacer</span>.
+                </p>
+                <div class="mt-8 flex flex-col gap-3">
+                    <button (click)="confirmDelete()" class="group relative flex items-center justify-center gap-2 w-full py-3.5 px-6 bg-gradient-to-br from-error to-error-container text-white font-bold rounded-lg shadow-sm active:scale-[0.98] transition-all overflow-hidden">
+                        <span class="relative z-10">Sí, eliminar pedido</span>
+                        <span class="material-symbols-outlined relative z-10 text-xl group-hover:translate-x-1 transition-transform">delete_forever</span>
+                    </button>
+                    <button (click)="closeDeleteModal()" class="w-full py-3.5 px-6 bg-surface-container text-on-surface font-bold rounded-lg hover:bg-surface-container-high active:scale-[0.98] transition-all">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Success Delete Modal -->
+@if (showSuccessModal) {
+    <div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" (click)="closeSuccessModal()"></div>
+        <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
+            <div class="h-2 w-full bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
+            <div class="p-8 text-center">
+                <div class="relative mb-6 flex justify-center">
+                    <div class="absolute inset-0 bg-emerald-500/10 rounded-full scale-150 blur-xl"></div>
+                    <div class="relative w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-400 rounded-full flex items-center justify-center shadow-lg">
+                        <span class="material-symbols-outlined text-white text-4xl" style="font-variation-settings: 'wght' 600;">check_circle</span>
+                    </div>
+                </div>
+                <h2 class="text-2xl font-extrabold text-on-surface tracking-tight mb-3 font-headline">¡Pedido Eliminado!</h2>
+                <p class="text-on-surface-variant text-base leading-relaxed font-body">El pedido ha sido eliminado correctamente del sistema.</p>
+                <div class="mt-8">
+                    <button (click)="closeSuccessModal()" class="w-full py-3.5 px-6 bg-primary text-white font-bold rounded-lg hover:opacity-90 transition-all">
+                        Continuar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
