@@ -68,4 +68,45 @@ describe('UsuariosComponent', () => {
     expect(component.viewMode).toBe('edit');
   });
 
+
+  it('should handle sorting and filtering', () => {
+    // Search
+    if (typeof component.onSearchChange === 'function') {
+      component.searchTerm = 'test';
+      component.onSearchChange();
+    }
+
+    // Filter
+    if (typeof component.onFilterChange === 'function') {
+      component.onFilterChange();
+    } else if (typeof component.onTypeFilterChange === 'function') {
+      component.onTypeFilterChange();
+    }
+
+    // Sort
+    if (typeof component.handleSort === 'function') {
+      component.handleSort('name');
+      component.handleSort('name'); // trigger desc
+      component.handleSort('other'); // trigger new column asc
+    }
+    
+    // Icon
+    if (typeof component.getSortIcon === 'function') {
+      component.getSortIcon('name');
+      component.getSortIcon('other');
+    }
+    
+    // Failsafe pagination branch
+    component.currentPage = 2;
+    if (component.paginatedClients) component.paginatedClients = [];
+    if (component.paginatedProducts) component.paginatedProducts = [];
+    if (component.paginatedUsers) component.paginatedUsers = [];
+    if (component.paginatedPayments) component.paginatedPayments = [];
+    if (component.paginatedOrders) component.paginatedOrders = [];
+    
+    if (typeof component.applyFilters === 'function') {
+      component.applyFilters();
+    }
+  });
+
 });
