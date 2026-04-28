@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { PaginationComponent } from '../shared/pagination/pagination';
@@ -52,7 +52,9 @@ export class PedidosComponent implements OnInit {
     { id: '4', name: 'Kit Creativo Transformado', price: 89.99 }
   ];
 
-  constructor(private fb: FormBuilder) {
+  private fb = inject(FormBuilder);
+
+  constructor() {
     this.orderForm = this.fb.group({
       id: [''],
       clientId: ['', Validators.required],

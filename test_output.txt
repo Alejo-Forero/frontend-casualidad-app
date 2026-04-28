@@ -1,0 +1,572 @@
+
+> frontend-casualidad-app@0.0.0 test
+> node --experimental-vm-modules node_modules/jest/bin/jest.js
+
+(node:16076) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16083) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS src/app/app.spec.ts
+(node:16089) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16096) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16069) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS src/app/layout/layout.spec.ts
+  ● Console
+
+    console.log
+      Usuario eliminado permanentemente
+
+      at LayoutComponent.log [as confirmDelete] (src/app/layout/layout.ts:63:13)
+
+PASS src/app/reportes/reportes.spec.ts
+PASS src/app/shared/pagination/pagination.spec.ts
+(node:16066) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS src/app/home/home.spec.ts
+  ● Console
+
+    console.error
+      Failed to create chart: can't acquire context from the given item
+
+      44 |     if (!ctx) return;
+      45 |
+    > 46 |     this.chartInstance = new Chart(ctx, {
+         |                          ^
+      47 |         type: 'bar',
+      48 |         data: {
+      49 |             labels: this.dashboardData.profitVsExpense.months,
+
+      at new error (node_modules/chart.js/src/core/core.controller.js:184:15)
+      at HomeComponent.initChart (src/app/home/home.ts:46:26)
+      at HomeComponent.initChart [as ngAfterViewInit] (src/app/home/home.ts:38:14)
+      at Object.<anonymous> (src/app/home/home.spec.ts:24:15)
+
+PASS src/app/login/login.spec.ts
+  ● Console
+
+    console.log
+      Login exitoso: {
+        accessToken: 'fake-jwt-token',
+        refreshToken: 'fake-refresh-token',
+        usuario: {
+          id: '1',
+          nombre: 'Administrador',
+          email: 'admin@casualidad.com',
+          rol: 'ADMINISTRADOR'
+        }
+      }
+
+      at log (src/app/login/login.ts:65:17)
+
+(node:16043) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+FAIL src/app/usuarios/usuarios.spec.ts
+  ● UsuariosComponent › should create
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.UsuariosComponent_Factory [as factory] (ng:/UsuariosComponent/ɵfac.js:5:61)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/usuarios/usuarios.spec.ts:13:23)
+
+  ● UsuariosComponent › should filter users and paginate
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.UsuariosComponent_Factory [as factory] (ng:/UsuariosComponent/ɵfac.js:5:61)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/usuarios/usuarios.spec.ts:13:23)
+
+  ● UsuariosComponent › should handle delete modal and confirm
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.UsuariosComponent_Factory [as factory] (ng:/UsuariosComponent/ɵfac.js:5:61)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/usuarios/usuarios.spec.ts:13:23)
+
+(node:16054) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+FAIL src/app/clientes/clientes.spec.ts
+  ● ClientesComponent › should create
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.ClientesComponent_Factory [as factory] (ng:/ClientesComponent/ɵfac.js:5:61)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/clientes/clientes.spec.ts:13:23)
+
+  ● ClientesComponent › should filter clients correctly
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.ClientesComponent_Factory [as factory] (ng:/ClientesComponent/ɵfac.js:5:61)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/clientes/clientes.spec.ts:13:23)
+
+  ● ClientesComponent › should handle pagination
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.ClientesComponent_Factory [as factory] (ng:/ClientesComponent/ɵfac.js:5:61)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/clientes/clientes.spec.ts:13:23)
+
+  ● ClientesComponent › should handle products modal
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.ClientesComponent_Factory [as factory] (ng:/ClientesComponent/ɵfac.js:5:61)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/clientes/clientes.spec.ts:13:23)
+
+  ● ClientesComponent › should handle delete modal and confirm
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.ClientesComponent_Factory [as factory] (ng:/ClientesComponent/ɵfac.js:5:61)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/clientes/clientes.spec.ts:13:23)
+
+(node:16035) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+FAIL src/app/pedidos/pedidos.spec.ts
+  ● PedidosComponent › should create
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.PedidosComponent_Factory [as factory] (ng:/PedidosComponent/ɵfac.js:5:60)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/pedidos/pedidos.spec.ts:13:23)
+
+  ● PedidosComponent › should filter orders
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.PedidosComponent_Factory [as factory] (ng:/PedidosComponent/ɵfac.js:5:60)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/pedidos/pedidos.spec.ts:13:23)
+
+  ● PedidosComponent › should handle pagination
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.PedidosComponent_Factory [as factory] (ng:/PedidosComponent/ɵfac.js:5:60)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/pedidos/pedidos.spec.ts:13:23)
+
+  ● PedidosComponent › should sort correctly
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.PedidosComponent_Factory [as factory] (ng:/PedidosComponent/ɵfac.js:5:60)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/pedidos/pedidos.spec.ts:13:23)
+
+  ● PedidosComponent › should handle delete modal and confirm
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.PedidosComponent_Factory [as factory] (ng:/PedidosComponent/ɵfac.js:5:60)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/pedidos/pedidos.spec.ts:13:23)
+
+(node:16037) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+FAIL src/app/inventario/inventario.spec.ts
+  ● InventarioComponent › should create
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.InventarioComponent_Factory [as factory] (ng:/InventarioComponent/ɵfac.js:5:63)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/inventario/inventario.spec.ts:13:23)
+
+  ● InventarioComponent › should calculate totalInventoryValue and getLowStockCount
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.InventarioComponent_Factory [as factory] (ng:/InventarioComponent/ɵfac.js:5:63)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/inventario/inventario.spec.ts:13:23)
+
+  ● InventarioComponent › should handle filters and pagination
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.InventarioComponent_Factory [as factory] (ng:/InventarioComponent/ɵfac.js:5:63)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/inventario/inventario.spec.ts:13:23)
+
+  ● InventarioComponent › should handle delete modal and confirm
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.InventarioComponent_Factory [as factory] (ng:/InventarioComponent/ɵfac.js:5:63)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/inventario/inventario.spec.ts:13:23)
+
+(node:16036) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+FAIL src/app/pagos/pagos.spec.ts
+  ● PagosComponent › should create
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.PagosComponent_Factory [as factory] (ng:/PagosComponent/ɵfac.js:5:58)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/pagos/pagos.spec.ts:13:23)
+
+  ● PagosComponent › should compute totalMonthlyBalance correctly
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.PagosComponent_Factory [as factory] (ng:/PagosComponent/ɵfac.js:5:58)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/pagos/pagos.spec.ts:13:23)
+
+  ● PagosComponent › should filter payments correctly
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.PagosComponent_Factory [as factory] (ng:/PagosComponent/ɵfac.js:5:58)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/pagos/pagos.spec.ts:13:23)
+
+  ● PagosComponent › should handle pagination
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.PagosComponent_Factory [as factory] (ng:/PagosComponent/ɵfac.js:5:58)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/pagos/pagos.spec.ts:13:23)
+
+  ● PagosComponent › should handle view modal
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.PagosComponent_Factory [as factory] (ng:/PagosComponent/ɵfac.js:5:58)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/pagos/pagos.spec.ts:13:23)
+
+  ● PagosComponent › should handle delete modal and confirm
+
+    NG0202: This constructor is not compatible with Angular Dependency Injection because its dependency at index 0 of the parameter list is invalid.
+    This can happen if the dependency type is a primitive like a string or if an ancestor of this class is missing an Angular decorator.
+
+    Please check that 1) the type for the parameter at index 0 is correct and 2) the correct Angular decorators are defined for this class and its ancestors.
+
+      at ɵɵinvalidFactoryDep (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:687:9)
+      at NodeInjectorFactory.PagosComponent_Factory [as factory] (ng:/PagosComponent/ɵfac.js:5:58)
+      at getNodeInjectable (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:1044:38)
+      at instantiateAllDirectives (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5230:23)
+      at createDirectivesInstances (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:5089:3)
+      at ComponentFactory.createComponentRef (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8741:7)
+      at ComponentFactory.create (node_modules/@angular/core/fesm2022/_debug_node-chunk.mjs:8721:21)
+      at initComponent (node_modules/@angular/core/fesm2022/testing.mjs:1475:45)
+      at NoopNgZone.run (node_modules/@angular/core/fesm2022/_effect-chunk2.mjs:2570:15)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1480:37)
+      at TestBedImpl.createComponent (node_modules/@angular/core/fesm2022/testing.mjs:1306:33)
+      at Object.<anonymous> (src/app/pagos/pagos.spec.ts:13:23)
+
+-----------------------|---------|----------|---------|---------|-------------------
+File                   | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-----------------------|---------|----------|---------|---------|-------------------
+All files              |   22.73 |     12.7 |      20 |   20.93 |                   
+ app                   |     100 |      100 |     100 |     100 |                   
+  app.ts               |     100 |      100 |     100 |     100 |                   
+ app/clientes          |    2.27 |        0 |       0 |    1.23 |                   
+  clientes.ts          |    2.27 |        0 |       0 |    1.23 | 15-196            
+ app/core/services     |      40 |        0 |   28.57 |   36.84 |                   
+  auth.service.ts      |      40 |        0 |   28.57 |   36.84 | 21-47             
+ app/home              |   91.66 |    83.33 |     100 |     100 |                   
+  home.ts              |   91.66 |    83.33 |     100 |     100 | 44                
+ app/inventario        |    1.81 |        0 |       0 |    0.98 |                   
+  inventario.ts        |    1.81 |        0 |       0 |    0.98 | 15-264            
+ app/layout            |     100 |       50 |     100 |     100 |                   
+  layout.ts            |     100 |       50 |     100 |     100 | 40-50             
+ app/login             |   87.09 |       75 |   71.42 |   86.66 |                   
+  login.ts             |   87.09 |       75 |   71.42 |   86.66 | 36-40,45-46       
+ app/pagos             |    2.12 |        0 |       0 |    1.13 |                   
+  pagos.ts             |    2.12 |        0 |       0 |    1.13 | 15-224            
+ app/pedidos           |    1.75 |        0 |       0 |    0.93 |                   
+  pedidos.ts           |    1.75 |        0 |       0 |    0.93 | 15-274            
+ app/reportes          |     100 |      100 |     100 |     100 |                   
+  reportes.ts          |     100 |      100 |     100 |     100 |                   
+ app/shared/pagination |     100 |    92.85 |     100 |     100 |                   
+  pagination.ts        |     100 |    92.85 |     100 |     100 | 24                
+ app/usuarios          |    2.73 |        0 |       0 |    1.47 |                   
+  usuarios.ts          |    2.73 |        0 |       0 |    1.47 | 16-170            
+-----------------------|---------|----------|---------|---------|-------------------
+Test Suites: 5 failed, 6 passed, 11 total
+Tests:       23 failed, 24 passed, 47 total
+Snapshots:   0 total
+Time:        3.33 s, estimated 10 s
+Ran all test suites.

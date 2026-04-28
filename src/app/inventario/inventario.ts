@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { PaginationComponent } from '../shared/pagination/pagination';
@@ -36,7 +36,9 @@ export class InventarioComponent implements OnInit {
   inventoryForm: FormGroup;
   showFormSuccessModal = false;
 
-  constructor(private fb: FormBuilder) {
+  private fb = inject(FormBuilder);
+
+  constructor() {
     this.inventoryForm = this.fb.group({
       id: [''],
       name: ['', Validators.required],

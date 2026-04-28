@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { PaginationComponent } from '../shared/pagination/pagination';
@@ -33,7 +33,9 @@ export class ClientesComponent implements OnInit {
   clientForm: FormGroup;
   showFormSuccessModal = false;
 
-  constructor(private fb: FormBuilder) {
+  private fb = inject(FormBuilder);
+
+  constructor() {
     this.clientForm = this.fb.group({
       id: [''],
       name: ['', Validators.required],

@@ -1,71 +1,71 @@
 <testExecutions version="1">
-<file path="src/app/layout/layout.spec.ts">
-<testCase name="LayoutComponent should create" duration="66" />
-<testCase name="LayoutComponent should handle dropdowns and modals" duration="34" />
-<testCase name="LayoutComponent should handle document click" duration="12" />
-</file>
 <file path="src/app/shared/pagination/pagination.spec.ts">
-<testCase name="PaginationComponent should create" duration="78" />
-<testCase name="PaginationComponent should calculate pagination correctly on changes" duration="14" />
-<testCase name="PaginationComponent should calculate displayed items correctly for last page" duration="11" />
-<testCase name="PaginationComponent should prevent negative displayed items" duration="11" />
-<testCase name="PaginationComponent should default totalPages to 1 if totalItems is 0" duration="12" />
-<testCase name="PaginationComponent should emit pageChange when onPageChange is called with a valid page" duration="46" />
-<testCase name="PaginationComponent should not emit pageChange for out of bounds or same page" duration="11" />
-</file>
-<file path="src/app/app.spec.ts">
-<testCase name="App should create the app" duration="59" />
-</file>
-<file path="src/app/pagos/pagos.spec.ts">
-<testCase name="PagosComponent should create" duration="102" />
-<testCase name="PagosComponent should compute totalMonthlyBalance correctly" duration="26" />
-<testCase name="PagosComponent should filter payments correctly" duration="11" />
-<testCase name="PagosComponent should handle pagination" duration="15" />
-<testCase name="PagosComponent should handle view modal" duration="27" />
-<testCase name="PagosComponent should handle delete modal and confirm" duration="7" />
+<testCase name="PaginationComponent should create" duration="154" />
+<testCase name="PaginationComponent should calculate pagination correctly on changes" duration="15" />
+<testCase name="PaginationComponent should calculate displayed items correctly for last page" duration="17" />
+<testCase name="PaginationComponent should prevent negative displayed items" duration="21" />
+<testCase name="PaginationComponent should default totalPages to 1 if totalItems is 0" duration="13" />
+<testCase name="PaginationComponent should emit pageChange when onPageChange is called with a valid page" duration="14" />
+<testCase name="PaginationComponent should not emit pageChange for out of bounds or same page" duration="24" />
 </file>
 <file path="src/app/home/home.spec.ts">
-<testCase name="HomeComponent should create" duration="83" />
-<testCase name="HomeComponent should initialize empty chart logic without errors" duration="237" />
+<testCase name="HomeComponent should create" duration="105" />
+<testCase name="HomeComponent should initialize empty chart logic without errors" duration="277" />
 </file>
-<file path="src/app/usuarios/usuarios.spec.ts">
-<testCase name="UsuariosComponent should create" duration="77" />
-<testCase name="UsuariosComponent should filter users and paginate" duration="20" />
-<testCase name="UsuariosComponent should handle delete modal and confirm" duration="14" />
+<file path="src/app/app.spec.ts">
+<testCase name="App should create the app" duration="82" />
 </file>
-<file path="src/app/inventario/inventario.spec.ts">
-<testCase name="InventarioComponent should create" duration="75" />
-<testCase name="InventarioComponent should calculate totalInventoryValue and getLowStockCount" duration="21" />
-<testCase name="InventarioComponent should handle filters and pagination" duration="14" />
-<testCase name="InventarioComponent should handle delete modal and confirm" duration="11" />
-</file>
-<file path="src/app/pedidos/pedidos.spec.ts">
-<testCase name="PedidosComponent should create" duration="76" />
-<testCase name="PedidosComponent should filter orders" duration="20" />
-<testCase name="PedidosComponent should handle pagination" duration="15" />
-<testCase name="PedidosComponent should sort correctly" duration="37" />
-<testCase name="PedidosComponent should handle delete modal and confirm" duration="16" />
-</file>
-<file path="src/app/clientes/clientes.spec.ts">
-<testCase name="ClientesComponent should create" duration="81" />
-<testCase name="ClientesComponent should filter clients correctly" duration="24" />
-<testCase name="ClientesComponent should handle pagination" duration="12" />
-<testCase name="ClientesComponent should handle products modal" duration="17" />
-<testCase name="ClientesComponent should handle delete modal and confirm" duration="26" />
+<file path="src/app/layout/layout.spec.ts">
+<testCase name="LayoutComponent should create" duration="73" />
+<testCase name="LayoutComponent should handle dropdowns and modals" duration="33" />
+<testCase name="LayoutComponent should handle document click" duration="17" />
 </file>
 <file path="src/app/reportes/reportes.spec.ts">
-<testCase name="ReportesComponent should create" duration="80" />
+<testCase name="ReportesComponent should create" duration="97" />
 <testCase name="ReportesComponent should calculate cashPercentage correctly" duration="16" />
-<testCase name="ReportesComponent should calculate transferPercentage correctly" duration="12" />
-<testCase name="ReportesComponent should handle onPageChange properly" duration="50" />
-<testCase name="ReportesComponent should reset pagination on date change" duration="22" />
-<testCase name="ReportesComponent should return correct rank color class" duration="11" />
-<testCase name="ReportesComponent should return correct rank progress class" duration="8" />
+<testCase name="ReportesComponent should calculate transferPercentage correctly" duration="11" />
+<testCase name="ReportesComponent should handle onPageChange properly" duration="36" />
+<testCase name="ReportesComponent should reset pagination on date change" duration="30" />
+<testCase name="ReportesComponent should return correct rank color class" duration="16" />
+<testCase name="ReportesComponent should return correct rank progress class" duration="10" />
+</file>
+<file path="src/app/clientes/clientes.spec.ts">
+<testCase name="ClientesComponent should create" duration="91" />
+<testCase name="ClientesComponent should filter clients correctly" duration="17" />
+<testCase name="ClientesComponent should handle pagination" duration="20" />
+<testCase name="ClientesComponent should handle products modal" duration="41" />
+<testCase name="ClientesComponent should handle delete modal and confirm" duration="13" />
+</file>
+<file path="src/app/inventario/inventario.spec.ts">
+<testCase name="InventarioComponent should create" duration="94" />
+<testCase name="InventarioComponent should calculate totalInventoryValue and getLowStockCount" duration="46" />
+<testCase name="InventarioComponent should handle filters and pagination" duration="14" />
+<testCase name="InventarioComponent should handle delete modal and confirm" duration="15" />
 </file>
 <file path="src/app/login/login.spec.ts">
-<testCase name="LoginComponent should create" duration="46" />
-<testCase name="LoginComponent should handle login logic" duration="23" />
-<testCase name="LoginComponent should show error on bad login" duration="18" />
-<testCase name="LoginComponent should toggle help modal" duration="7" />
+<testCase name="LoginComponent should create" duration="88" />
+<testCase name="LoginComponent should handle login logic" duration="26" />
+<testCase name="LoginComponent should show error on bad login" duration="11" />
+<testCase name="LoginComponent should toggle help modal" duration="9" />
+</file>
+<file path="src/app/usuarios/usuarios.spec.ts">
+<testCase name="UsuariosComponent should create" duration="92" />
+<testCase name="UsuariosComponent should filter users and paginate" duration="11" />
+<testCase name="UsuariosComponent should handle delete modal and confirm" duration="9" />
+</file>
+<file path="src/app/pagos/pagos.spec.ts">
+<testCase name="PagosComponent should create" duration="89" />
+<testCase name="PagosComponent should compute totalMonthlyBalance correctly" duration="10" />
+<testCase name="PagosComponent should filter payments correctly" duration="9" />
+<testCase name="PagosComponent should handle pagination" duration="11" />
+<testCase name="PagosComponent should handle view modal" duration="9" />
+<testCase name="PagosComponent should handle delete modal and confirm" duration="6" />
+</file>
+<file path="src/app/pedidos/pedidos.spec.ts">
+<testCase name="PedidosComponent should create" duration="61" />
+<testCase name="PedidosComponent should filter orders" duration="23" />
+<testCase name="PedidosComponent should handle pagination" duration="8" />
+<testCase name="PedidosComponent should sort correctly" duration="8" />
+<testCase name="PedidosComponent should handle delete modal and confirm" duration="7" />
 </file>
 </testExecutions>

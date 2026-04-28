@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PaginationComponent } from '../shared/pagination/pagination';
@@ -49,7 +49,9 @@ export class PagosComponent implements OnInit {
   // Mocks
   orders = ['#CL-1024 - Sofía Martínez', '#CL-1025 - Julian Castro', '#CL-1026 - Elena Pardo'];
 
-  constructor(private fb: FormBuilder) {
+  private fb = inject(FormBuilder);
+
+  constructor() {
     this.paymentForm = this.fb.group({
       id: [''],
       orderId: ['', Validators.required],

@@ -21,8 +21,8 @@ describe('ClientesComponent', () => {
 
   it('should filter clients correctly', () => {
     component.clientsData = [
-      { id: '1', name: 'Alpha', email: 'a@a.com', phone: '1', documentId: '1', totalOrders: 0, activeOrders: 0, totalSpent: 0, ordersSummary: {total:0, active:0, cancelled:0, pendingBalance:0} },
-      { id: '2', name: 'Beta', email: 'b@b.com', phone: '2', documentId: '2', totalOrders: 0, activeOrders: 0, totalSpent: 0, ordersSummary: {total:0, active:0, cancelled:0, pendingBalance:0} },
+      { idCliente: 1, id: '1', nombre: 'Alpha', name: 'Alpha', direccion: '', address: '', telefonos: ['1'], phones: ['1'], isActive: true, ordersSummary: {total:0, pending:0, inProduction:0}, createdAt: '' },
+      { idCliente: 2, id: '2', nombre: 'Beta', name: 'Beta', direccion: '', address: '', telefonos: ['2'], phones: ['2'], isActive: true, ordersSummary: {total:0, pending:0, inProduction:0}, createdAt: '' }
     ];
     
     component.searchTerm = 'Alpha';
@@ -32,7 +32,7 @@ describe('ClientesComponent', () => {
   });
 
   it('should handle pagination', () => {
-    component.clientsData = Array(10).fill({ id: '1', name: 'Alpha', email: 'a@a.com', phone: '1', documentId: '1', totalOrders: 0, activeOrders: 0, totalSpent: 0, ordersSummary: {total:0, active:0, cancelled:0, pendingBalance:0} });
+    component.clientsData = Array(10).fill({ idCliente: 1, id: '1', nombre: 'Alpha', name: 'Alpha', direccion: '', address: '', telefonos: ['1'], phones: ['1'], isActive: true, ordersSummary: {total:0, pending:0, inProduction:0}, createdAt: '' });
     component.pageSize = 3;
     component.searchTerm = '';
     component.onSearchChange();
@@ -51,7 +51,7 @@ describe('ClientesComponent', () => {
 
   it('should handle delete modal and confirm', () => {
     component.clientsData = [
-      { id: '1', name: 'Alpha', email: 'a@a.com', phone: '1', documentId: '1', totalOrders: 0, activeOrders: 0, totalSpent: 0, ordersSummary: {total:0, active:0, cancelled:0, pendingBalance:0} }
+      { idCliente: 1, id: '1', nombre: 'Alpha', name: 'Alpha', direccion: '', address: '', telefonos: ['1'], phones: ['1'], isActive: true, ordersSummary: {total:0, pending:0, inProduction:0}, createdAt: '' }
     ];
     const c = component.clientsData[0];
     

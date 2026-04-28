@@ -21,8 +21,8 @@ describe('UsuariosComponent', () => {
 
   it('should filter users and paginate', () => {
     component.usersData = [
-      { id: '1', firstName: 'Alpha', lastName: 'X', email: 'a@a.com', phone: '', documentId: '', role: 'ADMIN', createdAt: '', isActive: true },
-      { id: '2', firstName: 'Beta', lastName: 'Y', email: 'b@b.com', phone: '', documentId: '', role: 'WORKER', createdAt: '', isActive: true }
+      { id: '1', nombre: 'Alpha X', email: 'a@a.com', rol: 'ADMINISTRADOR' },
+      { id: '2', nombre: 'Beta Y', email: 'b@b.com', rol: 'WORKER' }
     ];
     
     component.searchTerm = 'Alpha';
@@ -32,7 +32,7 @@ describe('UsuariosComponent', () => {
 
   it('should handle delete modal and confirm', () => {
     component.usersData = [
-      { id: '1', firstName: 'Alpha', lastName: 'X', email: 'a@a.com', phone: '', documentId: '', role: 'ADMIN', createdAt: '', isActive: true }
+      { id: '1', nombre: 'Alpha X', email: 'a@a.com', rol: 'ADMINISTRADOR' }
     ];
     const u = component.usersData[0];
     component.openDeleteModal(u);
