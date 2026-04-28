@@ -36,7 +36,7 @@ export class InventarioComponent implements OnInit {
   inventoryForm: FormGroup;
   showFormSuccessModal = false;
 
-  private fb = inject(FormBuilder);
+  private readonly fb = inject(FormBuilder);
 
   constructor() {
     this.inventoryForm = this.fb.group({
@@ -261,10 +261,8 @@ export class InventarioComponent implements OnInit {
     this.showFormSuccessModal = false;
     if (goToList) {
       this.viewMode = 'list';
-    } else {
-      if (this.viewMode === 'add') {
-        this.openAddForm();
-      }
+    } else if (this.viewMode === 'add') {
+      this.openAddForm();
     }
   }
 }

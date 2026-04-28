@@ -33,7 +33,7 @@ export class ClientesComponent implements OnInit {
   clientForm: FormGroup;
   showFormSuccessModal = false;
 
-  private fb = inject(FormBuilder);
+  private readonly fb = inject(FormBuilder);
 
   constructor() {
     this.clientForm = this.fb.group({
@@ -193,10 +193,8 @@ export class ClientesComponent implements OnInit {
     this.showFormSuccessModal = false;
     if (goToList) {
       this.viewMode = 'list';
-    } else {
-      if (this.viewMode === 'add') {
-        this.openAddForm();
-      }
+    } else if (this.viewMode === 'add') {
+      this.openAddForm();
     }
   }
 }

@@ -34,7 +34,7 @@ export class UsuariosComponent implements OnInit {
   userForm: FormGroup;
   showFormSuccessModal = false;
 
-  private fb = inject(FormBuilder);
+  private readonly fb = inject(FormBuilder);
 
   constructor() {
     this.userForm = this.fb.group({

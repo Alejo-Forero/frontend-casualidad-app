@@ -21,17 +21,17 @@ describe('PagosComponent', () => {
 
   it('should compute totalMonthlyBalance correctly', () => {
     component.paymentsData = [
-      { id: '1', amount: 100, type: 'CASH', status: 'COMPLETED', orderId: 'O1', clientName: 'C1', date: '2026' },
-      { id: '2', amount: 50, type: 'TRANSFER', status: 'COMPLETED', orderId: 'O2', clientName: 'C2', date: '2026' },
-      { id: '3', amount: 200, type: 'CASH', status: 'PENDING', orderId: 'O3', clientName: 'C3', date: '2026' },
+      { id: '1', amount: 100, type: 'CASH', status: 'COMPLETED', orderId: 'O1', clientName: 'C1', createdAt: '2026', voucherUrl: null, exceptionalAuth: false, registeredBy: { id: '1', name: 'Admin' } },
+      { id: '2', amount: 50, type: 'TRANSFER', status: 'COMPLETED', orderId: 'O2', clientName: 'C2', createdAt: '2026', voucherUrl: null, exceptionalAuth: false, registeredBy: { id: '1', name: 'Admin' } },
+      { id: '3', amount: 200, type: 'CASH', status: 'PENDING', orderId: 'O3', clientName: 'C3', createdAt: '2026', voucherUrl: null, exceptionalAuth: false, registeredBy: { id: '1', name: 'Admin' } },
     ];
     expect(component.totalMonthlyBalance).toBe(150);
   });
 
   it('should filter payments correctly', () => {
     component.paymentsData = [
-      { id: '1', amount: 100, type: 'CASH', status: 'COMPLETED', orderId: 'O1', clientName: 'A', date: '2026' },
-      { id: '2', amount: 50, type: 'TRANSFER', status: 'PENDING', orderId: 'O2', clientName: 'B', date: '2026' }
+      { id: '1', amount: 100, type: 'CASH', status: 'COMPLETED', orderId: 'O1', clientName: 'A', createdAt: '2026', voucherUrl: null, exceptionalAuth: false, registeredBy: { id: '1', name: 'Admin' } },
+      { id: '2', amount: 50, type: 'TRANSFER', status: 'PENDING', orderId: 'O2', clientName: 'B', createdAt: '2026', voucherUrl: null, exceptionalAuth: false, registeredBy: { id: '1', name: 'Admin' } }
     ];
     
     component.setFilter('COMPLETED');
@@ -66,7 +66,7 @@ describe('PagosComponent', () => {
   });
 
   it('should handle delete modal and confirm', () => {
-    component.paymentsData = [{ id: '1', amount: 100, type: 'CASH', status: 'COMPLETED', orderId: 'O1', clientName: 'A', date: '2026' }];
+    component.paymentsData = [{ id: '1', amount: 100, type: 'CASH', status: 'COMPLETED', orderId: 'O1', clientName: 'A', createdAt: '2026', voucherUrl: null, exceptionalAuth: false, registeredBy: { id: '1', name: 'Admin' } }];
     const p = component.paymentsData[0];
     
     component.openDeleteModal(p);

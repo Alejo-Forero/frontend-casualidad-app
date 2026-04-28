@@ -49,7 +49,7 @@ export class PagosComponent implements OnInit {
   // Mocks
   orders = ['#CL-1024 - Sofía Martínez', '#CL-1025 - Julian Castro', '#CL-1026 - Elena Pardo'];
 
-  private fb = inject(FormBuilder);
+  private readonly fb = inject(FormBuilder);
 
   constructor() {
     this.paymentForm = this.fb.group({
@@ -221,10 +221,8 @@ export class PagosComponent implements OnInit {
     this.showFormSuccessModal = false;
     if (goToList) {
       this.viewMode = 'list';
-    } else {
-      if (this.viewMode === 'add') {
-        this.openAddForm();
-      }
+    } else if (this.viewMode === 'add') {
+      this.openAddForm();
     }
   }
 }

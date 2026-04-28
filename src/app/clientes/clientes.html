@@ -50,12 +50,12 @@
             <table class="w-full text-left">
                 <thead>
                     <tr class="text-xs font-bold text-on-surface-variant uppercase tracking-widest bg-stone-50/50">
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-5 group" (click)="handleSort('name')">
+                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-5 group" tabindex="0" (click)="handleSort('name')" (keydown.enter)="handleSort('name')">
                             Nombre del Cliente
                             <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'name' ? 'text-primary' : 'opacity-40 group-hover:opacity-100'">{{ getSortIcon('name') }}</span>
                         </th>
                         <th class="px-8 py-5">Pedidos</th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-5 group" (click)="handleSort('isActive')">
+                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-5 group" tabindex="0" (click)="handleSort('isActive')" (keydown.enter)="handleSort('isActive')">
                             Estado
                             <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'isActive' ? 'text-primary' : 'opacity-40 group-hover:opacity-100'">{{ getSortIcon('isActive') }}</span>
                         </th>
@@ -160,15 +160,15 @@
                 <div class="md:col-span-8">
                     @if (viewMode === 'edit') {
                         <div class="mb-4">
-                            <label class="block text-sm font-bold text-on-surface mb-2">ID Cliente</label>
-                            <input formControlName="id" class="w-full bg-stone-100 border-none rounded-xl py-4 px-5 text-stone-600 cursor-not-allowed" type="text" readonly />
+                            <label for="id" class="block text-sm font-bold text-on-surface mb-2">ID Cliente</label>
+                            <input id="id" formControlName="id" class="w-full bg-stone-100 border-none rounded-xl py-4 px-5 text-stone-600 cursor-not-allowed" type="text" readonly />
                         </div>
                     }
 
-                    <label class="block text-sm font-bold text-on-surface mb-2">
+                    <label for="name" class="block text-sm font-bold text-on-surface mb-2">
                         Nombre Completo <span class="text-error">*</span>
                     </label>
-                    <input formControlName="name" class="w-full bg-surface-container border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-neutral-400 focus:bg-white focus:ring-2 focus:ring-primary/40 transition-all" placeholder="Ej. Juan Pérez" type="text" />
+                    <input id="name" formControlName="name" class="w-full bg-surface-container border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-neutral-400 focus:bg-white focus:ring-2 focus:ring-primary/40 transition-all" placeholder="Ej. Juan Pérez" type="text" />
                 </div>
             </div>
             <div class="h-[1px] bg-neutral-100 w-full"></div>
@@ -184,11 +184,11 @@
                         @for (phoneCtrl of phonesFormArray.controls; track $index; let i = $index) {
                             <div class="phone-field-group flex gap-3 items-start animate-[dropdownFadeIn_0.2s_ease-out]">
                                 <div class="flex-1 relative">
-                                    <label class="block text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-1 px-1">
+                                    <label [for]="'phone_' + i" class="block text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-1 px-1">
                                         {{ i === 0 ? 'Teléfono Principal' : 'Teléfono Adicional' }} <span class="text-error" *ngIf="i === 0">*</span>
                                     </label>
                                     <div class="flex items-center bg-surface-container rounded-xl overflow-hidden">
-                                        <input [formControlName]="i" type="tel" class="phone-input flex-1 bg-transparent border-none py-4 px-3 text-on-surface placeholder:text-neutral-400 focus:ring-0" placeholder="55 0000 0000" />
+                                        <input [id]="'phone_' + i" [formControlName]="i" type="tel" class="phone-input flex-1 bg-transparent border-none py-4 px-3 text-on-surface placeholder:text-neutral-400 focus:ring-0" placeholder="55 0000 0000" />
                                     </div>
                                 </div>
                                 <button type="button" (click)="removePhoneField(i)" [disabled]="phonesFormArray.length === 1" 
@@ -216,8 +216,8 @@
                     <p class="text-sm text-neutral-400 mt-1">Información de logística y fiscal (opcional).</p>
                 </div>
                 <div class="md:col-span-8">
-                    <label class="block text-sm font-bold text-on-surface mb-2">Dirección de Entrega/Facturación</label>
-                    <textarea formControlName="address" class="w-full bg-surface-container border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-neutral-400 focus:bg-white focus:ring-2 focus:ring-primary/40 transition-all" placeholder="Calle, número, colonia, código postal y referencias adicionales..." rows="4"></textarea>
+                    <label for="address" class="block text-sm font-bold text-on-surface mb-2">Dirección de Entrega/Facturación</label>
+                    <textarea id="address" formControlName="address" class="w-full bg-surface-container border-none rounded-xl py-4 px-5 text-on-surface placeholder:text-neutral-400 focus:bg-white focus:ring-2 focus:ring-primary/40 transition-all" placeholder="Calle, número, colonia, código postal y referencias adicionales..." rows="4"></textarea>
                 </div>
             </div>
 

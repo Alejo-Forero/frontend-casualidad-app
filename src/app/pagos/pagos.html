@@ -24,7 +24,7 @@
 
     <!-- Bento Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div (click)="openAddForm()" class="group relative overflow-hidden bg-surface-container-lowest rounded-xl p-8 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] hover:translate-y-[-4px] transition-all duration-300 cursor-pointer">
+        <div tabindex="0" (keydown.enter)="openAddForm()" (click)="openAddForm()" class="group relative overflow-hidden bg-surface-container-lowest rounded-xl p-8 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] hover:translate-y-[-4px] transition-all duration-300 cursor-pointer">
             <div class="flex justify-between items-start mb-12">
                 <div class="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 transition-colors group-hover:bg-orange-600 group-hover:text-white">
                     <span class="material-symbols-outlined text-3xl">add_circle</span>
@@ -81,27 +81,27 @@
             <table class="w-full text-left">
                 <thead>
                     <tr class="text-stone-400 text-xs uppercase tracking-widest bg-stone-50/50">
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" (click)="handleSort('id')">
+                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" tabindex="0" (click)="handleSort('id')" (keydown.enter)="handleSort('id')">
                             ID PAGO
                             <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'id' ? 'text-primary' : 'opacity-40 group-hover:opacity-100'">{{ getSortIcon('id') }}</span>
                         </th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" (click)="handleSort('clientName')">
+                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" tabindex="0" (click)="handleSort('clientName')" (keydown.enter)="handleSort('clientName')">
                             Cliente
                             <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'clientName' ? 'text-primary' : 'opacity-40 group-hover:opacity-100'">{{ getSortIcon('clientName') }}</span>
                         </th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" (click)="handleSort('status')">
+                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" tabindex="0" (click)="handleSort('status')" (keydown.enter)="handleSort('status')">
                             Estado
                             <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'status' ? 'text-primary' : 'opacity-40 group-hover:opacity-100'">{{ getSortIcon('status') }}</span>
                         </th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" (click)="handleSort('createdAt')">
+                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" tabindex="0" (click)="handleSort('createdAt')" (keydown.enter)="handleSort('createdAt')">
                             Fecha
                             <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'createdAt' ? 'text-primary' : 'opacity-40 group-hover:opacity-100'">{{ getSortIcon('createdAt') }}</span>
                         </th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" (click)="handleSort('type')">
+                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" tabindex="0" (click)="handleSort('type')" (keydown.enter)="handleSort('type')">
                             Método
                             <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'type' ? 'text-primary' : 'opacity-40 group-hover:opacity-100'">{{ getSortIcon('type') }}</span>
                         </th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" (click)="handleSort('amount')">
+                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" tabindex="0" (click)="handleSort('amount')" (keydown.enter)="handleSort('amount')">
                             Monto
                             <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'amount' ? 'text-primary' : 'opacity-40 group-hover:opacity-100'">{{ getSortIcon('amount') }}</span>
                         </th>
@@ -198,11 +198,11 @@
                         </div>
                     </div>
                     <div class="space-y-2">
-                        <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
+                        <label for="date" class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
                             <span class="material-symbols-outlined text-xs">calendar_today</span>
                             Fecha y Hora <span class="text-error">*</span>
                         </label>
-                        <input formControlName="date" class="w-full bg-surface-container border-none rounded-lg px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all" type="datetime-local" />
+                        <input id="date" formControlName="date" class="w-full bg-surface-container border-none rounded-lg px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all" type="datetime-local" />
                     </div>
                 </div>
                 <!-- Form Section: Financials -->
@@ -243,12 +243,12 @@
                 <!-- Form Section: Status -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-2">
-                        <label class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
+                        <label for="status" class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
                             <span class="material-symbols-outlined text-xs">check_circle</span>
                             Estado <span class="text-error">*</span>
                         </label>
                         <div class="relative group">
-                            <select formControlName="status" class="w-full bg-surface-container border-none rounded-lg px-4 py-3 text-on-surface font-medium focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all appearance-none">
+                            <select id="status" formControlName="status" class="w-full bg-surface-container border-none rounded-lg px-4 py-3 text-on-surface font-medium focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all appearance-none">
                                 <option value="COMPLETED">Completado</option>
                                 <option value="PENDING">Pendiente</option>
                                 <option value="CANCELLED">Cancelado</option>

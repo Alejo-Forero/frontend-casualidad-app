@@ -21,7 +21,7 @@ describe('PedidosComponent', () => {
 
   it('should filter orders', () => {
     component.ordersData = [
-      { idPedido: 1, id: '1', codigoUnico: '001', code: '001', cliente: { idCliente: 1, nombreCompleto: 'Alpha', telefono: '' }, clientName: 'Alpha', total: 100, totalAmount: 100, saldoPendiente: 0, pendingBalance: 0, estadoPedido: 'DONE', status: 'DONE', fechaEntrega: '2026', deliveryDate: '2026' }
+      { idPedido: 1, id: '1', codigoUnico: '001', code: '001', cliente: { idCliente: 1, nombreCompleto: 'Alpha', telefono: '' }, clientName: 'Alpha', total: 100, totalAmount: 100, saldoPendiente: 0, pendingBalance: 0, estadoPedido: 'DONE', status: 'DONE', paymentStatus: 'PAID', fechaEntrega: '2026', deliveryDate: '2026' }
     ];
     component.searchTerm = 'Alpha';
     component.onSearchChange();
@@ -29,7 +29,7 @@ describe('PedidosComponent', () => {
   });
 
   it('should handle pagination', () => {
-    component.ordersData = Array(10).fill({ idPedido: 1, id: '1', codigoUnico: '001', code: '001', cliente: { idCliente: 1, nombreCompleto: 'Alpha', telefono: '' }, clientName: 'Alpha', total: 100, totalAmount: 100, saldoPendiente: 0, pendingBalance: 0, estadoPedido: 'DONE', status: 'DONE', fechaEntrega: '2026', deliveryDate: '2026' });
+    component.ordersData = Array(10).fill({ idPedido: 1, id: '1', codigoUnico: '001', code: '001', cliente: { idCliente: 1, nombreCompleto: 'Alpha', telefono: '' }, clientName: 'Alpha', total: 100, totalAmount: 100, saldoPendiente: 0, pendingBalance: 0, estadoPedido: 'DONE', status: 'DONE', paymentStatus: 'PAID', fechaEntrega: '2026', deliveryDate: '2026' });
     component.pageSize = 5;
     component.onSearchChange();
     
@@ -39,8 +39,8 @@ describe('PedidosComponent', () => {
 
   it('should sort correctly', () => {
     component.ordersData = [
-      { idPedido: 1, id: '1', codigoUnico: '001', code: '001', cliente: { idCliente: 1, nombreCompleto: 'Z', telefono: '' }, clientName: 'Z', total: 100, totalAmount: 100, saldoPendiente: 50, pendingBalance: 50, estadoPedido: 'DONE', status: 'DONE', fechaEntrega: '2026-01-01', deliveryDate: '2026-01-01' },
-      { idPedido: 2, id: '2', codigoUnico: '002', code: '002', cliente: { idCliente: 2, nombreCompleto: 'A', telefono: '' }, clientName: 'A', total: 100, totalAmount: 100, saldoPendiente: 0, pendingBalance: 0, estadoPedido: 'DONE', status: 'DONE', fechaEntrega: '2026-02-01', deliveryDate: '2026-02-01' }
+      { idPedido: 1, id: '1', codigoUnico: '001', code: '001', cliente: { idCliente: 1, nombreCompleto: 'Z', telefono: '' }, clientName: 'Z', total: 100, totalAmount: 100, saldoPendiente: 50, pendingBalance: 50, estadoPedido: 'DONE', status: 'DONE', paymentStatus: 'PARTIAL', fechaEntrega: '2026-01-01', deliveryDate: '2026-01-01' },
+      { idPedido: 2, id: '2', codigoUnico: '002', code: '002', cliente: { idCliente: 2, nombreCompleto: 'A', telefono: '' }, clientName: 'A', total: 100, totalAmount: 100, saldoPendiente: 0, pendingBalance: 0, estadoPedido: 'DONE', status: 'DONE', paymentStatus: 'PAID', fechaEntrega: '2026-02-01', deliveryDate: '2026-02-01' }
     ];
     component.handleSort('cliente');
     expect(component.filteredOrders[0].clientName).toBe('A');
@@ -58,7 +58,7 @@ describe('PedidosComponent', () => {
 
   it('should handle delete modal and confirm', () => {
     component.ordersData = [
-      { idPedido: 1, id: '1', codigoUnico: '001', code: '001', cliente: { idCliente: 1, nombreCompleto: 'Z', telefono: '' }, clientName: 'Z', total: 100, totalAmount: 100, saldoPendiente: 50, pendingBalance: 50, estadoPedido: 'DONE', status: 'DONE', fechaEntrega: '2026-01-01', deliveryDate: '2026-01-01' },
+      { idPedido: 1, id: '1', codigoUnico: '001', code: '001', cliente: { idCliente: 1, nombreCompleto: 'Z', telefono: '' }, clientName: 'Z', total: 100, totalAmount: 100, saldoPendiente: 50, pendingBalance: 50, estadoPedido: 'DONE', status: 'DONE', paymentStatus: 'PARTIAL', fechaEntrega: '2026-01-01', deliveryDate: '2026-01-01' },
     ];
     const o = component.ordersData[0];
     component.openDeleteModal(o);

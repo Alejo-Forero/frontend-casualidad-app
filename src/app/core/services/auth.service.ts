@@ -31,6 +31,7 @@ export class AuthService {
       try {
         return JSON.parse(userJson) as UserDTO;
       } catch (e) {
+        console.error('Error parsing user data from session storage', e);
         return null;
       }
     }

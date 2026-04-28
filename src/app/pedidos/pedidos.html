@@ -226,9 +226,9 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
-                            <label class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Cliente
+                            <label for="clientId" class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Cliente
                                 *</label>
-                            <select formControlName="clientId"
+                            <select id="clientId" formControlName="clientId"
                                 class="w-full bg-surface-container border-none rounded-lg py-3.5 px-4 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all appearance-none text-stone-700">
                                 <option disabled selected value="">Seleccionar cliente</option>
                                 @for (client of clients; track client) {
@@ -248,9 +248,9 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
-                            <label class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Tipo de
+                            <label for="eventType" class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Tipo de
                                 evento</label>
-                            <select formControlName="eventType"
+                            <select id="eventType" formControlName="eventType"
                                 class="w-full bg-surface-container border-none rounded-lg py-3.5 px-4 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all appearance-none text-stone-700">
                                 <option disabled selected value="">Elegir tipo</option>
                                 <option value="Cumpleaños">Cumpleaños</option>
@@ -261,9 +261,9 @@
                             </select>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">¿Para quién
+                            <label for="forWhom" class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">¿Para quién
                                 es?</label>
-                            <input formControlName="forWhom"
+                            <input id="forWhom" formControlName="forWhom"
                                 class="w-full bg-surface-container border-none rounded-lg py-3.5 px-4 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all placeholder:text-stone-400"
                                 type="text" placeholder="Ej: Hija (Valentina)" />
                         </div>
@@ -308,7 +308,7 @@
                                 @for (item of itemsFormArray.controls; track $index; let i = $index) {
                                 <tr [formGroupName]="i" class="group hover:bg-stone-50/30 transition-colors">
                                     <td class="p-2 border-b border-stone-50">
-                                        <select formControlName="productId" (change)="onProductSelect(i)"
+                                        <select id="productId" formControlName="productId" (change)="onProductSelect(i)"
                                             class="w-full bg-transparent border-none focus:ring-0 text-sm py-2 px-2 text-on-surface font-medium">
                                             <option disabled selected value="">Seleccionar producto...</option>
                                             @for (prod of productsList; track prod.id) {
@@ -317,14 +317,14 @@
                                         </select>
                                     </td>
                                     <td class="p-2 border-b border-stone-50">
-                                        <input formControlName="quantity"
+                                        <input id="quantity" formControlName="quantity"
                                             class="w-full bg-transparent border-none focus:ring-0 text-sm py-2 px-2 text-on-surface text-center font-medium"
                                             type="number" step="1" min="1" />
                                     </td>
                                     <td class="p-2 border-b border-stone-50">
                                         <div class="flex items-center">
                                             <span class="text-stone-400 text-xs ml-2">$</span>
-                                            <input formControlName="unitPrice"
+                                            <input id="unitPrice" formControlName="unitPrice"
                                                 class="w-full bg-transparent border-none focus:ring-0 text-sm py-2 px-1 text-on-surface font-bold text-right"
                                                 type="number" step="any" min="0" placeholder="0" />
                                         </div>
@@ -363,9 +363,9 @@
                         <h2 class="text-xl font-bold tracking-tight text-on-surface">Detalles y Especificaciones</h2>
                     </div>
                     <div class="space-y-2">
-                        <label
+                        <label for="specifications"
                             class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Especificaciones</label>
-                        <textarea formControlName="specifications"
+                        <textarea id="specifications" formControlName="specifications"
                             class="w-full bg-surface-container border-none rounded-lg py-4 px-4 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all placeholder:text-stone-400 resize-none"
                             rows="4"></textarea>
                     </div>
@@ -380,16 +380,16 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="space-y-2">
-                            <label class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Fecha de
+                            <label for="deliveryDate" class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Fecha de
                                 entrega *</label>
-                            <input formControlName="deliveryDate"
+                            <input id="deliveryDate" formControlName="deliveryDate"
                                 class="w-full bg-surface-container border-none rounded-lg py-3 px-3 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all text-sm"
                                 type="date" />
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Estado
+                            <label for="status" class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Estado
                                 *</label>
-                            <select formControlName="status"
+                            <select id="status" formControlName="status"
                                 class="w-full bg-surface-container border-none rounded-lg py-3 px-3 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all appearance-none text-sm font-bold">
                                 <option value="PENDING_ACCEPTANCE">Pendiente Aceptación</option>
                                 <option value="PENDING_PAYMENT">Pendiente Pago</option>
@@ -400,9 +400,9 @@
                             </select>
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Precio Final
+                            <label for="finalPrice" class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Precio Final
                                 Ajustado</label>
-                            <input formControlName="finalPrice"
+                            <input id="finalPrice" formControlName="finalPrice"
                                 class="w-full bg-surface-container border-none rounded-lg py-3 px-3 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all text-sm font-bold text-on-surface"
                                 type="number" step="any" min="0" />
                         </div>
@@ -427,7 +427,7 @@
 <!-- Form Success Modal -->
 @if (showFormSuccessModal) {
 <div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" (click)="closeFormSuccessModal(true)"></div>
+    <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" tabindex="0" (keydown.enter)="closeFormSuccessModal(true)" (click)="closeFormSuccessModal(true)"></div>
     <div
         class="relative bg-surface-container-lowest w-full max-w-lg rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
         <div class="h-2 w-full bg-gradient-to-r from-primary to-primary-container"></div>

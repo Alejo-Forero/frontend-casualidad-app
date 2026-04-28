@@ -21,8 +21,8 @@ describe('InventarioComponent', () => {
 
   it('should calculate totalInventoryValue and getLowStockCount', () => {
     component.productsData = [
-      { id: '1', name: 'A', description: '', purchasePrice: 10, stock: 5, categoryId: '1', imageUrl: '', createdAt: '', updatedAt: '', isLowStock: true, type: 'MATERIAL', unit: 'U' },
-      { id: '2', name: 'B', description: '', purchasePrice: 20, stock: 2, categoryId: '1', imageUrl: '', createdAt: '', updatedAt: '', isLowStock: false, type: 'MATERIAL', unit: 'U' }
+      { id: '1', name: 'A', purchasePrice: 10, stock: 5, minStock: 2, salePrice: null, wastePercent: null, productionCost: null, isLowStock: true, type: 'INSUMO', unit: {id:'1', name:'U'}, composition: null },
+      { id: '2', name: 'B', purchasePrice: 20, stock: 2, minStock: 1, salePrice: null, wastePercent: null, productionCost: null, isLowStock: false, type: 'INSUMO', unit: {id:'1', name:'U'}, composition: null }
     ];
     
     expect(component.getLowStockCount()).toBe(1);
@@ -31,8 +31,8 @@ describe('InventarioComponent', () => {
 
   it('should handle filters and pagination', () => {
     component.productsData = [
-      { id: '1', name: 'A', description: '', purchasePrice: 10, stock: 5, categoryId: '1', imageUrl: '', createdAt: '', updatedAt: '', isLowStock: true, type: 'MATERIAL', unit: 'U' },
-      { id: '2', name: 'B', description: '', purchasePrice: 20, stock: 2, categoryId: '1', imageUrl: '', createdAt: '', updatedAt: '', isLowStock: false, type: 'MATERIAL', unit: 'U' }
+      { id: '1', name: 'A', purchasePrice: 10, stock: 5, minStock: 2, salePrice: null, wastePercent: null, productionCost: null, isLowStock: true, type: 'INSUMO', unit: {id:'1', name:'U'}, composition: null },
+      { id: '2', name: 'B', purchasePrice: 20, stock: 2, minStock: 1, salePrice: null, wastePercent: null, productionCost: null, isLowStock: false, type: 'INSUMO', unit: {id:'1', name:'U'}, composition: null }
     ];
     component.setFilter('lowstock');
     expect(component.filteredProducts.length).toBe(1);
@@ -45,7 +45,7 @@ describe('InventarioComponent', () => {
 
   it('should handle delete modal and confirm', () => {
     component.productsData = [
-      { id: '1', name: 'A', description: '', purchasePrice: 10, stock: 5, categoryId: '1', imageUrl: '', createdAt: '', updatedAt: '', isLowStock: true, type: 'MATERIAL', unit: 'U' }
+      { id: '1', name: 'A', purchasePrice: 10, stock: 5, minStock: 2, salePrice: null, wastePercent: null, productionCost: null, isLowStock: true, type: 'INSUMO', unit: {id:'1', name:'U'}, composition: null }
     ];
     const p = component.productsData[0];
     component.openDeleteModal(p);
