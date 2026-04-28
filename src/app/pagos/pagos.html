@@ -24,7 +24,7 @@
 
     <!-- Bento Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div tabindex="0" role="button" (keydown.enter)="openAddForm()" (click)="openAddForm()" class="group relative overflow-hidden bg-surface-container-lowest rounded-xl p-8 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] hover:translate-y-[-4px] transition-all duration-300 cursor-pointer">
+        <button type="button" (click)="openAddForm()" class="text-left block w-full border-none appearance-none group relative overflow-hidden bg-surface-container-lowest rounded-xl p-8 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] hover:translate-y-[-4px] transition-all duration-300 cursor-pointer">
             <div class="flex justify-between items-start mb-12">
                 <div class="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 transition-colors group-hover:bg-orange-600 group-hover:text-white">
                     <span class="material-symbols-outlined text-3xl">add_circle</span>
@@ -38,7 +38,7 @@
             <div class="absolute -right-8 -bottom-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
                 <span class="material-symbols-outlined text-[160px]">payments</span>
             </div>
-        </div>
+        </button>
         <div class="group relative overflow-hidden bg-surface-container-lowest rounded-xl p-8 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] hover:translate-y-[-4px] transition-all duration-300 cursor-pointer">
             <div class="flex justify-between items-start mb-12">
                 <div class="w-14 h-14 bg-stone-50 rounded-2xl flex items-center justify-center text-stone-600 transition-colors group-hover:bg-stone-900 group-hover:text-white">
@@ -275,7 +275,7 @@
 <!-- Form Success Modal -->
 @if (showFormSuccessModal) {
     <div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" role="button" tabindex="0" (keydown.enter)="closeFormSuccessModal(true)" (click)="closeFormSuccessModal(true)"></div>
+        <button type="button" aria-label="Cerrar modal" class="absolute inset-0 w-full h-full border-none appearance-none block bg-on-background/40 backdrop-blur-sm cursor-default" (click)="closeFormSuccessModal(true)"></button>
         <div class="relative bg-surface-container-lowest w-full max-w-lg rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
             <div class="h-2 w-full bg-gradient-to-r from-primary to-primary-container"></div>
             <div class="p-10 text-center">

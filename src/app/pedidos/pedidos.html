@@ -10,8 +10,8 @@
     <!-- Quick Action Cards (Bento Grid Style) -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Action 1 -->
-        <div (click)="openAddForm()" tabindex="0" role="button" (keydown.enter)="openAddForm()"
-            class="group relative bg-surface-container-lowest p-6 rounded-xl overflow-hidden hover:bg-primary transition-all duration-300 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] cursor-pointer">
+        <button type="button" (click)="openAddForm()"
+            class="text-left w-full border-none appearance-none block group relative bg-surface-container-lowest p-6 rounded-xl overflow-hidden hover:bg-primary transition-all duration-300 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] cursor-pointer">
             <div class="relative z-10 flex flex-col h-full justify-between gap-8">
                 <div class="flex justify-between items-start">
                     <span
@@ -27,7 +27,7 @@
             <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
                 <span class="material-symbols-outlined text-[120px]">assignment_add</span>
             </div>
-        </div>
+        </button>
 
         <!-- Action 2 -->
         <div
@@ -427,7 +427,7 @@
 <!-- Form Success Modal -->
 @if (showFormSuccessModal) {
 <div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" role="button" tabindex="0" (keydown.enter)="closeFormSuccessModal(true)" (click)="closeFormSuccessModal(true)"></div>
+    <button type="button" aria-label="Cerrar modal" class="absolute inset-0 w-full h-full border-none appearance-none block bg-on-background/40 backdrop-blur-sm cursor-default" (click)="closeFormSuccessModal(true)"></button>
     <div
         class="relative bg-surface-container-lowest w-full max-w-lg rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
         <div class="h-2 w-full bg-gradient-to-r from-primary to-primary-container"></div>

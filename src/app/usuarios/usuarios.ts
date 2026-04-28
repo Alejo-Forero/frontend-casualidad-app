@@ -167,10 +167,8 @@ export class UsuariosComponent implements OnInit {
     this.showFormSuccessModal = false;
     if (goToList) {
       this.viewMode = 'list';
-    } else {
-      if (this.viewMode === 'add') {
-        this.userForm.reset();
-      }
+    } else if (this.viewMode === 'add') {
+      this.userForm.reset();
     }
   }
 }

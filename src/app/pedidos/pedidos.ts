@@ -48,7 +48,7 @@ export class PedidosComponent implements OnInit {
   productsList = [
     { id: '1', name: 'Crónicas de Casualidad', price: 24.99 },
     { id: '2', name: 'El Arte del Azar', price: 55 },
-    { id: '3', name: 'Revista Mensual Ed. 12', price: 12.50 },
+    { id: '3', name: 'Revista Mensual Ed. 12', price: 12.5 },
     { id: '4', name: 'Kit Creativo Transformado', price: 89.99 }
   ];
 
