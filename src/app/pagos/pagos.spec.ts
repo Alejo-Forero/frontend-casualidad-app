@@ -31,84 +31,116 @@ describe('PagosComponent', () => {
     fixture = TestBed.createComponent(PagosComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
+    fixture.detectChanges();
   });
 
-  it('should load data on init', () => {
-    expect(mockPaymentService.getSaldosPendientes).toHaveBeenCalled();
-    // In pagos.ts, data is mapped from content
-  });
+  it('should create', () => { expect(component).toBeTruthy(); });
 
   it('should compute totalMonthlyBalance correctly', () => {
     component.paymentsData = [
       { ...mockPayment, amount: 100, status: 'PENDING' },
-      { ...mockPayment, amount: 50,  status: 'COMPLETED' }
+      { ...mockPayment, amount: 50,  status: 'COMPLETED' },
+      { ...mockPayment, amount: 20,  status: 'CANCELLED' }
     ];
     expect(component.totalMonthlyBalance).toBe(100);
   });
 
-  it('should save payment successfully', () => {
-    component.openAddForm();
-    component.paymentForm.patchValue({ idPedido: 1, amount: 50, type: 'EFECTIVO' });
-    component.savePayment();
-    expect(mockPaymentService.registrarAbono).toHaveBeenCalled();
-    expect(component.showFormSuccessModal).toBeTruthy();
-  });
-
-  it('should handle error when saving payment', () => {
-    mockPaymentService.registrarAbono.mockReturnValueOnce(throwError(() => new Error('Err')));
-    component.openAddForm();
-    component.paymentForm.patchValue({ idPedido: 1, amount: 50, type: 'EFECTIVO' });
-    component.savePayment();
-    expect(mockPaymentService.registrarAbono).toHaveBeenCalled();
-  });
-
-  it('should handle sorting', () => {
+  it('should handle sorting all directions', () => {
     component.handleSort('amount');
-    expect(component.currentSort.column).toBe('amount');
+    expect(component.currentSort.direction).toBe('asc');
     component.handleSort('amount');
     expect(component.currentSort.direction).toBe('desc');
+    component.handleSort('clientName');
+    expect(component.currentSort.column).toBe('clientName');
+    expect(component.currentSort.direction).toBe('asc');
   });
 
-  it('should filter payments by search and status', () => {
+  it('should handle applyFilters branches', () => {
     component.paymentsData = [
-      { ...mockPayment, id: '1', status: 'COMPLETED', clientName: 'Alpha' },
-      { ...mockPayment, id: '2', status: 'PENDING',   clientName: 'Beta' }
+      { ...mockPayment, clientName: 'Alpha', status: 'COMPLETED', orderId: 'P1' },
+      { ...mockPayment, clientName: 'Beta',  status: 'PENDING',   orderId: 'P2' }
     ];
+    
+    // 1. All filter
+    component.currentFilter = 'ALL';
     component.searchTerm = 'beta';
-    component.currentFilter = 'PENDING';
     component.applyFilters();
     expect(component.filteredPayments.length).toBe(1);
-    expect(component.filteredPayments[0].clientName).toBe('Beta');
-  });
 
-  it('should handle pagination', () => {
-    component.paymentsData = Array(10).fill(0).map((_, i) => ({ ...mockPayment, id: String(i) }));
-    component.pageSize = 5;
+    // 2. Status filter
+    component.currentFilter = 'COMPLETED';
+    component.searchTerm = '';
     component.applyFilters();
-    component.onPageChange(2);
-    expect(component.currentPage).toBe(2);
-    expect(component.paginatedPayments.length).toBe(5);
+    expect(component.filteredPayments.length).toBe(1);
+    expect(component.filteredPayments[0].clientName).toBe('Alpha');
   });
 
-  it('should open view and delete modals', () => {
-    component.openViewModal(mockPayment);
-    expect(component.showViewModal).toBeTruthy();
-    component.closeViewModal();
-    expect(component.showViewModal).toBeFalsy();
-    
-    component.openDeleteModal(mockPayment);
-    expect(component.showDeleteModal).toBeTruthy();
-    component.confirmDelete();
-    expect(component.showSuccessModal).toBeTruthy();
+  it('should handle savePayment branches', () => {
+    // 1. Invalid form
+    component.openAddForm();
+    component.paymentForm.get('amount')?.setValue(null);
+    component.savePayment();
+    expect(mockPaymentService.registrarAbono).not.toHaveBeenCalled();
+
+    // 2. Success with reference
+    component.paymentForm.patchValue({ idPedido: 1, amount: 50, type: 'TRANSFERENCIA', referenciaComprobante: 'REF123' });
+    component.savePayment();
+    expect(mockPaymentService.registrarAbono).toHaveBeenCalled();
+    expect(component.showFormSuccessModal).toBe(true);
+
+    // 3. Error case
+    const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    mockPaymentService.registrarAbono.mockReturnValueOnce(throwError(() => new Error('Err')));
+    component.savePayment();
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
   });
 
-  it('should close form success modal and navigate', () => {
+  it('should handle closeFormSuccessModal branches', () => {
+    component.showFormSuccessModal = true;
     component.viewMode = 'add';
-    component.closeFormSuccessModal(true);
-    expect(component.viewMode).toBe('list');
     
+    // 1. goToList = true
+    component.closeFormSuccessModal(true);
+    expect(component.showFormSuccessModal).toBe(false);
+    expect(component.viewMode).toBe('list');
+
+    // 2. goToList = false, viewMode = add
+    component.showFormSuccessModal = true;
     component.viewMode = 'add';
     component.closeFormSuccessModal(false);
     expect(component.viewMode).toBe('add');
+    // It should have reset form (triggered openAddForm)
+  });
+
+  it('should handle mapPaymentType branches', () => {
+    expect((component as any).mapPaymentType('CASH')).toBe('EFECTIVO');
+    expect((component as any).mapPaymentType('TRANSFER')).toBe('TRANSFERENCIA');
+    expect((component as any).mapPaymentType('OTHER')).toBe('OTHER');
+  });
+
+  it('should handle delete confirmation', () => {
+    component.openDeleteModal(mockPayment);
+    expect(component.showDeleteModal).toBe(true);
+    component.confirmDelete();
+    expect(component.showSuccessModal).toBe(true);
+    component.closeSuccessModal();
+    expect(component.showSuccessModal).toBe(false);
+  });
+
+  it('should handle pagination edge cases', () => {
+    component.paymentsData = Array(12).fill(mockPayment);
+    component.pageSize = 5;
+    component.applyFilters();
+    expect(component.paginatedPayments.length).toBe(5);
+    component.onPageChange(3); // Last page (2 items)
+    expect(component.paginatedPayments.length).toBe(2);
+  });
+
+  it('should handle view modal lifecycle', () => {
+    component.openViewModal(mockPayment);
+    expect(component.showViewModal).toBe(true);
+    component.closeViewModal();
+    expect(component.showViewModal).toBe(false);
   });
 });

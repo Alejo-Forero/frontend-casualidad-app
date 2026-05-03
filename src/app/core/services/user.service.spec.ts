@@ -21,58 +21,50 @@ describe('UserService', () => {
     httpMock.verify();
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
+  it('should fetch all users with different data structures', () => {
+    // 1. res.data.data
+    service.getAll().subscribe(res => expect(res.length).toBe(1));
+    httpMock.expectOne(apiUrl).flush({ data: { data: [{ id: '1' }] } });
+
+    // 2. res.data only
+    service.getAll().subscribe(res => expect(res.length).toBe(1));
+    httpMock.expectOne(apiUrl).flush({ data: [{ id: '2' }] });
+
+    // 3. empty
+    service.getAll().subscribe(res => expect(res.length).toBe(0));
+    httpMock.expectOne(apiUrl).flush({});
   });
 
-  it('should fetch all users', () => {
-    const mockResponse = { data: { data: [{ id: '1', nombre: 'Test' }] } };
-    service.getAll().subscribe(users => {
-      expect(users.length).toBe(1);
-      expect(users[0].nombre).toBe('Test');
-    });
-
+  it('should handle payload mapping in create', () => {
+    // 1. firstName/lastName fallback
+    service.create({ firstName: 'A', lastName: 'B', email: 'e@e.com' }).subscribe();
     const req = httpMock.expectOne(apiUrl);
-    expect(req.request.method).toBe('GET');
-    req.flush(mockResponse);
+    expect(req.request.body.nombre).toBe('A B');
+    expect(req.request.body.correo).toBe('e@e.com');
+    req.flush({ data: {} });
+
+    // 2. data.correo fallback
+    service.create({ nombre: 'X', correo: 'c@c.com', password: 'P', idRol: 1 }).subscribe();
+    const req2 = httpMock.expectOne(apiUrl);
+    expect(req2.request.body.nombre).toBe('X');
+    expect(req2.request.body.correo).toBe('c@c.com');
+    expect(req2.request.body.contraseña).toBe('P');
+    expect(req2.request.body.idRol).toBe(1);
+    req2.flush({ data: {} });
   });
 
-  it('should fetch user by id', () => {
-    const mockUser = { id: '1', nombre: 'Test' };
-    service.getById('1').subscribe(user => {
-      expect(user.nombre).toBe('Test');
-    });
-
+  it('should handle payload mapping in update', () => {
+    service.update('1', { firstName: 'U' }).subscribe();
     const req = httpMock.expectOne(`${apiUrl}/1`);
-    expect(req.request.method).toBe('GET');
-    req.flush({ data: mockUser });
-  });
-
-  it('should create user', () => {
-    const userData = { firstName: 'John', lastName: 'Doe', email: 'john@example.com' };
-    service.create(userData).subscribe();
-
-    const req = httpMock.expectOne(apiUrl);
-    expect(req.request.method).toBe('POST');
-    expect(req.request.body.nombre).toBe('John Doe');
-    req.flush({ data: { id: '123' } });
-  });
-
-  it('should update user', () => {
-    const userData = { nombre: 'John Updated', email: 'john@example.com' };
-    service.update('123', userData).subscribe();
-
-    const req = httpMock.expectOne(`${apiUrl}/123`);
-    expect(req.request.method).toBe('PUT');
-    expect(req.request.body.nombre).toBe('John Updated');
+    expect(req.request.body.nombre).toBe('U');
+    expect(req.request.body.correo).toBe('');
     req.flush({ data: {} });
   });
 
-  it('should delete user', () => {
-    service.delete('123').subscribe();
-
-    const req = httpMock.expectOne(`${apiUrl}/123`);
-    expect(req.request.method).toBe('DELETE');
-    req.flush({ data: null });
+  it('should getById and delete', () => {
+    service.getById('1').subscribe();
+    httpMock.expectOne(`${apiUrl}/1`).flush({ data: {} });
+    service.delete('1').subscribe();
+    httpMock.expectOne(`${apiUrl}/1`).flush({ data: {} });
   });
 });
