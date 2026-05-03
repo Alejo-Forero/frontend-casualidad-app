@@ -7,11 +7,11 @@
             Desde la formalización hasta la entrega final al cliente.</p>
     </div>
 
-    <!-- Quick Action Cards (Bento Grid Style) -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Quick Action Cards -->
+    <section class="mb-8">
         <!-- Action 1 -->
         <button type="button" (click)="openAddForm()"
-            class="text-left w-full border-none appearance-none block group relative bg-surface-container-lowest p-6 rounded-xl overflow-hidden hover:bg-primary transition-all duration-300 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] cursor-pointer">
+            class="text-left w-full max-w-sm border-none appearance-none block group relative bg-surface-container-lowest p-6 rounded-xl overflow-hidden hover:bg-primary transition-all duration-300 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] cursor-pointer">
             <div class="relative z-10 flex flex-col h-full justify-between gap-8">
                 <div class="flex justify-between items-start">
                     <span
@@ -28,44 +28,6 @@
                 <span class="material-symbols-outlined text-[120px]">assignment_add</span>
             </div>
         </button>
-
-        <!-- Action 2 -->
-        <div
-            class="group relative bg-surface-container-lowest p-6 rounded-xl overflow-hidden hover:bg-primary transition-all duration-300 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] cursor-pointer">
-            <div class="relative z-10 flex flex-col h-full justify-between gap-8">
-                <div class="flex justify-between items-start">
-                    <span class="material-symbols-outlined text-primary group-hover:text-white text-4xl">verified</span>
-                    <span class="material-symbols-outlined text-zinc-300 group-hover:text-white/50">north_east</span>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold group-hover:text-white transition-colors">Formalizar Pedido</h3>
-                    <p class="text-sm text-on-surface-variant group-hover:text-white/80 mt-1">Valida pagos y autoriza el
-                        inicio de producción.</p>
-                </div>
-            </div>
-            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                <span class="material-symbols-outlined text-[120px]">verified</span>
-            </div>
-        </div>
-
-        <!-- Action 3 -->
-        <div
-            class="group relative bg-surface-container-lowest p-6 rounded-xl overflow-hidden hover:bg-primary transition-all duration-300 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] cursor-pointer">
-            <div class="relative z-10 flex flex-col h-full justify-between gap-8">
-                <div class="flex justify-between items-start">
-                    <span class="material-symbols-outlined text-primary group-hover:text-white text-4xl">category</span>
-                    <span class="material-symbols-outlined text-zinc-300 group-hover:text-white/50">north_east</span>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold group-hover:text-white transition-colors">Gestionar productos</h3>
-                    <p class="text-sm text-on-surface-variant group-hover:text-white/80 mt-1">Ajusta cantidades y
-                        especificaciones de pedidos.</p>
-                </div>
-            </div>
-            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                <span class="material-symbols-outlined text-[120px]">category</span>
-            </div>
-        </div>
     </section>
 
     <!-- Table Section -->
@@ -81,110 +43,147 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-zinc-50/50">
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
-                            (click)="handleSort('id')" (keydown.enter)="handleSort('id')">
-                            ID Pedido
-                            <span class="material-symbols-outlined text-[14px] align-middle ml-1"
-                                [ngClass]="currentSort.column === 'id' ? 'text-primary' : 'opacity-40'">{{
-                                getSortIcon('id') }}</span>
-                        </th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
-                            (click)="handleSort('cliente')" (keydown.enter)="handleSort('cliente')">
-                            Cliente
-                            <span class="material-symbols-outlined text-[14px] align-middle ml-1"
-                                [ngClass]="currentSort.column === 'cliente' ? 'text-primary' : 'opacity-40'">{{
-                                getSortIcon('cliente') }}</span>
-                        </th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
-                            (click)="handleSort('estado')" (keydown.enter)="handleSort('estado')">
-                            Estado
-                            <span class="material-symbols-outlined text-[14px] align-middle ml-1"
-                                [ngClass]="currentSort.column === 'estado' ? 'text-primary' : 'opacity-40'">{{
-                                getSortIcon('estado') }}</span>
-                        </th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
-                            (click)="handleSort('fecha')" (keydown.enter)="handleSort('fecha')">
-                            Fecha de entrega
-                            <span class="material-symbols-outlined text-[14px] align-middle ml-1"
-                                [ngClass]="currentSort.column === 'fecha' ? 'text-primary' : 'opacity-40'">{{
-                                getSortIcon('fecha') }}</span>
-                        </th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"
-                            (click)="handleSort('saldo')" (keydown.enter)="handleSort('saldo')">
-                            Saldo
-                            <span class="material-symbols-outlined text-[14px] align-middle ml-1"
-                                [ngClass]="currentSort.column === 'saldo' ? 'text-primary' : 'opacity-40'">{{
-                                getSortIcon('saldo') }}</span>
-                        </th>
-                        <th
-                            class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100 text-right">
-                            Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-zinc-100">
-                    @for (order of paginatedOrders; track order.id) {
-                    <tr class="hover:bg-orange-50/30 transition-colors group">
-                        <td class="px-8 py-4 text-xs font-bold text-on-surface">{{ order.codigoUnico || order.idPedido
-                            }}</td>
-                        <td class="px-8 py-4">
-                            <div class="flex items-center gap-3">
-                                <div
-                                    class="w-8 h-8 rounded-full bg-surface-container-high border border-surface-variant/20 flex items-center justify-center text-on-surface font-bold text-[10px]">
-                                    {{ order.cliente.nombreCompleto.charAt(0) || '?' }}
-                                </div>
-                                <span class="font-bold text-sm text-on-surface">{{ order.cliente.nombreCompleto
-                                    }}</span>
+
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
+            <table mat-table [dataSource]="dataSource" matSort class="w-full text-left">
+                <!-- ID Pedido Column -->
+                <ng-container matColumnDef="codigo">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"> ID Pedido </th>
+                    <td mat-cell *matCellDef="let order" class="px-8 py-4 text-xs font-bold text-on-surface"> {{ order.codigoUnico || order.idPedido }} </td>
+                </ng-container>
+
+                <!-- Cliente Column -->
+                <ng-container matColumnDef="cliente">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"> Cliente </th>
+                    <td mat-cell *matCellDef="let order" class="px-8 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-surface-container-high border border-surface-variant/20 flex items-center justify-center text-on-surface font-bold text-[10px]">
+                                {{ (order.nombreCliente || order.clientName || '?').charAt(0) }}
                             </div>
-                        </td>
-                        <td class="px-8 py-4">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold"
-                                [ngClass]="statusMap[order.estadoPedido].css">
-                                {{ statusMap[order.estadoPedido].text }}
-                            </span>
-                        </td>
-                        <td class="px-8 py-4 text-sm font-medium text-on-surface-variant">{{ order.fechaEntrega |
-                            date:'dd MMM yyyy' }}</td>
-                        <td class="px-8 py-4">
-                            <span class="text-sm font-bold text-on-surface">{{ order.saldoPendiente | currency:'USD'
-                                }}</span>
-                        </td>
-                        <td class="px-8 py-5 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <button class="p-2 text-zinc-400 hover:text-primary transition-colors"
-                                    title="Ver detalle">
-                                    <span class="material-symbols-outlined text-xl">visibility</span>
-                                </button>
-                                <button (click)="openEditForm(order)"
-                                    class="p-2 text-zinc-400 hover:text-secondary transition-colors" title="Editar">
-                                    <span class="material-symbols-outlined text-xl">edit</span>
-                                </button>
-                                <button (click)="openDeleteModal(order)"
-                                    class="p-2 text-zinc-400 hover:text-error transition-colors" title="Eliminar">
-                                    <span class="material-symbols-outlined text-xl">delete</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                    }
-                    @if (paginatedOrders.length === 0) {
-                    <tr>
-                        <td colspan="6" class="px-8 py-10 text-center text-on-surface-variant">
-                            No se encontraron pedidos registrados en el sistema.
-                        </td>
-                    </tr>
-                    }
-                </tbody>
+                            <span class="font-bold text-sm text-on-surface">{{ order.nombreCliente || order.clientName || '—' }}</span>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Estado Column -->
+                <ng-container matColumnDef="estado">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"> Estado </th>
+                    <td mat-cell *matCellDef="let order" class="px-8 py-4">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold" [ngClass]="(statusMap[order.estadoPedido] || statusMap[order.status])?.css ?? 'bg-stone-100 text-stone-500'">
+                            {{ (statusMap[order.estadoPedido] || statusMap[order.status])?.text ?? (order.estadoPedido || order.status || 'Sin estado') }}
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Fecha de entrega Column -->
+                <ng-container matColumnDef="fecha">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"> Fecha de entrega </th>
+                    <td mat-cell *matCellDef="let order" class="px-8 py-4 text-sm font-medium text-on-surface-variant"> {{ order.fechaEntrega | date:'dd MMM yyyy' }} </td>
+                </ng-container>
+
+                <!-- Saldo Column -->
+                <ng-container matColumnDef="saldo">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"> Saldo </th>
+                    <td mat-cell *matCellDef="let order" class="px-8 py-4">
+                        <span class="text-sm font-bold text-on-surface">{{ order.saldoPendiente | currency:'USD' }}</span>
+                    </td>
+                </ng-container>
+
+                <!-- Acciones Column -->
+                <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100 text-right"> Acciones </th>
+                    <td mat-cell *matCellDef="let order" class="px-8 py-5 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            @if (order.estadoPedido === 'PENDIENTE' || order.estadoPedido === 'PENDING_ACCEPTANCE' || order.estadoPedido === 'PENDING_PAYMENT') {
+                            <button mat-icon-button (click)="openActivarProduccionModal(order)"
+                                color="primary"
+                                title="Activar Producción">
+                                <mat-icon>play_circle</mat-icon>
+                            </button>
+                            }
+                            <button mat-icon-button (click)="openEditForm(order)"
+                                class="text-zinc-400 hover:text-secondary transition-colors" title="Ver/Editar">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="openDeleteModal(order)"
+                                color="warn" title="Eliminar">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-zinc-50/50"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-orange-50/30 transition-colors group"></tr>
+
+                <!-- Row shown when there is no matching data. -->
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell px-8 py-10 text-center text-on-surface-variant" colspan="6">
+                        No se encontraron pedidos.
+                    </td>
+                </tr>
             </table>
         </div>
 
-        <!-- Shared Pagination Component -->
-        <app-pagination [totalItems]="filteredOrders.length" [pageSize]="pageSize" [currentPage]="currentPage"
-            itemName="pedidos" (pageChange)="onPageChange($event)">
-        </app-pagination>
+        <!-- Mobile Cards View -->
+        <div class="block md:hidden divide-y divide-zinc-100">
+            @for (order of dataSource.filteredData | slice:(paginator.pageIndex || 0)*(paginator.pageSize || 5):((paginator.pageIndex || 0) + 1)*(paginator.pageSize || 5); track order.id) {
+            <div class="p-6 bg-white hover:bg-orange-50/30 transition-colors">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <div class="text-xs font-bold text-stone-400 mb-1">PEDIDO</div>
+                        <div class="font-bold text-on-surface">{{ order.codigoUnico || order.idPedido }}</div>
+                    </div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold" [ngClass]="(statusMap[order.estadoPedido] || statusMap[order.status])?.css ?? 'bg-stone-100 text-stone-500'">
+                        {{ (statusMap[order.estadoPedido] || statusMap[order.status])?.text ?? (order.estadoPedido || order.status || 'Sin estado') }}
+                    </span>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="text-xs font-bold text-stone-400 mb-1">CLIENTE</div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-full bg-surface-container-high border border-surface-variant/20 flex items-center justify-center text-on-surface font-bold text-[10px]">
+                            {{ (order.nombreCliente || order.clientName || '?').charAt(0) }}
+                        </div>
+                        <span class="font-bold text-sm text-on-surface">{{ order.nombreCliente || order.clientName || '—' }}</span>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <div class="text-xs font-bold text-stone-400 mb-1">ENTREGA</div>
+                        <div class="text-sm font-medium text-on-surface-variant">{{ order.fechaEntrega | date:'dd MMM yyyy' }}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs font-bold text-stone-400 mb-1">SALDO</div>
+                        <div class="text-sm font-bold text-on-surface">{{ order.saldoPendiente | currency:'USD' }}</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 pt-4 border-t border-zinc-100">
+                    @if (order.estadoPedido === 'PENDIENTE' || order.estadoPedido === 'PENDING_ACCEPTANCE' || order.estadoPedido === 'PENDING_PAYMENT') {
+                    <button (click)="openActivarProduccionModal(order)" class="flex-1 py-2 text-primary bg-primary/10 hover:bg-primary/20 font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">play_circle</span> Activar
+                    </button>
+                    }
+                    <button (click)="openEditForm(order)" class="flex-1 py-2 text-zinc-600 bg-surface-container hover:bg-surface-container-high font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">edit</span> Editar
+                    </button>
+                    <button (click)="openDeleteModal(order)" class="py-2 px-3 text-error bg-error-container/10 hover:bg-error-container/20 font-bold rounded-lg transition-colors flex justify-center items-center">
+                        <span class="material-symbols-outlined text-sm">delete</span>
+                    </button>
+                </div>
+            </div>
+            }
+            @if (dataSource.filteredData.length === 0) {
+            <div class="p-10 text-center text-on-surface-variant">
+                No se encontraron pedidos.
+            </div>
+            }
+        </div>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of orders"></mat-paginator>
     </section>
 </div>
 }
@@ -225,57 +224,46 @@
                         <h2 class="text-xl font-bold tracking-tight text-on-surface">Identificación</h2>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <label for="clientId" class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Cliente
-                                *</label>
-                            <select id="clientId" formControlName="clientId"
-                                class="w-full bg-surface-container border-none rounded-lg py-3.5 px-4 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all appearance-none text-stone-700">
-                                <option disabled selected value="">Seleccionar cliente</option>
-                                @for (client of clients; track client) {
-                                <option [value]="client">{{ client }}</option>
+                        @if (viewMode === 'add') {
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>Cliente</mat-label>
+                                <mat-select formControlName="clientId">
+                                    <mat-option [value]="null" disabled>Selecciona un cliente...</mat-option>
+                                    @for (client of clientsList; track client.id) {
+                                    <mat-option [value]="client.id">{{ client.nombre }}</mat-option>
+                                    }
+                                </mat-select>
+                                @if (orderForm.get('clientId')?.invalid && orderForm.get('clientId')?.touched) {
+                                <mat-error>El cliente es requerido</mat-error>
                                 }
-                            </select>
+                            </mat-form-field>
+                            } @else {
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>Cliente</mat-label>
+                                <input matInput [value]="selectedClientName" disabled>
+                            </mat-form-field>
+                            }
+                            @if (clientsList.length === 0) {
+                            <p class="text-xs text-amber-600 font-medium">Cargando clientes del sistema...</p>
+                            }
+                        <div class="space-y-2">
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>Fecha de Entrega (Estimada)</mat-label>
+                                <input matInput type="date" formControlName="deliveryDate">
+                            </mat-form-field>
                         </div>
                     </div>
                 </section>
 
-                <!-- Sección 2: Evento -->
-                <section>
-                    <div class="flex items-center gap-3 mb-6">
-                        <span
-                            class="w-8 h-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center font-bold text-sm">02</span>
-                        <h2 class="text-xl font-bold tracking-tight text-on-surface">Contexto del Evento</h2>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <label for="eventType" class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Tipo de
-                                evento</label>
-                            <select id="eventType" formControlName="eventType"
-                                class="w-full bg-surface-container border-none rounded-lg py-3.5 px-4 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all appearance-none text-stone-700">
-                                <option disabled selected value="">Elegir tipo</option>
-                                <option value="Cumpleaños">Cumpleaños</option>
-                                <option value="Grado">Grado</option>
-                                <option value="Despedida">Despedida</option>
-                                <option value="Aniversario">Aniversario</option>
-                                <option value="Otro">Otro</option>
-                            </select>
-                        </div>
-                        <div class="space-y-2">
-                            <label for="forWhom" class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">¿Para quién
-                                es?</label>
-                            <input id="forWhom" formControlName="forWhom"
-                                class="w-full bg-surface-container border-none rounded-lg py-3.5 px-4 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all placeholder:text-stone-400"
-                                type="text" placeholder="Ej: Hija (Valentina)" />
-                        </div>
-                    </div>
-                </section>
 
-                <!-- Sección 3: Detalle de Productos -->
+
+
+                <!-- Sección 2: Detalle de Productos -->
                 <section>
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center gap-3">
                             <span
-                                class="w-8 h-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center font-bold text-sm">03</span>
+                                class="w-8 h-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center font-bold text-sm">02</span>
                             <h2 class="text-xl font-bold tracking-tight text-on-surface">Ítems del Pedido</h2>
                         </div>
                         <button type="button" (click)="addItem()"
@@ -308,35 +296,32 @@
                                 @for (item of itemsFormArray.controls; track $index; let i = $index) {
                                 <tr [formGroupName]="i" class="group hover:bg-stone-50/30 transition-colors">
                                     <td class="p-2 border-b border-stone-50">
-                                        <select id="productId" formControlName="productId" (change)="onProductSelect(i)"
-                                            class="w-full bg-transparent border-none focus:ring-0 text-sm py-2 px-2 text-on-surface font-medium">
-                                            <option disabled selected value="">Seleccionar producto...</option>
-                                            @for (prod of productsList; track prod.id) {
-                                            <option [value]="prod.id">{{ prod.name }}</option>
-                                            }
-                                        </select>
+                                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
+                                            <mat-select formControlName="productId" placeholder="Seleccionar producto...">
+                                                @for (prod of productsList; track prod.id) {
+                                                <mat-option [value]="prod.id">{{ prod.nombre }}</mat-option>
+                                                }
+                                            </mat-select>
+                                        </mat-form-field>
                                     </td>
                                     <td class="p-2 border-b border-stone-50">
-                                        <input id="quantity" formControlName="quantity"
-                                            class="w-full bg-transparent border-none focus:ring-0 text-sm py-2 px-2 text-on-surface text-center font-medium"
-                                            type="number" step="1" min="1" />
+                                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
+                                            <input matInput type="number" formControlName="quantity" step="1" min="1" class="text-center" />
+                                        </mat-form-field>
                                     </td>
                                     <td class="p-2 border-b border-stone-50">
-                                        <div class="flex items-center">
-                                            <span class="text-stone-400 text-xs ml-2">$</span>
-                                            <input id="unitPrice" formControlName="unitPrice"
-                                                class="w-full bg-transparent border-none focus:ring-0 text-sm py-2 px-1 text-on-surface font-bold text-right"
-                                                type="number" step="any" min="0" placeholder="0" />
-                                        </div>
+                                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
+                                            <span matTextPrefix class="text-stone-400 mr-1">$</span>
+                                            <input matInput type="number" formControlName="unitPrice" step="any" min="0" placeholder="0" class="text-right" />
+                                        </mat-form-field>
                                     </td>
                                     <td class="p-2 border-b border-stone-50 text-right pr-4">
                                         <span class="text-sm font-bold text-orange-800">{{ (item.get('quantity')?.value
                                             || 0) * (item.get('unitPrice')?.value || 0) | currency:'USD' }}</span>
                                     </td>
                                     <td class="p-2 border-b border-stone-50">
-                                        <button type="button" (click)="removeItem(i)"
-                                            class="text-stone-300 hover:text-error-dim transition-colors">
-                                            <span class="material-symbols-outlined text-lg">delete</span>
+                                        <button mat-icon-button type="button" color="warn" (click)="removeItem(i)">
+                                            <mat-icon>delete</mat-icon>
                                         </button>
                                     </td>
                                 </tr>
@@ -355,59 +340,7 @@
                     </div>
                 </section>
 
-                <!-- Sección 4: Detalles -->
-                <section>
-                    <div class="flex items-center gap-3 mb-6">
-                        <span
-                            class="w-8 h-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center font-bold text-sm">04</span>
-                        <h2 class="text-xl font-bold tracking-tight text-on-surface">Detalles y Especificaciones</h2>
-                    </div>
-                    <div class="space-y-2">
-                        <label for="specifications"
-                            class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Especificaciones</label>
-                        <textarea id="specifications" formControlName="specifications"
-                            class="w-full bg-surface-container border-none rounded-lg py-4 px-4 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all placeholder:text-stone-400 resize-none"
-                            rows="4"></textarea>
-                    </div>
-                </section>
 
-                <!-- Sección 5: Logística -->
-                <section>
-                    <div class="flex items-center gap-3 mb-6">
-                        <span
-                            class="w-8 h-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center font-bold text-sm">05</span>
-                        <h2 class="text-xl font-bold tracking-tight text-on-surface">Logística y Costos</h2>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="space-y-2">
-                            <label for="deliveryDate" class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Fecha de
-                                entrega *</label>
-                            <input id="deliveryDate" formControlName="deliveryDate"
-                                class="w-full bg-surface-container border-none rounded-lg py-3 px-3 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all text-sm"
-                                type="date" />
-                        </div>
-                        <div class="space-y-2">
-                            <label for="status" class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Estado
-                                *</label>
-                            <select id="status" formControlName="status"
-                                class="w-full bg-surface-container border-none rounded-lg py-3 px-3 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all appearance-none text-sm font-bold">
-                                <option value="PENDING_ACCEPTANCE">Pendiente Aceptación</option>
-                                <option value="PENDING_PAYMENT">Pendiente Pago</option>
-                                <option value="IN_PRODUCTION">En Producción</option>
-                                <option value="DONE">Terminado</option>
-                                <option value="DELIVERED">Entregado</option>
-                                <option value="CANCELLED">Cancelado</option>
-                            </select>
-                        </div>
-                        <div class="space-y-2">
-                            <label for="finalPrice" class="text-xs font-bold uppercase tracking-wider text-stone-500 px-1">Precio Final
-                                Ajustado</label>
-                            <input id="finalPrice" formControlName="finalPrice"
-                                class="w-full bg-surface-container border-none rounded-lg py-3 px-3 focus:ring-2 focus:ring-primary/40 focus:bg-white transition-all text-sm font-bold text-on-surface"
-                                type="number" step="any" min="0" />
-                        </div>
-                    </div>
-                </section>
 
                 <!-- Actions -->
                 <div class="flex items-center gap-4 pt-6">
@@ -424,118 +357,3 @@
 </div>
 }
 
-<!-- Form Success Modal -->
-@if (showFormSuccessModal) {
-<div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
-    <button type="button" aria-label="Cerrar modal" class="absolute inset-0 w-full h-full border-none appearance-none block bg-on-background/40 backdrop-blur-sm cursor-default" (click)="closeFormSuccessModal(true)"></button>
-    <div
-        class="relative bg-surface-container-lowest w-full max-w-lg rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
-        <div class="h-2 w-full bg-gradient-to-r from-primary to-primary-container"></div>
-        <div class="p-10 text-center">
-            <div class="relative mb-8 flex justify-center">
-                <div class="absolute inset-0 bg-primary/10 rounded-full scale-150 blur-xl"></div>
-                <div
-                    class="relative w-24 h-24 bg-gradient-to-br from-primary to-primary-container rounded-full flex items-center justify-center shadow-lg">
-                    <span class="material-symbols-outlined text-white text-5xl"
-                        style="font-variation-settings: 'wght' 600;">check_circle</span>
-                </div>
-            </div>
-            <h2 class="text-3xl font-extrabold text-on-surface tracking-tight mb-4 font-headline">
-                {{ viewMode === 'add' ? '¡Pedido Creado con Éxito!' : '¡Pedido Actualizado!' }}
-            </h2>
-            <p class="text-on-surface-variant text-lg leading-relaxed font-body px-4">
-                {{ viewMode === 'add' ? 'El pedido ha sido registrado correctamente.' : 'Los detalles del pedido han
-                sido modificados.' }}
-            </p>
-            <div class="mt-10 flex flex-col gap-3">
-                <button (click)="closeFormSuccessModal(true)"
-                    class="group relative flex items-center justify-center gap-2 w-full py-4 px-6 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold rounded-lg shadow-sm active:scale-[0.98] transition-all overflow-hidden">
-                    <span class="relative z-10">Ir a Pedidos</span>
-                    <span
-                        class="material-symbols-outlined relative z-10 text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </button>
-                <button (click)="closeFormSuccessModal(false)"
-                    class="w-full py-4 px-6 bg-secondary-container/30 text-on-secondary-container font-bold rounded-lg hover:bg-secondary-container/50 active:scale-[0.98] transition-all">
-                    {{ viewMode === 'add' ? 'Crear otro pedido' : 'Seguir editando' }}
-                </button>
-            </div>
-            <button (click)="closeFormSuccessModal(true)"
-                class="mt-6 text-stone-400 hover:text-primary transition-colors text-sm font-medium tracking-wide">
-                Cerrar ventana
-            </button>
-        </div>
-    </div>
-</div>
-}
-
-<!-- Delete Order Confirmation Modal -->
-@if (showDeleteModal && selectedOrder) {
-<div class="fixed inset-0 z-[80] flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeDeleteModal()"
-        (keydown.enter)="closeDeleteModal()"></div>
-    <div
-        class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
-        <div class="h-2 w-full bg-gradient-to-r from-error to-error-container"></div>
-        <div class="p-8 text-center">
-            <div class="relative mb-6 flex justify-center">
-                <div class="absolute inset-0 bg-error/10 rounded-full scale-150 blur-xl"></div>
-                <div
-                    class="relative w-20 h-20 bg-gradient-to-br from-error to-error-container rounded-full flex items-center justify-center shadow-lg">
-                    <span class="material-symbols-outlined text-white text-4xl">delete_forever</span>
-                </div>
-            </div>
-            <h2 class="text-2xl font-extrabold text-on-surface tracking-tight mb-3 font-headline">¿Eliminar pedido?</h2>
-            <p class="text-on-surface-variant text-base leading-relaxed font-body">
-                ¿Estás seguro de que deseas eliminar el pedido <span class="font-bold text-primary">#{{
-                    selectedOrder.code || selectedOrder.id }}</span>
-                de <span class="font-bold">{{ selectedOrder.clientName }}</span>?
-                Esta acción <span class="text-error font-bold">no se puede deshacer</span>.
-            </p>
-            <div class="mt-8 flex flex-col gap-3">
-                <button (click)="confirmDelete()"
-                    class="group relative flex items-center justify-center gap-2 w-full py-3.5 px-6 bg-gradient-to-br from-error to-error-container text-white font-bold rounded-lg shadow-sm active:scale-[0.98] transition-all overflow-hidden">
-                    <span class="relative z-10">Sí, eliminar pedido</span>
-                    <span
-                        class="material-symbols-outlined relative z-10 text-xl group-hover:translate-x-1 transition-transform">delete_forever</span>
-                </button>
-                <button (click)="closeDeleteModal()"
-                    class="w-full py-3.5 px-6 bg-surface-container text-on-surface font-bold rounded-lg hover:bg-surface-container-high active:scale-[0.98] transition-all">
-                    Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-}
-
-<!-- Success Delete Modal -->
-@if (showSuccessModal) {
-<div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" (click)="closeSuccessModal()"
-        (keydown.enter)="closeSuccessModal()"></div>
-    <div
-        class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
-        <div class="h-2 w-full bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
-        <div class="p-8 text-center">
-            <div class="relative mb-6 flex justify-center">
-                <div class="absolute inset-0 bg-emerald-500/10 rounded-full scale-150 blur-xl"></div>
-                <div
-                    class="relative w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-400 rounded-full flex items-center justify-center shadow-lg">
-                    <span class="material-symbols-outlined text-white text-4xl"
-                        style="font-variation-settings: 'wght' 600;">check_circle</span>
-                </div>
-            </div>
-            <h2 class="text-2xl font-extrabold text-on-surface tracking-tight mb-3 font-headline">¡Pedido Eliminado!
-            </h2>
-            <p class="text-on-surface-variant text-base leading-relaxed font-body">El pedido ha sido eliminado
-                correctamente del sistema.</p>
-            <div class="mt-8">
-                <button (click)="closeSuccessModal()"
-                    class="w-full py-3.5 px-6 bg-primary text-white font-bold rounded-lg hover:opacity-90 transition-all">
-                    Continuar
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-}

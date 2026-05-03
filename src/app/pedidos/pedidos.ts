@@ -1,76 +1,100 @@
 import { ListHelper } from '../shared/utils/list-helper';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, AfterViewInit, ChangeDetectorRef, DestroyRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { PaginationComponent } from '../shared/pagination/pagination';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { OrderSummaryDTO, OrderStatus } from '../core/models/order.dto';
+import { OrderService } from '../core/services/order.service';
+import { ClientService } from '../core/services/client.service';
+import { InventoryService } from '../core/services/inventory.service';
 
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
+import { MatSortModule, MatSort } from '@angular/material/sort';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog';
+import { SuccessDialogComponent } from '../shared/components/success-dialog/success-dialog';
 @Component({
   selector: 'app-pedidos',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, PaginationComponent],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatDialogModule
+  ],
   templateUrl: './pedidos.html',
   styleUrls: ['./pedidos.css']
 })
-export class PedidosComponent implements OnInit {
+export class PedidosComponent implements OnInit, AfterViewInit {
   ordersData: OrderSummaryDTO[] = [];
-  filteredOrders: OrderSummaryDTO[] = [];
-  paginatedOrders: OrderSummaryDTO[] = [];
+  dataSource = new MatTableDataSource<OrderSummaryDTO>([]);
+  displayedColumns: string[] = ['codigo', 'cliente', 'estado', 'fecha', 'saldo', 'acciones'];
 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+  
   searchTerm = '';
-  currentPage = 1;
-  pageSize = 5;
 
-  currentSort: { column: string | null, direction: 'asc' | 'desc' } = { column: null, direction: 'asc' };
+  // Listas cargadas del backend
+  clientsList: { id: number; nombre: string }[] = [];
+  productsList: { id: number; nombre: string }[] = [];
 
-  // Modals state
-  showDeleteModal = false;
-  showSuccessModal = false;
   selectedOrder: OrderSummaryDTO | null = null;
 
-  // Mapa de estado para UI
-  statusMap: Record<OrderStatus, { text: string, css: string }> = {
+  // Activar producción result
+  activarProduccionResult: { codigoUnico: string; estado: string } | null = null;
+
+  // Mapa de estado para UI — incluye valores del backend (EstadoPedido) y aliases legacy
+  statusMap: Record<string, { text: string, css: string }> = {
+    // Valores reales del backend (EstadoPedido enum)
+    'PENDIENTE':       { text: 'Pendiente de Abono', css: 'bg-orange-100 text-orange-700' },
+    'EN_PRODUCCION':   { text: 'En Producción',       css: 'bg-blue-100 text-blue-700' },
+    'TERMINADO':       { text: 'Terminado',             css: 'bg-green-100 text-green-700' },
+    'CANCELADO':       { text: 'Cancelado',             css: 'bg-red-100 text-red-700' },
+    // Aliases legacy del frontend
     'PENDING_ACCEPTANCE': { text: 'Pendiente de Aceptación', css: 'bg-orange-100 text-orange-700' },
-    'PENDING_PAYMENT': { text: 'Pendiente de Pago', css: 'bg-orange-100 text-orange-700' },
-    'EN_PRODUCCION': { text: 'En Producción', css: 'bg-blue-100 text-blue-700' },
-    'IN_PRODUCTION': { text: 'En Producción', css: 'bg-blue-100 text-blue-700' },
-    'DONE': { text: 'Terminado', css: 'bg-green-100 text-green-700' },
-    'DELIVERED': { text: 'Entregado', css: 'bg-green-100 text-green-700' },
-    'CANCELLED': { text: 'Cancelado', css: 'bg-red-100 text-red-700' }
+    'PENDING_PAYMENT':    { text: 'Pendiente de Pago',        css: 'bg-orange-100 text-orange-700' },
+    'IN_PRODUCTION':      { text: 'En Producción',             css: 'bg-blue-100 text-blue-700' },
+    'DONE':               { text: 'Terminado',                 css: 'bg-green-100 text-green-700' },
+    'DELIVERED':          { text: 'Entregado',                 css: 'bg-green-100 text-green-700' },
+    'CANCELLED':          { text: 'Cancelado',                 css: 'bg-red-100 text-red-700' }
   };
 
   // Forms state
-  viewMode: 'list' | 'add' | 'edit' | 'view' | 'formalize' = 'list';
+  viewMode: 'list' | 'add' | 'edit' = 'list';
   orderForm: FormGroup;
-  showFormSuccessModal = false;
-
-  // Mock data for dropdowns
-  clients = ['Sofía Martínez', 'Mariana López', 'Empresa Soluciones IT', 'Carlos Restrepo'];
-  productsList = [
-    { id: '1', name: 'Crónicas de Casualidad', price: 24.99 },
-    { id: '2', name: 'El Arte del Azar', price: 55 },
-    { id: '3', name: 'Revista Mensual Ed. 12', price: 12.5 },
-    { id: '4', name: 'Kit Creativo Transformado', price: 89.99 }
-  ];
+  currentOrderClientName = '';
 
   private readonly fb = inject(FormBuilder);
+  private readonly orderService = inject(OrderService);
+  private readonly clientService = inject(ClientService);
+  private readonly inventoryService = inject(InventoryService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly dialog = inject(MatDialog);
 
   constructor() {
     this.orderForm = this.fb.group({
       id: [''],
-      clientId: ['', Validators.required],
-      eventType: [''],
-      forWhom: [''],
+      clientId: [null, Validators.required],
       deliveryDate: ['', Validators.required],
-      status: ['PENDING_ACCEPTANCE', Validators.required],
-      finalPrice: [0, [Validators.min(0)]],
-      specifications: [''],
       items: this.fb.array([])
-    });
-
-    // Auto-calculate total
-    this.itemsFormArray.valueChanges.subscribe(items => {
-      // Implementation pending
     });
   }
 
@@ -86,183 +110,289 @@ export class PedidosComponent implements OnInit {
     }, 0);
   }
 
-  addItem() {
+  get selectedClientName(): string {
+    const id = this.orderForm.get('clientId')?.value;
+    if (!id) return this.currentOrderClientName || 'Cliente Desconocido';
+    const client = this.clientsList.find(c => Number(c.id) === Number(id));
+    return client ? client.nombre : (this.currentOrderClientName || 'Cliente Desconocido');
+  }
+
+  addItem(): void {
     this.itemsFormArray.push(this.fb.group({
-      productId: ['', Validators.required],
+      idDetalle: [null],
+      productId: [null, Validators.required],
       quantity: [1, [Validators.required, Validators.min(1)]],
-      unitPrice: [0, [Validators.required, Validators.min(0)]],
-      customization: ['']
+      observaciones: [''],
+      unitPrice: [0]
     }));
   }
 
-  removeItem(index: number) {
+  removeItem(index: number): void {
     this.itemsFormArray.removeAt(index);
   }
 
-  onProductSelect(index: number) {
-    const itemGroup = this.itemsFormArray.at(index) as FormGroup;
-    const productId = itemGroup.get('productId')?.value;
-    const prod = this.productsList.find(p => p.id === productId || p.name === productId);
-    if (prod) {
-      itemGroup.patchValue({ unitPrice: prod.price });
+  ngOnInit(): void {
+    this.loadOrders();
+    this.loadClients();
+    this.loadProducts();
+
+    // Abrir formulario directamente si viene con ?new=true (desde boton Nuevo Pedido del sidebar)
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      if (params['new'] === 'true') {
+        this.openAddForm();
+      }
+    });
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch(property) {
+        case 'codigo': return item.codigoUnico || item.idPedido || '';
+        case 'cliente': return item.nombreCliente || item.clientName || '';
+        case 'estado': return item.estadoPedido || '';
+        case 'fecha': return item.fechaEntrega ? new Date(item.fechaEntrega).getTime() : 0;
+        case 'saldo': return item.saldoPendiente || 0;
+        default: return (item as any)[property];
+      }
+    };
+
+    this.dataSource.filterPredicate = (data, filter) => {
+      const dataStr = `${data.idPedido} ${data.codigoUnico} ${data.nombreCliente} ${data.clientName}`.toLowerCase();
+      return dataStr.indexOf(filter) !== -1;
+    };
+  }
+
+  loadOrders(): void {
+    this.orderService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data) => {
+        this.ordersData = data;
+        this.dataSource.data = this.ordersData;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error loading orders', err)
+    });
+  }
+
+  loadClients(): void {
+    this.clientService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data) => {
+        this.clientsList = data.map((c: any) => ({ id: Number(c.idCliente), nombre: c.nombre }));
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error loading clients', err)
+    });
+  }
+
+  loadProducts(): void {
+    this.inventoryService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (data) => {
+        this.productsList = data.map((p: any) => ({ id: Number(p.idProducto), nombre: p.nombre }));
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error loading products', err)
+    });
+  }
+
+  onSearchChange(): void {
+    this.dataSource.filter = this.searchTerm.trim().toLowerCase();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
   }
 
-  ngOnInit() {
-    this.applyFiltersAndSort();
+  // --- ACTIVAR PRODUCCIÓN ---
+  openActivarProduccionModal(order: OrderSummaryDTO): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      panelClass: 'casualidad-dialog',
+      data: {
+        title: '¿Activar Producci\u00f3n?',
+        message: `Pedido: `,
+        highlightText: order.codigoUnico || '#' + order.idPedido,
+        warningText: 'El pedido pasar\u00e1 al estado En Producci\u00f3n y se generar\u00e1 un c\u00f3digo \u00fanico de seguimiento. Esta acci\u00f3n ',
+        confirmLabel: 'S\u00ed, activar producci\u00f3n',
+        cancelLabel: 'Cancelar',
+        icon: 'play_circle',
+        iconStyle: "font-variation-settings:'FILL' 1",
+        accentColor: 'primary'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.selectedOrder = order;
+        this.confirmActivarProduccion();
+      }
+    });
   }
 
-  onSearchChange() {
-    this.currentPage = 1;
-    this.applyFiltersAndSort();
+  confirmActivarProduccion(): void {
+    if (!this.selectedOrder?.idPedido) { return; }
+    this.orderService.activarProduccion(this.selectedOrder.idPedido).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (res) => {
+        this.loadOrders();
+        this.dialog.open(SuccessDialogComponent, {
+          panelClass: 'casualidad-dialog',
+          data: {
+            title: '\u00a1En Producci\u00f3n!',
+            message: 'El pedido ha sido activado y est\u00e1 en producci\u00f3n.',
+            icon: 'verified',
+            accentColor: 'primary',
+            primaryActionLabel: 'Continuar',
+            detailLabel: res?.codigoUnico ? 'C\u00f3digo de seguimiento' : undefined,
+            detailValue: res?.codigoUnico
+          }
+        });
+      },
+      error: (err) => console.error('Error activando producci\u00f3n', err)
+    });
   }
 
-  onPageChange(page: number) {
-    this.currentPage = page;
-    this.applyFiltersAndSort();
-  }
+  // --- DELETE ---
+  openDeleteModal(order: OrderSummaryDTO): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      panelClass: 'casualidad-dialog',
+      data: {
+        title: '\u00bfEliminar pedido?',
+        message: '\u00bfEst\u00e1s seguro de que deseas eliminar el pedido ',
+        highlightText: '#' + (order.codigoUnico || order.idPedido),
+        warningText: 'Esta acci\u00f3n ',
+        confirmLabel: 'S\u00ed, eliminar pedido',
+        icon: 'delete_forever',
+        accentColor: 'error'
+      }
+    });
 
-  handleSort(column: string) {
-    ListHelper.handleSort(this.currentSort as any, column);
-    this.applyFiltersAndSort();
-  }
-
-  getSortIcon(column: string): string {
-    return ListHelper.getSortIcon(this.currentSort as any, column);
-  }
-
-  private applyFiltersAndSort() {
-    let result = [...this.ordersData];
-
-    // Filter
-    if (this.searchTerm.trim() !== '') {
-      const term = this.searchTerm.toLowerCase();
-      result = result.filter(o => 
-        (o.idPedido ? String(o.idPedido).includes(term) : false) ||
-        (o.codigoUnico ? o.codigoUnico.toLowerCase().includes(term) : false) ||
-        (o.cliente?.nombreCompleto ? o.cliente.nombreCompleto.toLowerCase().includes(term) : false)
-      );
-    }
-
-    // Sort
-    if (this.currentSort.column) {
-      result.sort((a, b) => {
-        let valA: any, valB: any;
-        switch (this.currentSort.column) {
-          case 'id':
-            valA = a.code || a.id;
-            valB = b.code || b.id;
-            break;
-          case 'cliente':
-            valA = a.clientName;
-            valB = b.clientName;
-            break;
-          case 'estado':
-            valA = a.status;
-            valB = b.status;
-            break;
-          case 'fecha':
-            valA = a.fechaEntrega ? new Date(a.fechaEntrega).getTime() : 0;
-            valB = b.fechaEntrega ? new Date(b.fechaEntrega).getTime() : 0;
-            break;
-          case 'saldo':
-            valA = a.pendingBalance;
-            valB = b.pendingBalance;
-            break;
-          default:
-            return 0;
-        }
-
-        if (valA < valB) return this.currentSort.direction === 'asc' ? -1 : 1;
-        if (valA > valB) return this.currentSort.direction === 'asc' ? 1 : -1;
-        return 0;
-      });
-    }
-
-    this.filteredOrders = result;
-
-    // Paginate
-    const start = (this.currentPage - 1) * this.pageSize;
-    const end = start + this.pageSize;
-    this.paginatedOrders = this.filteredOrders.slice(start, end);
-
-    if (this.paginatedOrders.length === 0 && this.currentPage > 1) {
-      this.currentPage = 1;
-      this.applyFiltersAndSort();
-    }
-  }
-
-  openDeleteModal(order: OrderSummaryDTO) {
-    this.selectedOrder = order;
-    this.showDeleteModal = true;
-  }
-
-  closeDeleteModal() {
-    this.showDeleteModal = false;
-    this.selectedOrder = null;
-  }
-
-  confirmDelete() {
-    if (this.selectedOrder) {
-      this.ordersData = this.ordersData.filter(o => o.id !== this.selectedOrder!.id);
-      this.applyFiltersAndSort();
-      this.closeDeleteModal();
-      this.showSuccessModal = true;
-    }
-  }
-
-  closeSuccessModal() {
-    this.showSuccessModal = false;
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.selectedOrder = order;
+        this.orderService.cancelar(order.idPedido ?? order.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+          next: () => {
+            this.loadOrders();
+            this.dialog.open(SuccessDialogComponent, {
+              panelClass: 'casualidad-dialog',
+              data: {
+                title: '\u00a1Pedido Eliminado!',
+                message: 'El pedido ha sido eliminado correctamente del sistema.',
+                icon: 'check_circle',
+                accentColor: 'success',
+                primaryActionLabel: 'Continuar'
+              }
+            });
+          },
+          error: (err) => console.error('Error cancelando pedido', err)
+        });
+      }
+    });
   }
 
   // --- FORM ACTIONS ---
-  openAddForm() {
+  openAddForm(): void {
+    this.orderForm.get('clientId')?.setValidators([Validators.required]);
+    this.orderForm.get('clientId')?.updateValueAndValidity();
+    
     this.orderForm.reset({
-      status: 'PENDING_ACCEPTANCE',
-      finalPrice: 0,
       deliveryDate: new Date(new Date().setDate(new Date().getDate() + 14)).toISOString().split('T')[0]
     });
     this.itemsFormArray.clear();
-    this.addItem(); // default 1 empty item
-    this.viewMode = 'add';
-  }
-
-  openEditForm(order: OrderSummaryDTO) {
-    this.orderForm.patchValue({
-      idPedido: order.idPedido || 0,
-      codigoUnico: order.codigoUnico || '',
-      estadoPedido: order.estadoPedido,
-      fechaEntrega: order.fechaEntrega ? order.fechaEntrega.split('T')[0] : '',
-      total: order.total,
-      saldoPendiente: order.saldoPendiente,
-      cliente: order.cliente
-    });
-    this.itemsFormArray.clear();
-    // Normally we would populate items from order details.
-    // For now add one dummy item since it's a summary list.
     this.addItem();
-    
-    this.viewMode = 'edit';
+    this.viewMode = 'add';
+    this.cdr.detectChanges();
   }
 
-  closeForm() {
+  openEditForm(order: OrderSummaryDTO): void {
+    const id = order.idPedido ?? order.id;
+    if (!id) return;
+
+    this.orderService.getById(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (detail) => {
+        const targetClientId = detail.cliente?.idCliente ?? detail.idCliente ?? order.idCliente;
+        const targetClientName = detail.cliente?.nombreCompleto ?? order.clientName ?? order.nombreCliente;
+        const matchingClient = this.clientsList.find(c => c.id === Number(targetClientId) || c.nombre === targetClientName);
+
+        this.currentOrderClientName = targetClientName;
+
+        // Update form state outside of the current change detection cycle to prevent NG0100
+        setTimeout(() => {
+          // El backend no requiere el clientId para hacer PUT (ActualizarPedidoDto),
+          // por lo que quitamos el validador en modo edición para no bloquear el botón.
+          this.orderForm.get('clientId')?.clearValidators();
+          this.orderForm.get('clientId')?.updateValueAndValidity();
+
+          this.orderForm.patchValue({
+            id: detail.idPedido,
+            clientId: matchingClient ? matchingClient.id : null,
+            deliveryDate: detail.fechaEntrega ? detail.fechaEntrega.split('T')[0] : ''
+          });
+
+          this.itemsFormArray.clear();
+          if (detail.productos && detail.productos.length > 0) {
+            detail.productos.forEach((p: any) => {
+              const matchingProduct = this.productsList.find(prod => prod.nombre === p.nombreProducto);
+              this.itemsFormArray.push(this.fb.group({
+                idDetalle: [p.idDetalle],
+                productId: [matchingProduct ? matchingProduct.id : null, Validators.required],
+                quantity: [p.cantidad, [Validators.required, Validators.min(1)]],
+                observaciones: [p.observaciones || ''],
+                unitPrice: [p.precioUnitario || 0]
+              }));
+            });
+          } else {
+            this.addItem();
+          }
+
+          this.viewMode = 'edit';
+          this.cdr.detectChanges();
+        });
+      },
+      error: (err) => console.error('Error loading order details', err)
+    });
+  }
+
+  closeForm(): void {
     this.viewMode = 'list';
+    this.cdr.detectChanges();
   }
 
-  saveOrder() {
+  saveOrder(): void {
     if (this.orderForm.valid) {
-      this.showFormSuccessModal = true;
+      const orderData = this.orderForm.value;
+      const id = orderData.id;
+      
+      const request$ = id 
+        ? this.orderService.update(id, orderData) 
+        : this.orderService.create(orderData);
+
+      request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (res) => {
+          this.loadOrders();
+          const dialogRef = this.dialog.open(SuccessDialogComponent, {
+            panelClass: 'casualidad-dialog',
+            data: {
+              title: id ? '\u00a1Pedido Actualizado!' : '\u00a1Pedido Creado!',
+              message: id ? 'Los detalles del pedido han sido modificados.' : 'El pedido ha sido registrado correctamente.',
+              icon: 'check_circle',
+              accentColor: 'primary',
+              primaryActionLabel: 'Ir a Pedidos',
+              secondaryActionLabel: id ? 'Seguir editando' : 'Crear otro pedido'
+            }
+          });
+
+          dialogRef.afterClosed().subscribe(result => {
+            if (!result || result.action === 'primary' || result.action === 'close') {
+              this.viewMode = 'list';
+            } else if (result.action === 'secondary' && !id) {
+              this.openAddForm();
+            }
+            this.cdr.detectChanges();
+          });
+        },
+        error: (err) => console.error('Error saving order', err)
+      });
     } else {
       this.orderForm.markAllAsTouched();
-    }
-  }
-
-  closeFormSuccessModal(goToList: boolean) {
-    this.showFormSuccessModal = false;
-    if (goToList) {
-      this.viewMode = 'list';
-    } else if (this.viewMode === 'add') {
-      this.openAddForm();
     }
   }
 }

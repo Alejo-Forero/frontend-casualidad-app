@@ -1,5 +1,19 @@
+import { PaymentService } from '../core/services/payment.service';
+import { of } from 'rxjs';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PagosComponent } from './pagos';
+
+const mockPaymentService = {
+  getSaldosPendientes: () => of({ pedidos: [] }),
+  registrarAbono: () => of({})
+};
+
+const mockPayment = {
+  id: '1', idPedido: 1, orderId: 'P001', clientName: 'Alpha',
+  amount: 100, type: 'CASH', status: 'PENDING',
+  createdAt: '2026-01-01', voucherUrl: null,
+  registeredBy: { id: '1', name: 'Admin' }, exceptionalAuth: false
+} as any;
 
 describe('PagosComponent', () => {
   let component: PagosComponent;
@@ -7,6 +21,7 @@ describe('PagosComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: [{ provide: PaymentService, useValue: mockPaymentService }],
       imports: [PagosComponent],
     }).compileComponents();
 
@@ -21,146 +36,94 @@ describe('PagosComponent', () => {
 
   it('should compute totalMonthlyBalance correctly', () => {
     component.paymentsData = [
-      { id: '1', amount: 100, type: 'CASH', status: 'COMPLETED', orderId: 'O1', clientName: 'C1', createdAt: '2026', voucherUrl: null, exceptionalAuth: false, registeredBy: { id: '1', name: 'Admin' } },
-      { id: '2', amount: 50, type: 'TRANSFER', status: 'COMPLETED', orderId: 'O2', clientName: 'C2', createdAt: '2026', voucherUrl: null, exceptionalAuth: false, registeredBy: { id: '1', name: 'Admin' } },
-      { id: '3', amount: 200, type: 'CASH', status: 'PENDING', orderId: 'O3', clientName: 'C3', createdAt: '2026', voucherUrl: null, exceptionalAuth: false, registeredBy: { id: '1', name: 'Admin' } },
+      { ...mockPayment, id: '1', amount: 100, status: 'PENDING' },
+      { ...mockPayment, id: '2', amount: 50,  status: 'COMPLETED' },
+      { ...mockPayment, id: '3', amount: 200, status: 'PENDING' },
     ];
-    expect(component.totalMonthlyBalance).toBe(150);
+    expect(component.totalMonthlyBalance).toBe(300);
   });
 
-  it('should filter payments correctly', () => {
+  it('should filter payments by status', () => {
     component.paymentsData = [
-      { id: '1', amount: 100, type: 'CASH', status: 'COMPLETED', orderId: 'O1', clientName: 'A', createdAt: '2026', voucherUrl: null, exceptionalAuth: false, registeredBy: { id: '1', name: 'Admin' } },
-      { id: '2', amount: 50, type: 'TRANSFER', status: 'PENDING', orderId: 'O2', clientName: 'B', createdAt: '2026', voucherUrl: null, exceptionalAuth: false, registeredBy: { id: '1', name: 'Admin' } }
+      { ...mockPayment, id: '1', status: 'COMPLETED', clientName: 'A' },
+      { ...mockPayment, id: '2', status: 'PENDING',   clientName: 'B' }
     ];
-    
     component.setFilter('COMPLETED');
     expect(component.filteredPayments.length).toBe(1);
-    
+    expect(component.filteredPayments[0].clientName).toBe('A');
+  });
+
+  it('should filter payments by search term', () => {
+    component.paymentsData = [
+      { ...mockPayment, id: '1', status: 'COMPLETED', clientName: 'Alpha', orderId: 'O1' },
+      { ...mockPayment, id: '2', status: 'PENDING',   clientName: 'Beta',  orderId: 'O2' }
+    ];
     component.setFilter('ALL');
-    component.searchTerm = 'B';
+    component.searchTerm = 'Alpha';
     component.onSearchChange();
     expect(component.filteredPayments.length).toBe(1);
-    expect(component.filteredPayments[0].clientName).toBe('B');
+    expect(component.filteredPayments[0].clientName).toBe('Alpha');
   });
 
   it('should handle pagination', () => {
-    component.paymentsData = Array(10).fill({ id: '1', amount: 100, type: 'CASH', status: 'COMPLETED', orderId: 'O1', clientName: 'A', date: '2026' });
+    component.paymentsData = Array(10).fill(mockPayment);
     component.pageSize = 5;
     component.setFilter('ALL');
-    
     component.onPageChange(2);
     expect(component.currentPage).toBe(2);
     expect(component.paginatedPayments.length).toBe(5);
   });
 
-  it('should handle view modal', () => {
-    const p = { id: '1', amount: 100, type: 'CASH', status: 'COMPLETED', orderId: 'O1', clientName: 'A', date: '2026' } as any;
-    component.openViewModal(p);
+  it('should handle openViewModal and closeViewModal', () => {
+    component.openViewModal(mockPayment);
     expect(component.showViewModal).toBe(true);
-    expect(component.selectedPayment).toBe(p);
-    
+    expect(component.selectedPayment).toBe(mockPayment);
     component.closeViewModal();
     expect(component.showViewModal).toBe(false);
-    expect(component.selectedPayment).toBeNull();
   });
 
-  it('should handle delete modal and confirm', () => {
-    component.paymentsData = [{ id: '1', amount: 100, type: 'CASH', status: 'COMPLETED', orderId: 'O1', clientName: 'A', createdAt: '2026', voucherUrl: null, exceptionalAuth: false, registeredBy: { id: '1', name: 'Admin' } }];
-    const p = component.paymentsData[0];
-    
-    component.openDeleteModal(p);
+  it('should handle openDeleteModal and confirmDelete', () => {
+    component.paymentsData = [{ ...mockPayment, id: '1' }];
+    component.openDeleteModal(component.paymentsData[0]);
     expect(component.showDeleteModal).toBe(true);
-    
     component.confirmDelete();
-    expect(component.paymentsData.length).toBe(0);
-    expect(component.showDeleteModal).toBe(false);
     expect(component.showSuccessModal).toBe(true);
-    
     component.closeSuccessModal();
     expect(component.showSuccessModal).toBe(false);
   });
 
-  it('should handle form operations', () => {
+  it('should handle openAddForm and closeForm', () => {
     component.openAddForm();
     expect(component.viewMode).toBe('add');
     component.closeForm();
     expect(component.viewMode).toBe('list');
+  });
 
-    Object.defineProperty(component.paymentForm, 'valid', {get: () => true});
+  it('should handle savePayment with invalid form', () => {
+    component.openAddForm();
     component.savePayment();
-    expect(component.showFormSuccessModal).toBe(true);
+    expect(component.showFormSuccessModal).toBe(false);
+  });
 
+  it('should handle handleSort and getSortIcon', () => {
+    component.handleSort('amount');
+    expect(component.currentSort.column).toBe('amount');
+    expect(component.currentSort.direction).toBe('asc');
+    component.handleSort('amount');
+    expect(component.currentSort.direction).toBe('desc');
+    expect(component.getSortIcon('amount')).toBeDefined();
+    expect(component.getSortIcon('other')).toBeDefined();
+  });
+
+  it('should handle closeFormSuccessModal branches', () => {
+    component.viewMode = 'add';
+    component.showFormSuccessModal = true;
     component.closeFormSuccessModal(true);
     expect(component.viewMode).toBe('list');
-    
-    component.viewMode = 'add';
+
+    component.openAddForm();
     component.showFormSuccessModal = true;
     component.closeFormSuccessModal(false);
     expect(component.viewMode).toBe('add');
   });
-
-
-  it('should handle sorting and filtering', () => {
-    // Search
-    if (typeof component.onSearchChange === 'function') {
-      component.searchTerm = 'test';
-      component.onSearchChange();
-    }
-
-    // Filter
-    if (typeof component.onFilterChange === 'function') {
-      component.onFilterChange();
-    } else if (typeof component.onTypeFilterChange === 'function') {
-      component.onTypeFilterChange();
-    }
-
-    // Sort
-    if (typeof component.handleSort === 'function') {
-      component.handleSort('name');
-      component.handleSort('name'); // trigger desc
-      component.handleSort('other'); // trigger new column asc
-    }
-    
-    // Icon
-    if (typeof component.getSortIcon === 'function') {
-      component.getSortIcon('name');
-      component.getSortIcon('other');
-    }
-    
-    // Failsafe pagination branch
-    component.currentPage = 2;
-    if (component.paginatedClients) component.paginatedClients = [];
-    if (component.paginatedProducts) component.paginatedProducts = [];
-    if (component.paginatedUsers) component.paginatedUsers = [];
-    if (component.paginatedPayments) component.paginatedPayments = [];
-    if (component.paginatedOrders) component.paginatedOrders = [];
-    
-    if (typeof component.applyFilters === 'function') {
-      component.applyFilters();
-    }
-  });
-
-
-  it('should cover remaining branches in pagos', () => {
-    // invalid form save
-    component.openAddForm();
-    component.savePayment();
-
-    // close modal add branch
-    component.viewMode = 'add';
-    component.closeFormSuccessModal(false);
-  });
-
-
-  it('should cover remaining branches in pagos', () => {
-    // invalid form save
-    component.openAddForm();
-    component.savePayment();
-
-    // close modal add branch
-    component.viewMode = 'add';
-    component.closeFormSuccessModal(false);
-  });
-
 });

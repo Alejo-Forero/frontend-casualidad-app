@@ -2,7 +2,6 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoginResponseDTO } from '../core/models/auth.dto';
 import { AuthService } from '../core/services/auth.service';
 
 @Component({
@@ -28,10 +27,6 @@ export class LoginComponent {
   showErrorModal = false;
   isLoading = false;
 
-  // Credenciales simuladas (del prototipo)
-  private readonly VALID_EMAIL = 'admin@casualidad.com';
-  private readonly VALID_PASSWORD = 'admin123';
-
   get emailControl() {
     return this.loginForm.get('email');
   }
@@ -47,30 +42,21 @@ export class LoginComponent {
     }
 
     const { email, password } = this.loginForm.value;
+    this.isLoading = true;
 
-    if (email === this.VALID_EMAIL && password === this.VALID_PASSWORD) {
-      this.isLoading = true;
-      // Simulando delay de red y respuesta de la API
-      setTimeout(() => {
-        const simulatedResponse: LoginResponseDTO = {
-            accessToken: 'fake-jwt-token',
-            refreshToken: 'fake-refresh-token',
-            usuario: {
-                id: '1',
-                nombre: 'Administrador',
-                email: this.VALID_EMAIL,
-                rol: 'ADMINISTRADOR'
-            }
-        };
-        console.log('Login exitoso:', simulatedResponse);
-        this.authService.setSession(simulatedResponse);
+    this.authService.login({ email, password }).subscribe({
+      next: (response) => {
+        console.log('Login exitoso:', response);
         this.router.navigate(['/']);
         this.isLoading = false;
-      }, 800);
-    } else {
-      this.showErrorModal = true;
-      this.loginForm.reset({ email: '', password: '', remember: false });
-    }
+      },
+      error: (err) => {
+        console.error('Error in login', err);
+        this.showErrorModal = true;
+        this.loginForm.reset({ email: '', password: '', remember: false });
+        this.isLoading = false;
+      }
+    });
   }
 
   toggleHelpModal() {

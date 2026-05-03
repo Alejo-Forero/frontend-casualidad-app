@@ -181,57 +181,48 @@
     <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/15 overflow-hidden">
         <div class="p-8">
             <form [formGroup]="paymentForm" (ngSubmit)="savePayment()" class="space-y-8">
-                <!-- Form Section: Association -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="space-y-2">
-                        <label for="orderId" class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
-                            <span class="material-symbols-outlined text-xs">shopping_cart</span>
-                            Pedido Asociado <span class="text-error">*</span>
-                        </label>
-                        <div class="relative group">
-                            <select id="orderId" formControlName="orderId" class="w-full bg-surface-container border-none rounded-lg px-4 py-3 text-on-surface font-medium focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all appearance-none">
-                                <option disabled selected value="">Seleccionar pedido...</option>
-                                @for (order of orders; track order) {
-                                    <option [value]="order">{{ order }}</option>
-                                }
-                            </select>                                        
-                        </div>
-                    </div>
-                    <div class="space-y-2">
-                        <label for="date" class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
-                            <span class="material-symbols-outlined text-xs">calendar_today</span>
-                            Fecha y Hora <span class="text-error">*</span>
-                        </label>
-                        <input id="date" formControlName="date" class="w-full bg-surface-container border-none rounded-lg px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all" type="datetime-local" />
+                <!-- Pedido Asociado -->
+                <div class="space-y-2">
+                    <label for="idPedido" class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
+                        <span class="material-symbols-outlined text-xs">shopping_cart</span>
+                        Pedido Asociado <span class="text-error">*</span>
+                    </label>
+                    <div class="relative group">
+                        <select id="idPedido" formControlName="idPedido" class="w-full bg-surface-container border-none rounded-lg px-4 py-3 text-on-surface font-medium focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all appearance-none">
+                            <option [ngValue]="null" disabled>Seleccionar pedido...</option>
+                            @for (p of paymentsData; track p.idPedido) {
+                                <option [value]="p.idPedido">{{ p.orderId }} — {{ p.clientName }} (Saldo: {{ p.amount | currency:'USD' }})</option>
+                            }
+                        </select>
                     </div>
                 </div>
-                <!-- Form Section: Financials -->
+                <!-- Monto y Método -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-2">
                         <label for="amount" class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
                             <span class="material-symbols-outlined text-xs">payments</span>
-                            Monto del Pago <span class="text-error">*</span>
+                            Monto del Abono <span class="text-error">*</span>
                         </label>
                         <div class="relative">
                             <span class="absolute left-4 top-3 text-primary font-bold">$</span>
-                            <input id="amount" formControlName="amount" class="w-full bg-surface-container border-none rounded-lg pl-8 pr-4 py-3 text-on-surface font-bold text-lg focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all" placeholder="0.00" type="number" step="0.01" min="0" />
+                            <input id="amount" formControlName="amount" class="w-full bg-surface-container border-none rounded-lg pl-8 pr-4 py-3 text-on-surface font-bold text-lg focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all" placeholder="0.00" type="number" step="0.01" min="0.01" />
                         </div>
                     </div>
                     <div class="space-y-2">
                         <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
                             <span class="material-symbols-outlined text-xs">account_balance_wallet</span>
-                            Tipo de Pago <span class="text-error">*</span>
+                            Método de Pago <span class="text-error">*</span>
                         </span>
                         <div class="flex gap-3">
                             <label class="flex-1">
-                                <input formControlName="type" class="hidden peer" type="radio" value="CASH" />
+                                <input formControlName="type" class="hidden peer" type="radio" value="EFECTIVO" />
                                 <div class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-transparent bg-surface-container peer-checked:bg-secondary-container peer-checked:border-secondary transition-all cursor-pointer">
                                     <span class="material-symbols-outlined mb-1">payments</span>
                                     <span class="text-xs font-bold">Efectivo</span>
                                 </div>
                             </label>
                             <label class="flex-1">
-                                <input formControlName="type" class="hidden peer" type="radio" value="TRANSFER" />
+                                <input formControlName="type" class="hidden peer" type="radio" value="TRANSFERENCIA" />
                                 <div class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-transparent bg-surface-container peer-checked:bg-secondary-container peer-checked:border-secondary transition-all cursor-pointer">
                                     <span class="material-symbols-outlined mb-1">account_balance</span>
                                     <span class="text-xs font-bold">Transferencia</span>
@@ -240,21 +231,13 @@
                         </div>
                     </div>
                 </div>
-                <!-- Form Section: Status -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="space-y-2">
-                        <label for="status" class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
-                            <span class="material-symbols-outlined text-xs">check_circle</span>
-                            Estado <span class="text-error">*</span>
-                        </label>
-                        <div class="relative group">
-                            <select id="status" formControlName="status" class="w-full bg-surface-container border-none rounded-lg px-4 py-3 text-on-surface font-medium focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all appearance-none">
-                                <option value="COMPLETED">Completado</option>
-                                <option value="PENDING">Pendiente</option>
-                                <option value="CANCELLED">Cancelado</option>
-                            </select>                                        
-                        </div>
-                    </div>
+                <!-- Referencia / Comprobante (opcional) -->
+                <div class="space-y-2">
+                    <label for="referenciaComprobante" class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
+                        <span class="material-symbols-outlined text-xs">receipt_long</span>
+                        Referencia / N° Comprobante <span class="text-stone-400 font-normal">(opcional)</span>
+                    </label>
+                    <input id="referenciaComprobante" formControlName="referenciaComprobante" class="w-full bg-surface-container border-none rounded-lg px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all" placeholder="Ej: TRF-2024-001" type="text" />
                 </div>
 
                 <!-- Actions -->
