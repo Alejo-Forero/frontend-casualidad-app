@@ -1,30 +1,61 @@
-import { ClientDTO } from './client.dto';
+import { OrderClientDTO } from './client.dto';
 
-export type OrderStatus = 'PENDING_ACCEPTANCE' | 'PENDING_PAYMENT' | 'IN_PRODUCTION' | 'DONE' | 'DELIVERED' | 'CANCELLED';
+export type OrderStatus = 'PENDING_ACCEPTANCE' | 'PENDING_PAYMENT' | 'EN_PRODUCCION' | 'IN_PRODUCTION' | 'DONE' | 'DELIVERED' | 'CANCELLED' | 'PENDIENTE' | 'TERMINADO' | 'CANCELADO';
 export type PaymentStatus = 'PENDING' | 'PARTIAL' | 'PAID';
 
+export interface OrderProductDTO {
+  idDetalle: number;
+  nombreProducto: string;
+  cantidad: number;
+  precioUnitario: number;
+  subtotal: number;
+}
+
+/**
+ * Mapea PedidoResumenDto del backend (GET /api/v1/pedidos):
+ *   { idPedido, codigoUnico, nombreCliente, estadoPedido, fechaEntrega, total, saldoPendiente }
+ *
+ * El campo `cliente` (objeto) solo viene en PedidoDetalleCompletoDto (GET /api/v1/pedidos/{id}).
+ */
 export interface OrderSummaryDTO {
-  id: string;
-  code: string | null;
-  clientName: string;
-  status: OrderStatus;
-  paymentStatus: PaymentStatus;
-  totalAmount: number;
+  // ─── Campos PedidoResumenDto (listado) ───────────────────────────────────
+  idPedido:       number;
+  codigoUnico:    string;
+  nombreCliente:  string;         // campo directo en PedidoResumenDto
+  estadoPedido:   OrderStatus;
+  fechaEntrega:   string;
+  total:          number | null;
+  saldoPendiente: number | null;
+
+  // ─── Campos PedidoDetalleCompletoDto (detalle) ───────────────────────────
+  cliente?:   OrderClientDTO;     // solo viene en /pedidos/{id}
+  idCliente?: number;             // puede venir en el cliente anidado
+
+  // ─── Aliases legacy para compatibilidad con templates ────────────────────
+  id:             string;
+  code:           string | null;
+  clientName:     string;
+  status:         OrderStatus;
+  paymentStatus:  PaymentStatus;
+  totalAmount:    number;
   pendingBalance: number;
-  deliveryDate: string; // ISO8601 date
+  deliveryDate:   string;
 }
 
 export interface OrderItemDTO {
-  productId: string;
-  productName: string;
-  quantity: number;
-  unitPrice: number;
-  subtotal: number;
+  productId:     string;
+  productName:   string;
+  quantity:      number;
+  unitPrice:     number;
+  subtotal:      number;
   customization: string | null;
 }
 
 export interface OrderDetailDTO extends OrderSummaryDTO {
-  client: ClientDTO;
-  items: OrderItemDTO[];
-  paymentsHistory: any[]; // Se definirá PaymentDTO a detalle después si es necesario
+  productos: OrderProductDTO[];
+  // Legacy fields
+  client?:          any;
+  items?:           OrderItemDTO[];
+  paymentsHistory?: any[];
 }
+

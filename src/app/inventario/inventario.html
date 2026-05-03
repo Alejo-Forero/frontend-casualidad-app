@@ -1,3 +1,4 @@
+@if (viewMode === 'list') {
 <div class="p-10 max-w-7xl mx-auto space-y-10 animate-[dropdownFadeIn_0.3s_ease-out]">
     <!-- Hero Header Section -->
     <div class="flex justify-between items-end">
@@ -9,26 +10,35 @@
     <!-- Dashboard Row 1: Metrics & Add Section -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
         <!-- Main Metric -->
-        <div class="md:col-span-2 bg-surface-container-lowest p-8 rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] relative overflow-hidden group">
-            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all duration-500"></div>
+        <div
+            class="md:col-span-2 bg-surface-container-lowest p-8 rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] relative overflow-hidden group">
+            <div
+                class="absolute -right-10 -bottom-10 w-48 h-48 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all duration-500">
+            </div>
             <div class="relative z-10 space-y-4">
                 <div class="flex justify-between items-start">
-                    <span class="material-symbols-outlined p-3 bg-orange-50 text-orange-600 rounded-xl" style='font-variation-settings: "FILL" 1;'>inventory</span>
+                    <span class="material-symbols-outlined p-3 bg-orange-50 text-orange-600 rounded-xl"
+                        style='font-variation-settings: "FILL" 1;'>inventory</span>
                     <span class="text-emerald-600 font-bold text-xs bg-emerald-50 px-2 py-1 rounded">Valor Neto</span>
                 </div>
                 <div>
                     <p class="text-on-surface-variant text-sm font-medium">Valor Total de Inventario</p>
-                    <h4 class="text-4xl font-extrabold text-on-surface mt-1">{{ totalInventoryValue | currency:'USD' }}</h4>
+                    <h4 class="text-4xl font-extrabold text-on-surface mt-1">{{ totalInventoryValue | currency:'USD' }}
+                    </h4>
                 </div>
             </div>
         </div>
 
         <!-- Add New Product Section -->
-        <button class="md:col-span-2 group relative flex flex-col items-start p-8 bg-surface-container-lowest rounded-xl text-left overflow-hidden transition-all duration-300 hover:translate-y-[-4px] hover:shadow-[0px_10px_30px_rgba(42,52,57,0.06)] border border-stone-100 shadow-[0px_12px_32px_rgba(45,47,47,0.06)]">
-            <div class="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity pointer-events-none">
-                <span class="material-symbols-outlined text-[180px]" style='font-variation-settings: "wght" 200;'>add_box</span>
+        <button (click)="openAddForm()"
+            class="md:col-span-2 group relative flex flex-col items-start p-8 bg-surface-container-lowest rounded-xl text-left overflow-hidden transition-all duration-300 hover:translate-y-[-4px] hover:shadow-[0px_10px_30px_rgba(42,52,57,0.06)] border border-stone-100 shadow-[0px_12px_32px_rgba(45,47,47,0.06)]">
+            <div
+                class="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity pointer-events-none">
+                <span class="material-symbols-outlined text-[180px]"
+                    style='font-variation-settings: "wght" 200;'>add_box</span>
             </div>
-            <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center text-primary mb-6 transition-transform group-hover:scale-110">
+            <div
+                class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center text-primary mb-6 transition-transform group-hover:scale-110">
                 <span class="material-symbols-outlined text-3xl" style='font-variation-settings: "wght" 600;'>add</span>
             </div>
             <h3 class="text-2xl font-extrabold text-on-surface mb-2 tracking-tighter">Agregar Nuevo Artículo</h3>
@@ -45,13 +55,15 @@
     <!-- Dashboard Row 2: Secondary Metrics -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Low Stock -->
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] border-l-4 border-error flex items-center justify-between">
+        <div
+            class="bg-surface-container-lowest p-6 rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] border-l-4 border-error flex items-center justify-between">
             <div class="space-y-1">
                 <p class="text-on-surface-variant text-xs font-bold uppercase tracking-wider">Stock Bajo</p>
                 <h4 class="text-3xl font-extrabold text-error">{{ getLowStockCount() }}</h4>
                 <p class="text-[11px] text-on-surface-variant font-medium">Requieren reposición inmediata</p>
             </div>
-            <span class="material-symbols-outlined text-error bg-error-container/10 p-4 rounded-full" style='font-variation-settings: "FILL" 1;'>warning</span>
+            <span class="material-symbols-outlined text-error bg-error-container/10 p-4 rounded-full"
+                style='font-variation-settings: "FILL" 1;'>warning</span>
         </div>
     </div>
 
@@ -59,161 +71,387 @@
     <section class="bg-surface-container-lowest rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden">
         <div class="px-8 py-6 flex justify-between items-center bg-surface-container-low/30 border-b border-stone-100">
             <div class="flex gap-6">
-                <button (click)="setFilter('all')" [ngClass]="currentFilter === 'all' ? 'text-primary font-bold border-b-2 border-primary pb-1' : 'text-on-surface-variant font-medium hover:text-primary transition-colors'" class="text-sm">Todos los artículos</button>
-                <button (click)="setFilter('lowstock')" [ngClass]="currentFilter === 'lowstock' ? 'text-primary font-bold border-b-2 border-primary pb-1' : 'text-on-surface-variant font-medium hover:text-primary transition-colors'" class="text-sm">Stock bajo</button>
-                <button (click)="setFilter('category')" [ngClass]="currentFilter === 'category' ? 'text-primary font-bold border-b-2 border-primary pb-1' : 'text-on-surface-variant font-medium hover:text-primary transition-colors'" class="text-sm flex items-center gap-1">
-                    Por categoría <span class="material-symbols-outlined text-[14px]">expand_more</span>
-                </button>
+                <h3 class="text-xl font-bold text-on-surface">Inventario</h3>
             </div>
             <div class="flex items-center gap-2">
                 <div class="relative hidden lg:block">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-sm">search</span>
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-sm">search</span>
                     <input [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
                         class="bg-surface-container border-none rounded-full py-2 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-orange-600/40 focus:bg-surface-container-lowest transition-all"
                         placeholder="Buscar artículo..." type="text" />
                 </div>
             </div>
         </div>
-        
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50">
-                        <th class="px-8 py-4">Artículo</th>
-                        <th class="px-6 py-4">Categoría</th>
-                        <th class="px-6 py-4">Stock</th>
-                        <th class="px-6 py-4">Estado</th>
-                        <th class="px-6 py-4">Precio (Compra)</th>
-                        <th class="px-8 py-4 text-right">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-stone-100">
-                    @for (product of paginatedProducts; track product.id) {
-                        <tr class="hover:bg-stone-50/50 transition-colors group">
-                            <td class="px-8 py-5">
-                                <div>
-                                    <p class="font-bold text-on-surface group-hover:text-primary transition-colors">{{ product.name }}</p>
-                                    <p class="text-xs text-on-surface-variant">ID: {{ product.id }}</p>
+
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
+            <table mat-table [dataSource]="dataSource" matSort class="w-full text-left">
+
+                <!-- Artículo Column -->
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-8 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50"> Artículo </th>
+                    <td mat-cell *matCellDef="let product" class="px-8 py-5">
+                        <div>
+                            <p class="font-bold text-on-surface group-hover:text-primary transition-colors">{{ product.name }}</p>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Categoría Column -->
+                <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50"> Categoría </th>
+                    <td mat-cell *matCellDef="let product" class="px-6 py-5">
+                        <span class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full">
+                            {{ product.type | titlecase }}
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Stock Column -->
+                <ng-container matColumnDef="stock">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50"> Stock </th>
+                    <td mat-cell *matCellDef="let product" class="px-6 py-5">
+                        <div class="space-y-1">
+                            <p class="text-sm font-bold" [ngClass]="product.isLowStock ? 'text-error' : 'text-on-surface'">
+                                {{ product.stock }} {{ product.unit.name }}
+                            </p>
+                            <div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden">
+                                <div class="h-full rounded-full"
+                                    [ngClass]="product.isLowStock ? (product.stock === 0 ? 'w-0 bg-error' : 'w-[15%] bg-error') : 'w-[75%] bg-primary'">
                                 </div>
-                            </td>
-                            <td class="px-6 py-5">
-                                <span class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full">
-                                    {{ product.type | titlecase }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-5">
-                                <div class="space-y-1">
-                                    <p class="text-sm font-bold" [ngClass]="product.isLowStock ? 'text-error' : 'text-on-surface'">
-                                        {{ product.stock }} {{ product.unit.name }}
-                                    </p>
-                                    <div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden">
-                                        <div class="h-full rounded-full" 
-                                             [ngClass]="product.isLowStock ? (product.stock === 0 ? 'w-0 bg-error' : 'w-[15%] bg-error') : 'w-[75%] bg-primary'">
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-5">
-                                @if (product.stock === 0) {
-                                    <span class="flex items-center gap-1.5 text-error text-[11px] font-black uppercase">
-                                        <span class="w-2 h-2 rounded-full bg-error"></span>Sin Stock
-                                    </span>
-                                } @else if (product.isLowStock) {
-                                    <span class="flex items-center gap-1.5 text-error text-[11px] font-black uppercase">
-                                        <span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>Stock Bajo
-                                    </span>
-                                } @else {
-                                    <span class="flex items-center gap-1.5 text-emerald-600 text-[11px] font-black uppercase">
-                                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>Disponible
-                                    </span>
-                                }
-                            </td>
-                            <td class="px-6 py-5 font-bold text-on-surface">
-                                {{ product.purchasePrice || product.productionCost || 0 | currency:'USD' }}
-                            </td>
-                            <td class="px-8 py-5 text-right">
-                                <div class="flex items-center justify-end gap-3">
-                                    <button class="material-symbols-outlined text-outline hover:text-primary transition-colors p-1 rounded-md hover:bg-surface-container" title="Editar">edit</button>
-                                    <button (click)="openDeleteModal(product)" class="material-symbols-outlined text-error-dim hover:text-error transition-colors p-1 rounded-md hover:bg-error-container/10" title="Eliminar">delete</button>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                    @if (paginatedProducts.length === 0) {
-                        <tr>
-                            <td colspan="6" class="px-8 py-10 text-center text-on-surface-variant">
-                                No se encontraron artículos en el inventario.
-                            </td>
-                        </tr>
-                    }
-                </tbody>
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Estado Column -->
+                <ng-container matColumnDef="estado">
+                    <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50"> Estado </th>
+                    <td mat-cell *matCellDef="let product" class="px-6 py-5">
+                        @if (product.stock === 0) {
+                        <span class="flex items-center gap-1.5 text-error text-[11px] font-black uppercase">
+                            <span class="w-2 h-2 rounded-full bg-error"></span>Sin Stock
+                        </span>
+                        } @else if (product.isLowStock) {
+                        <span class="flex items-center gap-1.5 text-error text-[11px] font-black uppercase">
+                            <span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>Stock Bajo
+                        </span>
+                        } @else {
+                        <span class="flex items-center gap-1.5 text-emerald-600 text-[11px] font-black uppercase">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>Disponible
+                        </span>
+                        }
+                    </td>
+                </ng-container>
+
+                <!-- Precio Column -->
+                <ng-container matColumnDef="precio">
+                    <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50"> Precio (Compra) </th>
+                    <td mat-cell *matCellDef="let product" class="px-6 py-5 font-bold text-on-surface">
+                        {{ product.purchasePrice || product.productionCost || 0 | currency:'USD' }}
+                    </td>
+                </ng-container>
+
+                <!-- Acciones Column -->
+                <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef class="px-8 py-4 text-right text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50"> Acciones </th>
+                    <td mat-cell *matCellDef="let product" class="px-8 py-5 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            <button mat-icon-button (click)="openEntradaModal(product)"
+                                color="primary"
+                                title="Registrar Entrada de Stock">
+                                <mat-icon>add_circle</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="openAjusteModal(product)"
+                                color="primary"
+                                title="Ajustar Inventario">
+                                <mat-icon>tune</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="openEditForm(product)"
+                                class="text-zinc-400 hover:text-primary transition-colors"
+                                title="Editar">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="openDeleteModal(product)"
+                                color="warn"
+                                title="Eliminar">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-stone-50/50 transition-colors group"></tr>
+
+                <!-- Row shown when there is no matching data. -->
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell px-8 py-10 text-center text-on-surface-variant" colspan="6">
+                        No se encontraron artículos en el inventario.
+                    </td>
+                </tr>
             </table>
         </div>
-        
-        <!-- Shared Pagination Component -->
-        <app-pagination 
-            [totalItems]="filteredProducts.length" 
-            [pageSize]="pageSize" 
-            [currentPage]="currentPage"
-            itemName="artículos"
-            (pageChange)="onPageChange($event)">
-        </app-pagination>
+
+        <!-- Mobile Cards View -->
+        <div class="block md:hidden divide-y divide-zinc-100">
+            @for (product of dataSource.filteredData | slice:(paginator?.pageIndex || 0)*(paginator?.pageSize || 5):((paginator?.pageIndex || 0) + 1)*(paginator?.pageSize || 5); track product.id) {
+            <div class="p-6 bg-white hover:bg-stone-50/50 transition-colors">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <p class="font-bold text-on-surface">{{ product.name }}</p>
+                        <span class="px-2 py-0.5 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full mt-1 inline-block">{{ product.type | titlecase }}</span>
+                    </div>
+                    @if (product.stock === 0) {
+                    <span class="flex items-center gap-1.5 text-error text-[11px] font-black uppercase"><span class="w-2 h-2 rounded-full bg-error"></span>Sin Stock</span>
+                    } @else if (product.isLowStock) {
+                    <span class="flex items-center gap-1.5 text-error text-[11px] font-black uppercase"><span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>Stock Bajo</span>
+                    } @else {
+                    <span class="flex items-center gap-1.5 text-emerald-600 text-[11px] font-black uppercase"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Disponible</span>
+                    }
+                </div>
+
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <div class="text-xs font-bold text-stone-400 mb-1">STOCK</div>
+                        <p class="text-sm font-bold" [ngClass]="product.isLowStock ? 'text-error' : 'text-on-surface'">{{ product.stock }} {{ product.unit.name }}</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs font-bold text-stone-400 mb-1">PRECIO COMPRA</div>
+                        <p class="text-sm font-bold text-on-surface">{{ product.purchasePrice || product.productionCost || 0 | currency:'USD' }}</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 pt-4 border-t border-zinc-100">
+                    <button (click)="openEntradaModal(product)" class="flex-1 py-2 text-primary bg-primary/10 hover:bg-primary/20 font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">add_circle</span> Entrada
+                    </button>
+                    <button (click)="openAjusteModal(product)" class="flex-1 py-2 text-zinc-600 bg-surface-container hover:bg-surface-container-high font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">tune</span> Ajustar
+                    </button>
+                    <button (click)="openEditForm(product)" class="py-2 px-3 text-zinc-600 bg-surface-container hover:bg-surface-container-high rounded-lg transition-colors flex justify-center items-center">
+                        <span class="material-symbols-outlined text-sm">edit</span>
+                    </button>
+                    <button (click)="openDeleteModal(product)" class="py-2 px-3 text-error bg-error-container/10 hover:bg-error-container/20 rounded-lg transition-colors flex justify-center items-center">
+                        <span class="material-symbols-outlined text-sm">delete</span>
+                    </button>
+                </div>
+            </div>
+            }
+            @if (dataSource.filteredData.length === 0) {
+            <div class="p-10 text-center text-on-surface-variant">
+                No se encontraron artículos en el inventario.
+            </div>
+            }
+        </div>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Seleccionar página de inventario"></mat-paginator>
     </section>
 </div>
+}
 
-<!-- Delete Article Confirmation Modal -->
-@if (showDeleteModal && selectedProduct) {
-    <div class="fixed inset-0 z-[80] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeDeleteModal()" (keydown.enter)="closeDeleteModal()"></div>
-        <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
-            <div class="h-2 w-full bg-gradient-to-r from-error to-error-container"></div>
-            <div class="p-8 text-center">
-                <div class="relative mb-6 flex justify-center">
-                    <div class="absolute inset-0 bg-error/10 rounded-full scale-150 blur-xl"></div>
-                    <div class="relative w-20 h-20 bg-gradient-to-br from-error to-error-container rounded-full flex items-center justify-center shadow-lg">
-                        <span class="material-symbols-outlined text-white text-4xl">delete_forever</span>
+@if (viewMode === 'add' || viewMode === 'edit') {
+<main class="p-10 max-w-5xl mx-auto w-full animate-[dropdownFadeIn_0.2s_ease-out]">
+    <nav class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4">
+        <button type="button" class="opacity-50 hover:opacity-100 transition-opacity"
+            (click)="closeForm()">INVENTARIO</button>
+        <span class="opacity-50">/</span>
+        <span>{{ viewMode === 'add' ? 'AGREGAR' : 'EDITAR' }} ARTÍCULO</span>
+    </nav>
+    <div class="mb-10">
+        <h1 class="text-5xl font-extrabold text-on-background tracking-tighter mb-2">{{ viewMode === 'add' ? 'Agregar
+            Nuevo Artículo' : 'Editar Artículo' }}</h1>
+        <p class="text-stone-500 text-lg max-w-2xl">
+            {{ viewMode === 'add' ? 'Registra un nuevo artículo en tu inventario con todos sus detalles y componentes.'
+            : 'Actualiza la información del artículo.' }}
+        </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        <div
+            class="md:col-span-8 bg-surface-container-lowest rounded-xl p-8 shadow-[0px_12px_32px_rgba(45,47,47,0.06)]">
+            <form [formGroup]="inventoryForm" (ngSubmit)="saveProduct()" class="space-y-8">
+                @if (errorMessage) {
+                    <div class="bg-red-50 border-l-4 border-error p-4 rounded-r-lg flex items-start gap-3 animate-[dropdownFadeIn_0.2s_ease-out]">
+                        <span class="material-symbols-outlined text-error">error</span>
+                        <p class="text-error font-medium text-sm">{{ errorMessage }}</p>
+                    </div>
+                }
+                <div class="space-y-2">
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Nombre del Artículo</mat-label>
+                        <input matInput formControlName="name" placeholder="Ej: Papel Bond 80g" />
+                        @if (inventoryForm.get('name')?.invalid && (inventoryForm.get('name')?.dirty || inventoryForm.get('name')?.touched)) {
+                            <mat-error>El nombre es obligatorio.</mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+
+                <div class="space-y-2">
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Cantidad Inicial (Stock)</mat-label>
+                        <input matInput type="number" formControlName="stock" step="any" />
+                        @if (inventoryForm.get('stock')?.invalid && (inventoryForm.get('stock')?.dirty || inventoryForm.get('stock')?.touched)) {
+                            <mat-error>La cantidad no puede ser negativa ni estar vacía.</mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Tipo de Artículo</mat-label>
+                        <mat-select formControlName="type">
+                            <mat-option value="" disabled>Selecciona un tipo...</mat-option>
+                            <mat-option value="INSUMO">Insumo</mat-option>
+                            <mat-option value="ELABORADO">Elaborado</mat-option>
+                            <mat-option value="TRANSFORMADO">Transformado</mat-option>
+                            <mat-option value="REVENTA">Reventa</mat-option>
+                        </mat-select>
+                        @if (inventoryForm.get('type')?.invalid && (inventoryForm.get('type')?.dirty || inventoryForm.get('type')?.touched)) {
+                            <mat-error>El tipo es obligatorio.</mat-error>
+                        }
+                    </mat-form-field>
+                    
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Unidad de Medida</mat-label>
+                        <input matInput formControlName="unit" placeholder="Ej: Resma, Kg, Unidad" />
+                        @if (inventoryForm.get('unit')?.invalid && (inventoryForm.get('unit')?.dirty || inventoryForm.get('unit')?.touched)) {
+                            <mat-error>La unidad es obligatoria.</mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Stock mínimo</mat-label>
+                        <input matInput type="number" formControlName="minStock" step="any" placeholder="0" />
+                        <mat-icon matPrefix>inventory</mat-icon>
+                    </mat-form-field>
+                    
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Costo de producción</mat-label>
+                        <span matTextPrefix>$&nbsp;</span>
+                        <input matInput type="number" formControlName="productionCost" step="0.01" />
+                        @if (inventoryForm.get('productionCost')?.invalid && (inventoryForm.get('productionCost')?.dirty || inventoryForm.get('productionCost')?.touched)) {
+                            <mat-error>El costo debe ser al menos 1.</mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>Precio de venta (Opcional)</mat-label>
+                        <span matTextPrefix>$&nbsp;</span>
+                        <input matInput type="number" formControlName="salePrice" step="0.01" placeholder="0.00" />
+                        @if (inventoryForm.get('salePrice')?.invalid && (inventoryForm.get('salePrice')?.dirty || inventoryForm.get('salePrice')?.touched)) {
+                            <mat-error>El precio debe ser al menos 1.</mat-error>
+                        }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-full">
+                        <mat-label>% Sobrante o residuos</mat-label>
+                        <input matInput type="number" formControlName="wastePercent" step="0.1" max="100" placeholder="0" />
+                        <mat-icon matPrefix>recycling</mat-icon>
+                    </mat-form-field>
+                </div>
+
+                <!-- Components Section -->
+                @if (inventoryForm.get('type')?.value === 'ELABORADO' || inventoryForm.get('type')?.value ===
+                'TRANSFORMADO') {
+                <div class="pt-6 border-t border-stone-100">
+                    <h3 class="font-headline font-bold text-lg text-on-background tracking-tight mb-4">Componentes del
+                        Artículo</h3>
+                    <div class="space-y-4" formArrayName="components">
+                        <div class="flex justify-between items-center">
+                            <span class="font-headline font-bold text-xs tracking-tight text-stone-500 uppercase">Lista
+                                de Componentes</span>
+                            <button type="button" (click)="addComponent()"
+                                class="bg-primary/10 text-primary px-4 py-2 rounded-lg font-bold hover:bg-primary/20 transition-colors text-sm flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">add</span> Añadir
+                            </button>
+                        </div>
+
+                        @if (componentsFormArray.length > 0) {
+                        <div class="overflow-x-auto rounded-lg border border-stone-100">
+                            <table class="w-full text-left text-sm font-body">
+                                <thead class="bg-stone-50 border-b border-stone-100">
+                                    <tr>
+                                        <th
+                                            class="px-4 py-3 font-bold text-stone-600 uppercase tracking-wider text-[11px]">
+                                            ID Insumo</th>
+                                        <th
+                                            class="px-4 py-3 font-bold text-stone-600 uppercase tracking-wider text-[11px] w-28">
+                                            Cantidad usada</th>
+                                        <th
+                                            class="px-4 py-3 font-bold text-stone-600 uppercase tracking-wider text-[11px] w-16 text-center">
+                                            Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-stone-50">
+                                    @for (comp of componentsFormArray.controls; track $index; let i = $index) {
+                                    <tr [formGroupName]="i" class="hover:bg-stone-50/50 transition-colors group">
+                                        <td class="px-4 py-2">
+                                            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
+                                                <input matInput type="number" formControlName="idInsumo" min="1" step="1" placeholder="ID del insumo" />
+                                            </mat-form-field>
+                                        </td>
+                                        <td class="px-4 py-2">
+                                            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
+                                                <input matInput type="number" formControlName="cantidadUsada" step="0.001" min="0.001" placeholder="0.000" class="text-right" />
+                                            </mat-form-field>
+                                        </td>
+                                        <td class="px-4 py-2 text-center">
+                                            <button mat-icon-button type="button" color="warn" (click)="removeComponent(i)">
+                                                <mat-icon>delete</mat-icon>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        } @else {
+                        <div
+                            class="bg-stone-50 text-stone-500 text-center p-6 rounded-lg text-sm border border-dashed border-stone-200">
+                            No se han añadido componentes.
+                        </div>
+                        }
                     </div>
                 </div>
-                <h2 class="text-2xl font-extrabold text-on-surface tracking-tight mb-3 font-headline">¿Eliminar artículo?</h2>
-                <p class="text-on-surface-variant text-base leading-relaxed font-body">
-                    ¿Estás seguro de que deseas eliminar "<span class="font-bold text-primary">{{ selectedProduct.name }}</span>"?
-                    Esta acción <span class="text-error font-bold">no se puede deshacer</span>.
-                </p>
-                <div class="mt-8 flex flex-col gap-3">
-                    <button (click)="confirmDelete()" class="group relative flex items-center justify-center gap-2 w-full py-3.5 px-6 bg-gradient-to-br from-error to-error-container text-white font-bold rounded-lg shadow-sm active:scale-[0.98] transition-all overflow-hidden">
-                        <span class="relative z-10">Sí, eliminar artículo</span>
-                        <span class="material-symbols-outlined relative z-10 text-xl group-hover:translate-x-1 transition-transform">delete_forever</span>
-                    </button>
-                    <button (click)="closeDeleteModal()" class="w-full py-3.5 px-6 bg-surface-container text-on-surface font-bold rounded-lg hover:bg-surface-container-high active:scale-[0.98] transition-all">
-                        Cancelar
+                }
+
+                <div class="pt-6 border-t border-stone-100 flex items-center justify-end gap-4">
+                    <button (click)="closeForm()"
+                        class="px-6 py-3 rounded-lg font-bold text-stone-500 hover:bg-stone-50 transition-colors"
+                        type="button">Cancelar</button>
+                    <button [disabled]="!inventoryForm.valid"
+                        class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-3 rounded-lg font-bold shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        type="submit">
+                        {{ viewMode === 'add' ? 'Agregar Artículo' : 'Actualizar Artículo' }}
                     </button>
                 </div>
+            </form>
+        </div>
+
+        <div class="md:col-span-4 space-y-6">
+            <div class="bg-primary/5 rounded-xl p-6 border-l-4 border-primary">
+                <h3 class="font-headline font-bold text-primary mb-2">Consejo</h3>
+                <p class="text-sm text-stone-600 leading-relaxed">Para artículos <b>Elaborados</b> o
+                    <b>Transformados</b>, asegúrate de agregar todos los componentes necesarios para calcular
+                    correctamente el costo de producción.</p>
+            </div>
+            <div class="bg-stone-100 rounded-xl p-6 border-l-4 border-stone-400">
+                <h3 class="font-headline font-bold text-stone-700 mb-2">Ayuda</h3>
+                <p class="text-sm text-stone-500 leading-relaxed">Los campos marcados con <span
+                        class="text-error font-bold">*</span> son obligatorios. El <b>% Sobrante</b> ayuda a calcular el
+                    desperdicio estimado en producción.</p>
             </div>
         </div>
     </div>
+</main>
 }
 
-<!-- Success Delete Modal -->
-@if (showSuccessModal) {
-    <div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" (click)="closeSuccessModal()" (keydown.enter)="closeSuccessModal()"></div>
-        <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
-            <div class="h-2 w-full bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
-            <div class="p-8 text-center">
-                <div class="relative mb-6 flex justify-center">
-                    <div class="absolute inset-0 bg-emerald-500/10 rounded-full scale-150 blur-xl"></div>
-                    <div class="relative w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-400 rounded-full flex items-center justify-center shadow-lg">
-                        <span class="material-symbols-outlined text-white text-4xl" style="font-variation-settings: 'wght' 600;">check_circle</span>
-                    </div>
-                </div>
-                <h2 class="text-2xl font-extrabold text-on-surface tracking-tight mb-3 font-headline">¡Artículo Eliminado!</h2>
-                <p class="text-on-surface-variant text-base leading-relaxed font-body">El artículo ha sido eliminado correctamente del inventario.</p>
-                <div class="mt-8">
-                    <button (click)="closeSuccessModal()" class="w-full py-3.5 px-6 bg-primary text-white font-bold rounded-lg hover:opacity-90 transition-all">
-                        Continuar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-}
+
+
+

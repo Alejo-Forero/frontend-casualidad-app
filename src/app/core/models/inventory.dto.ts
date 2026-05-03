@@ -13,7 +13,36 @@ export interface CompositionItem {
   subtotal: number;
 }
 
+export interface ProductRequestDTO {
+  nombre: string;
+  tipo: ProductType;
+  idUnidadMedida: number;
+  cantidad: number;
+  stockMinimo: number;
+  precioCompra: number;
+  precioVenta: number;
+  porcentajeSobrante: number;
+}
+
+export interface ProductResponseDTO {
+  message: string;
+  code: number;
+  data: number;
+}
+
 export interface ProductDTO {
+  // New API fields
+  idProducto?: number;
+  nombre?: string;
+  tipo?: ProductType;
+  idUnidadMedida?: number;
+  cantidad?: number;
+  stockMinimo?: number;
+  precioCompra?: number;
+  precioVenta?: number;
+  porcentajeSobrante?: number;
+
+  // Legacy fields for UI compatibility
   id: string;
   name: string;
   type: ProductType;

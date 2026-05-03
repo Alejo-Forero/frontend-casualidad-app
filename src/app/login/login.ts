@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoginResponseDTO } from '../core/models/auth.dto';
+import { AuthService } from '../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +14,7 @@ import { LoginResponseDTO } from '../core/models/auth.dto';
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -25,10 +26,6 @@ export class LoginComponent {
   showHelpModal = false;
   showErrorModal = false;
   isLoading = false;
-
-  // Credenciales simuladas (del prototipo)
-  private readonly VALID_EMAIL = 'admin@casualidad.com';
-  private readonly VALID_PASSWORD = 'admin123';
 
   get emailControl() {
     return this.loginForm.get('email');
@@ -45,30 +42,21 @@ export class LoginComponent {
     }
 
     const { email, password } = this.loginForm.value;
+    this.isLoading = true;
 
-    if (email === this.VALID_EMAIL && password === this.VALID_PASSWORD) {
-      this.isLoading = true;
-      // Simulando delay de red y respuesta de la API
-      setTimeout(() => {
-        const simulatedResponse: LoginResponseDTO = {
-            access_token: 'fake-jwt-token',
-            refresh_token: 'fake-refresh-token',
-            user: {
-                id: 'admin-uuid',
-                firstName: 'Administrador',
-                lastName: '',
-                email: this.VALID_EMAIL,
-                phone: '0000000000'
-            }
-        };
-        console.log('Login exitoso:', simulatedResponse);
+    this.authService.login({ email, password }).subscribe({
+      next: (response) => {
+        console.log('Login exitoso:', response);
         this.router.navigate(['/']);
         this.isLoading = false;
-      }, 800);
-    } else {
-      this.showErrorModal = true;
-      this.loginForm.reset({ email: '', password: '', remember: false });
-    }
+      },
+      error: (err) => {
+        console.error('Error in login', err);
+        this.showErrorModal = true;
+        this.loginForm.reset({ email: '', password: '', remember: false });
+        this.isLoading = false;
+      }
+    });
   }
 
   toggleHelpModal() {
