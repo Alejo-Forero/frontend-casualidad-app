@@ -7,6 +7,7 @@ import { throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
+  const router = inject(Router);
   const token = authService.getAccessToken();
 
   // If we have an accessToken, append it to the request.
@@ -18,7 +19,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       // If the token is invalid or expired, the backend returns 401
       if (error.status === 401) {
         authService.clearSession();
-        const router = inject(Router);
         router.navigate(['/login']);
       }
       return throwError(() => error);

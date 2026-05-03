@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
@@ -65,7 +65,7 @@ export class InventoryService {
    */
   create(data: any): Observable<any> {
     const unitValue = data.unit || data.unidadMedida || '';
-    const idUnidad = isNaN(Number(unitValue)) ? null : Number(unitValue) || null;
+    const idUnidad = Number.isNaN(Number(unitValue)) ? null : Number(unitValue) || null;
 
     const payload: any = {
       nombre: data.name || data.nombre,
@@ -102,7 +102,7 @@ export class InventoryService {
    */
   update(id: string | number, data: any): Observable<any> {
     const unitValue = data.unit || data.unidadMedida || '';
-    const idUnidad = isNaN(Number(unitValue)) ? null : Number(unitValue) || null;
+    const idUnidad = Number.isNaN(Number(unitValue)) ? null : Number(unitValue) || null;
 
     const payload: any = {
       nombre: data.name || data.nombre,
