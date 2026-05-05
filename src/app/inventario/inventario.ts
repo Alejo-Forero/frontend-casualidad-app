@@ -2,6 +2,7 @@ import { Component, inject, OnInit, AfterViewInit, ChangeDetectorRef, DestroyRef
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 import { ProductDTO, ProductType } from '../core/models/inventory.dto';
 import { InventoryService } from '../core/services/inventory.service';
@@ -15,10 +16,12 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog';
 import { SuccessDialogComponent } from '../shared/components/success-dialog/success-dialog';
+import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog';
 import { EntradaDialogComponent } from './components/entrada-dialog/entrada-dialog';
 import { AjusteDialogComponent } from './components/ajuste-dialog/ajuste-dialog';
+import { ListHelper } from '../shared/utils/list-helper';
+import { BaseTableComponent } from '../shared/components/base-table.component';
 
 @Component({
   selector: 'app-inventario',
@@ -40,13 +43,10 @@ import { AjusteDialogComponent } from './components/ajuste-dialog/ajuste-dialog'
   templateUrl: './inventario.html',
   styleUrls: ['./inventario.css']
 })
-export class InventarioComponent implements OnInit, AfterViewInit {
+export class InventarioComponent extends BaseTableComponent<ProductDTO> implements OnInit, AfterViewInit {
   productsData: ProductDTO[] = [];
   dataSource = new MatTableDataSource<ProductDTO>([]);
-  displayedColumns: string[] = ['name', 'type', 'stock', 'estado', 'precio', 'acciones'];
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  displayedColumns: string[] = ['id', 'name', 'type', 'stock', 'estado', 'acciones'];
 
   searchTerm = '';
   currentFilter: 'all' | 'lowstock' | 'category' = 'all';
@@ -58,11 +58,11 @@ export class InventarioComponent implements OnInit, AfterViewInit {
 
   // Motivos de movimiento — enum MotivoMovimiento del backend
   readonly motivosEntrada = [
-    { value: 'COMPRA_INSUMOS',     label: 'Compra de Insumos' },
-    { value: 'VENTA_PRODUCTO',     label: 'Venta de Producto' },
-    { value: 'CONSUMO',            label: 'Consumo interno' },
-    { value: 'DESPERDICIO',        label: 'Desperdicio / Merma' },
-    { value: 'AJUSTE_INVENTARIO',  label: 'Ajuste de Inventario' }
+    { value: 'COMPRA_INSUMOS', label: 'Compra de Insumos' },
+    { value: 'VENTA_PRODUCTO', label: 'Venta de Producto' },
+    { value: 'CONSUMO', label: 'Consumo interno' },
+    { value: 'DESPERDICIO', label: 'Desperdicio / Merma' },
+    { value: 'AJUSTE_INVENTARIO', label: 'Ajuste de Inventario' }
   ];
 
   // Forms state
@@ -75,7 +75,16 @@ export class InventarioComponent implements OnInit, AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly dialog = inject(MatDialog);
 
+  isMobile = false;
+  private readonly breakpointObserver = inject(BreakpointObserver);
+
   constructor() {
+    super();
+    this.breakpointObserver.observe([Breakpoints.Handset, Breakpoints.TabletPortrait]).subscribe(result => {
+      this.isMobile = result.matches;
+      this.cdr.markForCheck();
+    });
+
     this.inventoryForm = this.fb.group({
       id: [''],
       name: ['', Validators.required],
@@ -120,8 +129,8 @@ export class InventarioComponent implements OnInit, AfterViewInit {
   addComponent(): void {
     // idInsumo y cantidadUsada son los campos de InsumoComposicionDto en el backend
     this.componentsFormArray.push(this.fb.group({
-      idInsumo:      [null, [Validators.required, Validators.min(1)]],
-      cantidadUsada: [1,    [Validators.required, Validators.min(0.001)]]
+      idInsumo: [null, [Validators.required, Validators.min(1)]],
+      cantidadUsada: [1, [Validators.required, Validators.min(0.001)]]
     }));
   }
 
@@ -134,9 +143,6 @@ export class InventarioComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-
     this.dataSource.sortingDataAccessor = (item: ProductDTO, property: string) => {
       switch (property) {
         case 'name': return item.name.toLowerCase();
@@ -175,16 +181,15 @@ export class InventarioComponent implements OnInit, AfterViewInit {
     this._applyTableFilter();
   }
 
-  onSearchChange(): void {
-    this._applyTableFilter();
-  }
-
   private _applyTableFilter(): void {
-    // Trigger filterPredicate by setting filter string (use a timestamp to force re-evaluation)
     this.dataSource.filter = this.searchTerm.trim().toLowerCase() + '|' + this.currentFilter + '|' + this.selectedCategory;
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  onSearchChange(): void {
+    this._applyTableFilter();
   }
 
   get totalInventoryValue(): number {
@@ -253,45 +258,59 @@ export class InventarioComponent implements OnInit, AfterViewInit {
   // --- DELETE ---
   openDeleteModal(product: ProductDTO): void {
     this.errorMessage = null;
-
+    
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       panelClass: 'casualidad-dialog',
       data: {
-        title: '\u00bfEliminar Art\u00edculo?',
-        message: '\u00bfEst\u00e1s seguro de que deseas eliminar ',
+        title: '\u00bfEliminar art\u00edculo?',
+        message: 'Est\u00e1s a punto de eliminar ',
         highlightText: product.name,
-        warningText: 'Esta acci\u00f3n ',
+        warningText: 'Esta acci\u00f3n no se puede deshacer y ',
         confirmLabel: 'S\u00ed, eliminar art\u00edculo',
         icon: 'delete_forever',
         accentColor: 'error'
       }
     });
 
-    dialogRef.afterClosed().subscribe(confirmed => {
-      if (confirmed) {
-        this.inventoryService.delete(product.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-          next: () => {
-            this.loadInventory();
-            this.dialog.open(SuccessDialogComponent, {
-              panelClass: 'casualidad-dialog',
-              data: {
-                title: '\u00a1Art\u00edculo Eliminado!',
-                message: 'El art\u00edculo ha sido eliminado del inventario.',
-                icon: 'check_circle',
-                accentColor: 'success',
-                primaryActionLabel: 'Continuar'
-              }
-            });
-          },
-          error: (err) => {
-            console.error('Error eliminando producto', err);
-            this.errorMessage = 'No se pudo eliminar el producto. Puede que est\u00e9 en uso o referenciado.';
-            this.cdr.detectChanges();
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.confirmDelete(product);
+      }
+    });
+  }
+
+  confirmDelete(product: ProductDTO): void {
+    this.inventoryService.delete(product.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.loadInventory();
+        this.dialog.open(SuccessDialogComponent, {
+          panelClass: 'casualidad-dialog',
+          data: {
+            title: '\u00a1Art\u00edculo Eliminado!',
+            message: 'El art\u00edculo ha sido eliminado permanentemente del inventario.',
+            icon: 'check_circle',
+            accentColor: 'success',
+            primaryActionLabel: 'Continuar'
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error eliminando producto', err);
+        this.dialog.open(SuccessDialogComponent, {
+          panelClass: 'casualidad-dialog',
+          data: {
+            title: '\u00a1Algo sali\u00f3 mal!',
+            message: 'No se pudo eliminar el art\u00edculo. Puede que est\u00e9 en uso o referenciado.',
+            icon: 'error',
+            accentColor: 'warning',
+            primaryActionLabel: 'Entendido'
           }
         });
       }
     });
   }
+
+
 
   // --- FORM ACTIONS ---
   openAddForm(): void {
@@ -321,8 +340,8 @@ export class InventarioComponent implements OnInit, AfterViewInit {
     if (product.composition && product.composition.length > 0) {
       product.composition.forEach((comp: any) => {
         this.componentsFormArray.push(this.fb.group({
-          idInsumo:      [comp.idInsumo ?? comp.inventoryId ?? null, [Validators.required, Validators.min(1)]],
-          cantidadUsada: [comp.cantidadUsada ?? comp.quantity ?? 1,  [Validators.required, Validators.min(0.001)]]
+          idInsumo: [comp.idInsumo ?? comp.inventoryId ?? null, [Validators.required, Validators.min(1)]],
+          cantidadUsada: [comp.cantidadUsada ?? comp.quantity ?? 1, [Validators.required, Validators.min(0.001)]]
         }));
       });
     }
@@ -359,7 +378,7 @@ export class InventarioComponent implements OnInit, AfterViewInit {
           title: isEdit ? '\u00a1Art\u00edculo Actualizado!' : '\u00a1Art\u00edculo Creado!',
           message: isEdit ? 'Los datos del art\u00edculo han sido modificados.' : 'El art\u00edculo ha sido registrado en el inventario.',
           icon: 'check_circle',
-          accentColor: 'primary',
+          accentColor: 'success',
           primaryActionLabel: 'Ir al Inventario',
           secondaryActionLabel: isEdit ? undefined : 'Agregar otro'
         }
@@ -367,7 +386,7 @@ export class InventarioComponent implements OnInit, AfterViewInit {
       dialogRef.afterClosed().subscribe(result => {
         if (!result || result.action === 'primary' || result.action === 'close') {
           this.viewMode = 'list';
-        } else if (result.action === 'secondary') {
+        } else if (result.action === 'secondary' && !isEdit) {
           this.openAddForm();
         }
         this.cdr.detectChanges();
@@ -393,7 +412,7 @@ export class InventarioComponent implements OnInit, AfterViewInit {
             const id = Number(idProducto);
             if (tieneComposicion && id > 0) {
               const insumos = this.componentsFormArray.controls.map(ctrl => ({
-                idInsumo:      Number(ctrl.get('idInsumo')?.value),
+                idInsumo: Number(ctrl.get('idInsumo')?.value),
                 cantidadUsada: Number(ctrl.get('cantidadUsada')?.value)
               }));
               this.inventoryService.addComposicion(id, insumos)

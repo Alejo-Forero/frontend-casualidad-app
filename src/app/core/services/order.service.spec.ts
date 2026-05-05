@@ -66,4 +66,13 @@ describe('OrderService', () => {
     service.delete(1).subscribe();
     httpMock.expectOne(`${apiUrl}/1/cancelar?reintegrarMateriales=false`).flush({});
   });
+
+  it('should manage order draft', () => {
+    const draft = { clientId: 1, items: [] };
+    service.setOrderDraft(draft);
+    expect(service.getOrderDraft()).toEqual(draft);
+    
+    service.clearOrderDraft();
+    expect(service.getOrderDraft()).toBeNull();
+  });
 });

@@ -27,6 +27,7 @@ export class LayoutComponent {
   showProfileDropdown = false;
   showConfigModal = false;
   showDeleteModal = false;
+  showLogoutModal = false;
 
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
@@ -38,7 +39,7 @@ export class LayoutComponent {
   constructor() {
     this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
       this.isMobile = result.matches;
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     });
   }
 
@@ -91,6 +92,27 @@ export class LayoutComponent {
 
   confirmDelete(): void {
     this.closeDeleteModal();
+  }
+
+  openLogoutModal(event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    this.showLogoutModal = true;
+    this.showProfileDropdown = false;
+    this.cdr.detectChanges();
+  }
+
+  closeLogoutModal(): void {
+    this.showLogoutModal = false;
+    this.cdr.detectChanges();
+  }
+
+  confirmLogout(): void {
+    this.authService.clearSession();
+    this.router.navigate(['/login']);
+    this.closeLogoutModal();
   }
 
   onDocumentClick(): void {

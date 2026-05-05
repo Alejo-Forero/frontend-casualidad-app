@@ -24,45 +24,63 @@
 
     <!-- Bento Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <button type="button" (click)="openAddForm()" class="text-left block w-full border-none appearance-none group relative overflow-hidden bg-surface-container-lowest rounded-xl p-8 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] hover:translate-y-[-4px] transition-all duration-300 cursor-pointer">
+        <button type="button" (click)="openAddForm()"
+            class="text-left block w-full border-none appearance-none group relative overflow-hidden bg-surface-container-lowest rounded-xl p-8 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] hover:translate-y-[-4px] transition-all duration-300 cursor-pointer">
             <div class="flex justify-between items-start mb-12">
-                <div class="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 transition-colors group-hover:bg-orange-600 group-hover:text-white">
+                <div
+                    class="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center text-orange-600 transition-colors group-hover:bg-orange-600 group-hover:text-white">
                     <span class="material-symbols-outlined text-3xl">add_circle</span>
                 </div>
-                <span class="material-symbols-outlined text-stone-300 group-hover:text-orange-500 transition-colors">arrow_outward</span>
+                <span
+                    class="material-symbols-outlined text-stone-300 group-hover:text-orange-500 transition-colors">arrow_outward</span>
             </div>
             <div>
                 <h3 class="text-2xl font-bold mb-2">Registrar Pago</h3>
-                <p class="text-on-surface-variant font-body">Inicia una nueva transacción manual o procesa recibos pendientes de clientes.</p>
+                <p class="text-on-surface-variant font-body">Inicia una nueva transacción manual o procesa recibos
+                    pendientes de clientes.</p>
             </div>
             <div class="absolute -right-8 -bottom-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
                 <span class="material-symbols-outlined text-[160px]">payments</span>
             </div>
         </button>
-        <div class="group relative overflow-hidden bg-surface-container-lowest rounded-xl p-8 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] hover:translate-y-[-4px] transition-all duration-300 cursor-pointer">
+        <button (click)="verReportes()" type="button"
+            class="group relative overflow-hidden bg-surface-container-lowest rounded-xl p-8 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] hover:translate-y-[-4px] transition-all duration-300 cursor-pointer text-left w-full">
             <div class="flex justify-between items-start mb-12">
-                <div class="w-14 h-14 bg-stone-50 rounded-2xl flex items-center justify-center text-stone-600 transition-colors group-hover:bg-stone-900 group-hover:text-white">
+                <div
+                    class="w-14 h-14 bg-stone-50 rounded-2xl flex items-center justify-center text-stone-600 transition-colors group-hover:bg-stone-900 group-hover:text-white">
                     <span class="material-symbols-outlined text-3xl">bar_chart</span>
                 </div>
-                <span class="material-symbols-outlined text-stone-300 group-hover:text-stone-900 transition-colors">arrow_outward</span>
+                <span
+                    class="material-symbols-outlined text-stone-300 group-hover:text-stone-900 transition-colors">arrow_outward</span>
             </div>
             <div>
                 <h3 class="text-2xl font-bold mb-2">Ver Reportes</h3>
-                <p class="text-on-surface-variant font-body">Analiza métricas de rendimiento financiero y proyecciones de ingresos anuales.</p>
+                <p class="text-on-surface-variant font-body">Analiza métricas de rendimiento financiero y proyecciones
+                    de ingresos anuales.</p>
             </div>
             <div class="absolute -right-8 -bottom-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
                 <span class="material-symbols-outlined text-[160px]">analytics</span>
             </div>
-        </div>
+        </button>
     </div>
 
     <!-- Filtros rápidos -->
     <div class="flex flex-wrap gap-3">
-        <button (click)="setFilter('ALL')" [ngClass]="currentFilter === 'ALL' ? 'bg-primary text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'" class="px-4 py-2 rounded-full text-sm font-medium shadow-sm transition-all">Todos</button>
-        <button (click)="setFilter('TERMINADO')" [ngClass]="currentFilter === 'TERMINADO' ? 'bg-primary text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'" class="px-4 py-2 rounded-full text-sm font-medium transition-all">Completados</button>
-        <button (click)="setFilter('EN_PRODUCCION')" [ngClass]="currentFilter === 'EN_PRODUCCION' ? 'bg-primary text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'" class="px-4 py-2 rounded-full text-sm font-medium transition-all">En Producción</button>
-        <button (click)="setFilter('PENDIENTE')" [ngClass]="currentFilter === 'PENDIENTE' ? 'bg-primary text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'" class="px-4 py-2 rounded-full text-sm font-medium transition-all">Pendientes</button>
-        <button (click)="setFilter('CANCELADO')" [ngClass]="currentFilter === 'CANCELADO' ? 'bg-primary text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'" class="px-4 py-2 rounded-full text-sm font-medium transition-all">Cancelados</button>
+        <button (click)="setFilter('ALL')"
+            [ngClass]="currentFilter === 'ALL' ? 'bg-primary text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'"
+            class="px-4 py-2 rounded-full text-sm font-medium shadow-sm transition-all">Todos</button>
+        <button (click)="setFilter('TERMINADO')"
+            [ngClass]="currentFilter === 'TERMINADO' ? 'bg-primary text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'"
+            class="px-4 py-2 rounded-full text-sm font-medium transition-all">Completados</button>
+        <button (click)="setFilter('EN_PRODUCCION')"
+            [ngClass]="currentFilter === 'EN_PRODUCCION' ? 'bg-primary text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'"
+            class="px-4 py-2 rounded-full text-sm font-medium transition-all">En Producción</button>
+        <button (click)="setFilter('PENDIENTE')"
+            [ngClass]="currentFilter === 'PENDIENTE' ? 'bg-primary text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'"
+            class="px-4 py-2 rounded-full text-sm font-medium transition-all">Pendientes</button>
+        <button (click)="setFilter('CANCELADO')"
+            [ngClass]="currentFilter === 'CANCELADO' ? 'bg-primary text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'"
+            class="px-4 py-2 rounded-full text-sm font-medium transition-all">Cancelados</button>
     </div>
 
     <!-- Table Section -->
@@ -71,96 +89,167 @@
             <h3 class="text-xl font-bold">Historial de Pagos</h3>
             <div class="flex items-center gap-6">
                 <div class="relative">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-sm">search</span>
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-sm">search</span>
                     <input [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
                         class="bg-surface-container border-none rounded-full py-2 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-orange-600/40 focus:bg-surface-container-lowest transition-all"
                         placeholder="Buscar pagos..." type="text" />
                 </div>
             </div>
         </div>
+        @if (!isMobile) {
         <div class="overflow-x-auto">
-            <table class="w-full text-left">
-                <thead>
-                    <tr class="text-stone-400 text-xs uppercase tracking-widest bg-stone-50/50">
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" tabindex="0" (click)="handleSort('id')" (keydown.enter)="handleSort('id')">
-                            ID PAGO
-                            <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'id' ? 'text-primary' : 'opacity-40 group-hover:opacity-100'">{{ getSortIcon('id') }}</span>
-                        </th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" tabindex="0" (click)="handleSort('clientName')" (keydown.enter)="handleSort('clientName')">
-                            Cliente
-                            <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'clientName' ? 'text-primary' : 'opacity-40 group-hover:opacity-100'">{{ getSortIcon('clientName') }}</span>
-                        </th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" tabindex="0" (click)="handleSort('status')" (keydown.enter)="handleSort('status')">
-                            Estado
-                            <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'status' ? 'text-primary' : 'opacity-40 group-hover:opacity-100'">{{ getSortIcon('status') }}</span>
-                        </th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" tabindex="0" (click)="handleSort('createdAt')" (keydown.enter)="handleSort('createdAt')">
-                            Fecha
-                            <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'createdAt' ? 'text-primary' : 'opacity-40 group-hover:opacity-100'">{{ getSortIcon('createdAt') }}</span>
-                        </th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" tabindex="0" (click)="handleSort('type')" (keydown.enter)="handleSort('type')">
-                            Método
-                            <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'type' ? 'text-primary' : 'opacity-40 group-hover:opacity-100'">{{ getSortIcon('type') }}</span>
-                        </th>
-                        <th class="cursor-pointer select-none transition-colors hover:bg-black/5 px-8 py-4 font-bold group" tabindex="0" (click)="handleSort('amount')" (keydown.enter)="handleSort('amount')">
-                            Monto
-                            <span class="material-symbols-outlined text-[14px] align-middle ml-1" [ngClass]="currentSort.column === 'amount' ? 'text-primary' : 'opacity-40 group-hover:opacity-100'">{{ getSortIcon('amount') }}</span>
-                        </th>
-                        <th class="px-8 py-4 font-bold text-right">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-stone-100">
-                    @for (payment of paymentsListed; track payment.idPago) {
-                        <tr class="hover:bg-orange-50/30 transition-colors group">
-                            <td class="px-8 py-5 text-sm font-bold text-primary">#{{ payment.idPago.toString().substring(0,8) | uppercase }}</td>
-                            <td class="px-8 py-5"><span class="text-sm font-medium">{{ payment.nombreCliente || 'Desconocido' }}</span></td>
-                            <td class="px-8 py-5">
-                                <span class="px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-full" [ngClass]="statusMap[payment.estadoPedido].css">
-                                    {{ statusMap[payment.estadoPedido].text }}
-                                </span>
-                            </td>
-                            <td class="px-8 py-5 text-sm text-on-surface-variant font-body">{{ payment.fechaPago | date:'mediumDate' }}</td>
-                            <td class="px-8 py-5">
-                                <div class="flex items-center gap-2 text-sm text-on-surface-variant">
-                                    <span class="material-symbols-outlined text-sm">{{ typeMap[payment.metodoPago].icon }}</span>
-                                    {{ typeMap[payment.metodoPago].text }}
-                                </div>
-                            </td>
-                            <td class="px-8 py-5 font-black text-sm">{{ payment.monto | currency:'USD' }}</td>
-                            <td class="px-8 py-5 text-right">
-                                <div class="flex items-center justify-end gap-2">
-                                    <button (click)="openViewModal(payment)" class="p-2 text-zinc-400 hover:text-primary transition-colors" title="Ver detalles">
-                                        <span class="material-symbols-outlined text-xl">visibility</span>
-                                    </button>
-                                    <button (click)="openEditForm(payment)" class="p-2 text-zinc-400 hover:text-secondary transition-colors">
-                                        <span class="material-symbols-outlined text-xl">edit</span>
-                                    </button>
-                                    <button (click)="openDeleteModal(payment)" class="p-2 text-stone-400 hover:text-error hover:bg-error/5 rounded-lg transition-all" title="Eliminar pago">
-                                        <span class="material-symbols-outlined text-lg">delete</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                    @if (paginatedPayments.length === 0) {
-                        <tr>
-                            <td colspan="7" class="px-8 py-12 text-center text-stone-500">
-                                No hay pagos que coincidan con los filtros actuales.
-                            </td>
-                        </tr>
-                    }
-                </tbody>
+            <table mat-table [dataSource]="dataSource" matSort class="w-full text-left">
+                <!-- ID Pago Column -->
+                <ng-container matColumnDef="idPago">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="casualidad-table-header">
+                        ID PAGO </th>
+                    <td mat-cell *matCellDef="let payment" class="px-8 py-5 text-sm font-bold text-primary"> #{{
+                        payment.idPago.toString().substring(0,8) | uppercase }} </td>
+                </ng-container>
+
+                <!-- Cliente Column -->
+                <ng-container matColumnDef="cliente">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="casualidad-table-header">
+                        Cliente </th>
+                    <td mat-cell *matCellDef="let payment" class="px-8 py-5 text-sm font-medium"> {{
+                        payment.nombreCliente || 'Desconocido' }} </td>
+                </ng-container>
+
+                <!-- Estado Column -->
+                <ng-container matColumnDef="estado">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="casualidad-table-header">
+                        Estado </th>
+                    <td mat-cell *matCellDef="let payment" class="px-8 py-5">
+                        <span class="px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-full"
+                            [ngClass]="statusMap[payment.estadoPedido].css">
+                            {{ statusMap[payment.estadoPedido].text }}
+                        </span>
+                    </td>
+                </ng-container>
+
+                <!-- Fecha Column -->
+                <ng-container matColumnDef="fecha">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="casualidad-table-header">
+                        Fecha </th>
+                    <td mat-cell *matCellDef="let payment" class="px-8 py-5 text-sm text-on-surface-variant font-body">
+                        {{ payment.fechaPago | date:'mediumDate' }} </td>
+                </ng-container>
+
+                <!-- Método Column -->
+                <ng-container matColumnDef="metodo">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="casualidad-table-header">
+                        Método </th>
+                    <td mat-cell *matCellDef="let payment" class="px-8 py-5">
+                        <div class="flex items-center gap-2 text-sm text-on-surface-variant">
+                            <span class="material-symbols-outlined text-sm">{{ typeMap[payment.metodoPago].icon
+                                }}</span>
+                            {{ typeMap[payment.metodoPago].text }}
+                        </div>
+                    </td>
+                </ng-container>
+
+                <!-- Monto Column -->
+                <ng-container matColumnDef="monto">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="casualidad-table-header text-right">
+                        Monto </th>
+                    <td mat-cell *matCellDef="let payment" class="px-8 py-5 font-black text-sm text-right"> {{
+                        payment.monto | currency:'USD' }} </td>
+                </ng-container>
+
+                <!-- Acciones Column -->
+                <ng-container matColumnDef="acciones">
+                    <th mat-header-cell *matHeaderCellDef class="casualidad-table-header text-right">
+                        Acciones </th>
+                    <td mat-cell *matCellDef="let payment" class="px-8 py-5 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            <button (click)="openViewModal(payment)"
+                                class="p-2 text-zinc-400 hover:text-primary transition-colors" title="Ver detalles">
+                                <span class="material-symbols-outlined text-xl">visibility</span>
+                            </button>
+                            <button (click)="openEditForm(payment)"
+                                class="p-2 text-zinc-400 hover:text-secondary transition-colors" title="Editar pago">
+                                <span class="material-symbols-outlined text-xl">edit</span>
+                            </button>
+                            <button (click)="openDeleteModal(payment)"
+                                class="p-2 text-stone-400 hover:text-error hover:bg-error/5 rounded-lg transition-all"
+                                title="Eliminar pago">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-zinc-50/50"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                    class="hover:bg-orange-50/30 transition-colors group"></tr>
+
+                <!-- Row shown when there is no matching data. -->
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell px-8 py-10 text-center text-on-surface-variant" colspan="7">
+                        No se encontraron pagos.
+                    </td>
+                </tr>
             </table>
         </div>
+        } @else {
+        <div class="divide-y divide-stone-100">
+            @for (payment of dataSource.filteredData | slice:(paginator?.pageIndex || 0)*(paginator?.pageSize ||
+            3):((paginator?.pageIndex || 0) + 1)*(paginator?.pageSize || 3); track payment.idPago) {
+            <div class="p-6 bg-white hover:bg-orange-50/30 transition-colors">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="font-bold text-lg text-primary">#{{ payment.idPago.toString().substring(0,8) | uppercase
+                        }}</div>
+                    <span class="px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-full"
+                        [ngClass]="statusMap[payment.estadoPedido].css">
+                        {{ statusMap[payment.estadoPedido].text }}
+                    </span>
+                </div>
+                <div class="mb-3 text-base font-bold text-on-surface">{{ payment.nombreCliente || 'Desconocido' }}</div>
+                <div class="flex flex-col gap-2 mb-4">
+                    <div class="flex justify-between text-sm text-on-surface-variant">
+                        <span class="font-bold">Monto:</span>
+                        <span class="font-black text-on-surface">{{ payment.monto | currency:'USD' }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-on-surface-variant">
+                        <span class="font-bold">Método:</span>
+                        <div class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">{{ typeMap[payment.metodoPago].icon
+                                }}</span>
+                            {{ typeMap[payment.metodoPago].text }}
+                        </div>
+                    </div>
+                    <div class="flex justify-between text-sm text-on-surface-variant">
+                        <span class="font-bold">Fecha:</span>
+                        <span>{{ payment.fechaPago | date:'mediumDate' }}</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 pt-4 border-t border-stone-100">
+                    <button (click)="openViewModal(payment)"
+                        class="flex-1 py-2 text-zinc-600 bg-surface-container hover:bg-surface-container-high font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">visibility</span> Ver
+                    </button>
+                    <button (click)="openEditForm(payment)"
+                        class="flex-1 py-2 text-zinc-600 bg-surface-container hover:bg-surface-container-high font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">edit</span> Editar
+                    </button>
+                    <button (click)="openDeleteModal(payment)"
+                        class="py-2 px-3 bg-error-container/10 text-error hover:bg-error-container/20 transition-colors rounded-lg flex justify-center items-center">
+                        <span class="material-symbols-outlined text-sm">delete</span>
+                    </button>
+                </div>
+            </div>
+            }
+            @if (dataSource.filteredData.length === 0) {
+            <div class="p-8 text-center text-stone-500">
+                No hay pagos que coincidan con los filtros actuales.
+            </div>
+            }
+        </div>
+        }
 
         <!-- Shared Pagination Component -->
-        <app-pagination
-            [totalItems]="totalElements"
-            [pageSize]="pageSize"
-            [currentPage]="currentPage"
-            itemName="transacciones"
-            (pageChange)="onPageChange($event)">
-        </app-pagination>
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of payments"></mat-paginator>
     </section>
 </div>
 }
@@ -168,15 +257,19 @@
 @if (viewMode === 'add' || viewMode === 'edit') {
 <div class="p-8 md:p-12 max-w-4xl mx-auto w-full animate-[dropdownFadeIn_0.2s_ease-out]">
     <!-- Breadcrumb -->
-    <nav class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4">
-        <button type="button" class="opacity-50 hover:opacity-100 transition-opacity" (click)="closeForm()">PAGOS</button>
+    <nav aria-label="Migas de pan de edición" class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4">
+        <button type="button" class="opacity-50 hover:opacity-100 transition-opacity"
+            (click)="closeForm()">PAGOS</button>
         <span class="opacity-50">/</span>
         <span>{{ viewMode === 'add' ? 'REGISTRAR' : 'EDITAR' }} PAGO</span>
     </nav>
     <!-- Header Section -->
     <div class="mb-10">
-        <h1 class="text-4xl font-extrabold tracking-tight font-headline text-on-surface mb-2">{{ viewMode === 'add' ? 'Registrar Nuevo Pago' : 'Editar Pago' }}</h1>
-        <p class="text-on-surface-variant max-w-lg">{{ viewMode === 'add' ? 'Completa los detalles de la transacción para actualizar el estado del pedido y el balance del ledger.' : 'Modifica los detalles de este pago.' }}</p>
+        <h1 class="text-4xl font-extrabold tracking-tight font-headline text-on-surface mb-2">{{ viewMode === 'add' ?
+            'Registrar Nuevo Pago' : 'Editar Pago' }}</h1>
+        <p class="text-on-surface-variant max-w-lg">{{ viewMode === 'add' ? 'Completa los detalles de la transacción
+            para actualizar el estado del pedido y el balance del ledger.' : 'Modifica los detalles de este pago.' }}
+        </p>
     </div>
     <!-- Registration Form Card -->
     <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/15 overflow-hidden">
@@ -184,15 +277,18 @@
             <form [formGroup]="paymentForm" (ngSubmit)="savePayment()" class="space-y-8">
                 <!-- Pedido Asociado -->
                 <div class="space-y-2">
-                    <label for="idPedido" class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
+                    <label for="idPedido"
+                        class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
                         <span class="material-symbols-outlined text-xs">shopping_cart</span>
                         Pedido Asociado <span class="text-error">*</span>
                     </label>
                     <div class="relative group">
-                        <select id="idPedido" formControlName="idPedido" class="w-full bg-surface-container border-none rounded-lg px-4 py-3 text-on-surface font-medium focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all appearance-none">
+                        <select id="idPedido" formControlName="idPedido"
+                            class="w-full bg-surface-container border-none rounded-lg px-4 py-3 text-on-surface font-medium focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all appearance-none">
                             <option [ngValue]="null" disabled>Seleccionar pedido...</option>
                             @for (p of paymentsData; track p.idPedido) {
-                                <option [value]="p.idPedido">{{ p.orderId }} — {{ p.clientName }} (Saldo: {{ p.amount | currency:'USD' }})</option>
+                            <option [value]="p.idPedido">{{ p.orderId }} — {{ p.clientName }} (Saldo: {{ p.amount |
+                                currency:'USD' }})</option>
                             }
                         </select>
                     </div>
@@ -200,31 +296,41 @@
                 <!-- Monto y Método -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-2">
-                        <label for="amount" class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
+                        <label for="amount"
+                            class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
                             <span class="material-symbols-outlined text-xs">payments</span>
                             Monto del Abono <span class="text-error">*</span>
                         </label>
                         <div class="relative">
                             <span class="absolute left-4 top-3 text-primary font-bold">$</span>
-                            <input id="amount" formControlName="amount" class="w-full bg-surface-container border-none rounded-lg pl-8 pr-4 py-3 text-on-surface font-bold text-lg focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all" placeholder="0.00" type="number" step="0.01" min="0.01" />
+                            <input id="amount" formControlName="amount"
+                                class="w-full bg-surface-container border-none rounded-lg pl-8 pr-4 py-3 text-on-surface font-bold text-lg focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all"
+                                placeholder="0.00" type="number" step="0.01" min="0.01" />
                         </div>
+                        @if (hasAmountError()) {
+                        <p class="text-error text-xs font-bold mt-1">El monto excede el saldo pendiente ({{
+                            getMaxAmount() | currency:'USD' }}).</p>
+                        }
                     </div>
                     <div class="space-y-2">
-                        <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
+                        <p id="payment-method-label"
+                            class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
                             <span class="material-symbols-outlined text-xs">account_balance_wallet</span>
                             Método de Pago <span class="text-error">*</span>
-                        </span>
-                        <div class="flex gap-3">
+                        </p>
+                        <div class="flex gap-3" aria-labelledby="payment-method-label">
                             <label class="flex-1">
                                 <input formControlName="type" class="hidden peer" type="radio" value="EFECTIVO" />
-                                <div class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-transparent bg-surface-container peer-checked:bg-secondary-container peer-checked:border-secondary transition-all cursor-pointer">
+                                <div
+                                    class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-transparent bg-surface-container peer-checked:bg-secondary-container peer-checked:border-secondary transition-all cursor-pointer">
                                     <span class="material-symbols-outlined mb-1">payments</span>
                                     <span class="text-xs font-bold">Efectivo</span>
                                 </div>
                             </label>
                             <label class="flex-1">
                                 <input formControlName="type" class="hidden peer" type="radio" value="TRANSFERENCIA" />
-                                <div class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-transparent bg-surface-container peer-checked:bg-secondary-container peer-checked:border-secondary transition-all cursor-pointer">
+                                <div
+                                    class="flex flex-col items-center justify-center p-4 rounded-xl border-2 border-transparent bg-surface-container peer-checked:bg-secondary-container peer-checked:border-secondary transition-all cursor-pointer">
                                     <span class="material-symbols-outlined mb-1">account_balance</span>
                                     <span class="text-xs font-bold">Transferencia</span>
                                 </div>
@@ -234,19 +340,25 @@
                 </div>
                 <!-- Referencia / Comprobante (opcional) -->
                 <div class="space-y-2">
-                    <label for="referenciaComprobante" class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
+                    <label for="referenciaComprobante"
+                        class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
                         <span class="material-symbols-outlined text-xs">receipt_long</span>
                         Referencia / N° Comprobante <span class="text-stone-400 font-normal">(opcional)</span>
                     </label>
-                    <input id="referenciaComprobante" formControlName="referenciaComprobante" class="w-full bg-surface-container border-none rounded-lg px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all" placeholder="Ej: TRF-2024-001" type="text" />
+                    <input id="referenciaComprobante" formControlName="referenciaComprobante"
+                        class="w-full bg-surface-container border-none rounded-lg px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all"
+                        placeholder="Ej: TRF-2024-001" type="text" />
                 </div>
 
                 <!-- Actions -->
-                <div class="px-8 py-6 bg-surface-container-low flex flex-col sm:flex-row-reverse gap-4 -mx-8 -mb-8 mt-8 border-t border-outline-variant/15">
-                    <button type="submit" [disabled]="!paymentForm.valid" class="flex-1 bg-gradient-to-br from-[#974300] to-[#fd8e4a] text-white py-4 rounded-xl font-bold tracking-wide shadow-lg shadow-orange-900/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50">
+                <div
+                    class="px-8 py-6 bg-surface-container-low flex flex-col sm:flex-row-reverse gap-4 -mx-8 -mb-8 mt-8 border-t border-outline-variant/15">
+                    <button type="submit" [disabled]="!paymentForm.valid || hasAmountError()"
+                        class="flex-1 bg-gradient-to-br from-[#974300] to-[#fd8e4a] text-white py-4 rounded-xl font-bold tracking-wide shadow-lg shadow-orange-900/20 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50">
                         {{ viewMode === 'add' ? 'Registrar Movimiento' : 'Guardar Cambios' }}
                     </button>
-                    <button type="button" (click)="closeForm()" class="flex-1 bg-white text-on-surface-variant border border-outline-variant/30 py-4 rounded-xl font-bold tracking-wide hover:bg-neutral-100 transition-all">
+                    <button type="button" (click)="closeForm()"
+                        class="flex-1 bg-white text-on-surface-variant border border-outline-variant/30 py-4 rounded-xl font-bold tracking-wide hover:bg-neutral-100 transition-all">
                         Cancelar
                     </button>
                 </div>
@@ -256,93 +368,67 @@
 </div>
 }
 
-<!-- Form Success Modal -->
-@if (showFormSuccessModal) {
-    <div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
-        <button type="button" aria-label="Cerrar modal" class="absolute inset-0 w-full h-full border-none appearance-none block bg-on-background/40 backdrop-blur-sm cursor-default" (click)="closeFormSuccessModal(true)"></button>
-        <div class="relative bg-surface-container-lowest w-full max-w-lg rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
-            <div class="h-2 w-full bg-gradient-to-r from-primary to-primary-container"></div>
-            <div class="p-10 text-center">
-                <div class="relative mb-8 flex justify-center">
-                    <div class="absolute inset-0 bg-primary/10 rounded-full scale-150 blur-xl"></div>
-                    <div class="relative w-24 h-24 bg-gradient-to-br from-primary to-primary-container rounded-full flex items-center justify-center shadow-lg">
-                        <span class="material-symbols-outlined text-white text-5xl" style="font-variation-settings: 'wght' 600;">check_circle</span>
-                    </div>
-                </div>
-                <h2 class="text-3xl font-extrabold text-on-surface tracking-tight mb-4 font-headline">
-                    {{ viewMode === 'add' ? '¡Pago Registrado con Éxito!' : '¡Pago Actualizado!' }}
-                </h2>
-                <p class="text-on-surface-variant text-lg leading-relaxed font-body px-4">
-                    {{ viewMode === 'add' ? 'El movimiento ha sido registrado correctamente.' : 'Los detalles del pago han sido modificados.' }}
-                </p>
-                <div class="mt-10 flex flex-col gap-3">
-                    <button (click)="closeFormSuccessModal(true)" class="group relative flex items-center justify-center gap-2 w-full py-4 px-6 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold rounded-lg shadow-sm active:scale-[0.98] transition-all overflow-hidden">
-                        <span class="relative z-10">Ir a Pagos</span>
-                        <span class="material-symbols-outlined relative z-10 text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                    </button>
-                    <button (click)="closeFormSuccessModal(false)" class="w-full py-4 px-6 bg-secondary-container/30 text-on-secondary-container font-bold rounded-lg hover:bg-secondary-container/50 active:scale-[0.98] transition-all">
-                        {{ viewMode === 'add' ? 'Registrar otro pago' : 'Seguir editando' }}
-                    </button>
-                </div>
-                <button (click)="closeFormSuccessModal(true)" class="mt-6 text-stone-400 hover:text-primary transition-colors text-sm font-medium tracking-wide">
-                    Cerrar ventana
-                </button>
-            </div>
-        </div>
-    </div>
-}
+
 
 <!-- View Payment Modal -->
 @if (showViewModal && selectedPayment) {
-    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-background/20 backdrop-blur-sm">
-        <div class="absolute inset-0" (click)="closeViewModal()" (keydown.enter)="closeViewModal()"></div>
-        <div class="relative w-full max-w-2xl bg-surface-container-lowest rounded-2xl shadow-[0px_24px_48px_rgba(45,47,47,0.12)] overflow-hidden flex flex-col animate-[dropdownFadeIn_0.2s_ease-out]">
-            <!-- Modal Header -->
-            <div class="px-8 pt-8 pb-4 flex justify-between items-start">
-                <div>
-                    <h2 class="text-3xl font-headline font-extrabold tracking-tight text-on-surface">Detalle de Pago</h2>
-                    <p class="text-secondary font-medium mt-1">Pedido asociado: <span class="text-on-surface font-bold">#{{ selectedPayment.idPago }}</span></p>
-                </div>
-                <button (click)="closeViewModal()" class="p-2 hover:bg-surface-container rounded-full transition-colors active:scale-95">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-background/20 backdrop-blur-sm"
+    role="dialog" aria-modal="true" aria-label="Detalle del pago">
+    <button type="button" aria-label="Cerrar detalle"
+        class="absolute inset-0 bg-on-background/20 backdrop-blur-sm cursor-default border-none"
+        (click)="closeViewModal()"></button>
+    <div
+        class="relative w-full max-w-2xl bg-surface-container-lowest rounded-2xl shadow-[0px_24px_48px_rgba(45,47,47,0.12)] overflow-hidden flex flex-col animate-[dropdownFadeIn_0.2s_ease-out]">
+        <!-- Modal Header -->
+        <div class="px-8 pt-8 pb-4 flex justify-between items-start">
+            <div>
+                <h2 class="text-3xl font-headline font-extrabold tracking-tight text-on-surface">Detalle de Pago</h2>
+                <p class="text-secondary font-medium mt-1">Pedido asociado: <span class="text-on-surface font-bold">#{{
+                        selectedPayment.idPago }}</span></p>
             </div>
-            <!-- Modal Body (Editorial Layout) -->
-            <div class="px-8 py-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Left Column: Details -->
-                <div class="space-y-6">
-                    <div class="space-y-1">
-                        <p class="text-xs uppercase tracking-widest text-outline font-bold">Fecha y hora</p>
-                        <p class="text-on-surface font-semibold flex items-center gap-2">
-                            <span class="material-symbols-outlined text-primary text-xl">calendar_today</span>
-                            <span>{{ selectedPayment.fechaPago | date:'medium' }}</span>
-                        </p>
+            <button (click)="closeViewModal()"
+                class="p-2 hover:bg-surface-container rounded-full transition-colors active:scale-95">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <!-- Modal Body (Editorial Layout) -->
+        <div class="px-8 py-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Left Column: Details -->
+            <div class="space-y-6">
+                <div class="space-y-1">
+                    <p class="text-xs uppercase tracking-widest text-outline font-bold">Fecha y hora</p>
+                    <p class="text-on-surface font-semibold flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-xl">calendar_today</span>
+                        <span>{{ selectedPayment.fechaPago | date:'medium' }}</span>
+                    </p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-xs uppercase tracking-widest text-outline font-bold">Monto del Pago</p>
+                    <div class="text-4xl font-headline font-extrabold text-primary-dim tracking-tighter">
+                        <span>{{ selectedPayment.monto | currency:'USD' }}</span>
                     </div>
-                    <div class="space-y-1">
-                        <p class="text-xs uppercase tracking-widest text-outline font-bold">Monto del Pago</p>
-                        <div class="text-4xl font-headline font-extrabold text-primary-dim tracking-tighter">
-                            <span>{{ selectedPayment.monto | currency:'USD' }}</span>
-                        </div>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-xs uppercase tracking-widest text-outline font-bold">Tipo de pago</p>
-                        <p class="text-on-surface font-semibold flex items-center gap-2">
-                            <span class="material-symbols-outlined text-primary text-xl">{{ typeMap[selectedPayment.metodoPago].icon }}</span>
-                            <span>{{ typeMap[selectedPayment.metodoPago].text }}</span>
-                        </p>
-                    </div>
-                    <div class="space-y-1">
-                        <p class="text-xs uppercase tracking-widest text-outline font-bold">Usuario responsable</p>
-                        <div class="flex items-center gap-3 mt-2 bg-surface-container-low p-3 rounded-xl">
-                            <div>
-                                <p class="text-sm font-bold text-on-surface leading-none">{{ selectedPayment.nombreCliente }}</p>
-                                <p class="text-xs text-zinc-500">ID: {{ selectedPayment.idPedido }}</p>
-                            </div>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-xs uppercase tracking-widest text-outline font-bold">Tipo de pago</p>
+                    <p class="text-on-surface font-semibold flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-xl">{{
+                            typeMap[selectedPayment.metodoPago].icon }}</span>
+                        <span>{{ typeMap[selectedPayment.metodoPago].text }}</span>
+                    </p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-xs uppercase tracking-widest text-outline font-bold">Usuario responsable</p>
+                    <div class="flex items-center gap-3 mt-2 bg-surface-container-low p-3 rounded-xl">
+                        <div>
+                            <p class="text-sm font-bold text-on-surface leading-none">{{ selectedPayment.nombreCliente
+                                }}</p>
+                            <p class="text-xs text-zinc-500">ID: {{ selectedPayment.idPedido }}</p>
                         </div>
                     </div>
                 </div>
-                <!-- Right Column: Receipt Image -->
-                <!-- <div class="space-y-4">
+            </div>
+            <!-- Right Column: Receipt Image -->
+            <!-- <div class="space-y-4">
                     <p class="text-xs uppercase tracking-widest text-outline font-bold">Comprobante</p>
                     <div class="group relative rounded-xl overflow-hidden aspect-[3/4] bg-surface-container-high cursor-pointer ring-offset-4 focus-within:ring-2 focus-within:ring-primary">
                         @if (selectedPayment.voucherUrl) {
@@ -361,71 +447,15 @@
                         }
                     </div>
                 </div> -->
-            </div>
-            <!-- Modal Footer (Glass Bar Style Buttons) -->
-            <!-- <div class="px-8 py-8 mt-auto flex flex-col sm:flex-row-reverse gap-4">
+        </div>
+        <!-- Modal Footer (Glass Bar Style Buttons) -->
+        <!-- <div class="px-8 py-8 mt-auto flex flex-col sm:flex-row-reverse gap-4">
                 <button [disabled]="!selectedPayment.voucherUrl"
                     class="flex-1 bg-gradient-to-br from-primary to-primary-container text-on-primary font-headline font-bold py-4 px-8 rounded-xl shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">download</span>
                     Descargar Comprobante
                 </button>
             </div> -->
-        </div>
     </div>
-}
-
-<!-- Delete Payment Confirmation Modal -->
-@if (showDeleteModal && selectedPayment) {
-    <div class="fixed inset-0 z-[110] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeDeleteModal()" (keydown.enter)="closeDeleteModal()"></div>
-        <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
-            <div class="h-2 w-full bg-gradient-to-r from-error to-error-container"></div>
-            <div class="p-8 text-center">
-                <div class="relative mb-6 flex justify-center">
-                    <div class="absolute inset-0 bg-error/10 rounded-full scale-150 blur-xl"></div>
-                    <div class="relative w-20 h-20 bg-gradient-to-br from-error to-error-container rounded-full flex items-center justify-center shadow-lg">
-                        <span class="material-symbols-outlined text-white text-4xl">delete_forever</span>
-                    </div>
-                </div>
-                <h2 class="text-2xl font-extrabold text-on-surface tracking-tight mb-3 font-headline">¿Eliminar pago?</h2>
-                <p class="text-on-surface-variant text-base leading-relaxed font-body">
-                    ¿Estás seguro de que deseas eliminar este registro de pago de <span class="font-bold text-primary">{{ selectedPayment.monto | currency:'USD' }}</span>?
-                </p>
-                <div class="mt-8 flex flex-col gap-3">
-                    <button (click)="confirmDelete()" class="group relative flex items-center justify-center gap-2 w-full py-3.5 px-6 bg-gradient-to-br from-error to-error-container text-white font-bold rounded-lg shadow-sm active:scale-[0.98] transition-all overflow-hidden">
-                        <span class="relative z-10">Sí, eliminar pago</span>
-                        <span class="material-symbols-outlined relative z-10 text-xl group-hover:translate-x-1 transition-transform">delete</span>
-                    </button>
-                    <button (click)="closeDeleteModal()" class="w-full py-3.5 px-6 bg-surface-container text-on-surface font-bold rounded-lg hover:bg-surface-container-high active:scale-[0.98] transition-all">
-                        Cancelar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
-<!-- Success Delete Modal -->
-@if (showSuccessModal) {
-    <div class="fixed inset-0 z-[120] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" (click)="closeSuccessModal()" (keydown.enter)="closeSuccessModal()"></div>
-        <div class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
-            <div class="h-2 w-full bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
-            <div class="p-8 text-center">
-                <div class="relative mb-6 flex justify-center">
-                    <div class="absolute inset-0 bg-emerald-500/10 rounded-full scale-150 blur-xl"></div>
-                    <div class="relative w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-400 rounded-full flex items-center justify-center shadow-lg">
-                        <span class="material-symbols-outlined text-white text-4xl" style="font-variation-settings: 'wght' 600;">check_circle</span>
-                    </div>
-                </div>
-                <h2 class="text-2xl font-extrabold text-on-surface tracking-tight mb-3 font-headline">¡Pago Eliminado!</h2>
-                <p class="text-on-surface-variant text-base leading-relaxed font-body">El registro de pago ha sido eliminado exitosamente.</p>
-                <div class="mt-8">
-                    <button (click)="closeSuccessModal()" class="w-full py-3.5 px-6 bg-primary text-white font-bold rounded-lg hover:opacity-90 transition-all">
-                        Continuar
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+</div>
 }

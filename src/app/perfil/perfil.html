@@ -1,0 +1,106 @@
+<div class="p-6 md:p-10 space-y-10 animate-[dropdownFadeIn_0.3s_ease-out] max-w-5xl mx-auto">
+  <!-- Hero Header -->
+  <div class="flex flex-col gap-2">
+    <nav class="flex gap-2 text-xs font-bold tracking-[0.2em] text-orange-700 uppercase mb-2">
+      <span class="opacity-50">MI CUENTA</span>
+      <span class="opacity-50">/</span>
+      <span>PERFIL</span>
+    </nav>
+    <h2 class="text-4xl font-extrabold text-on-surface tracking-tighter mb-4">Mis Datos</h2>
+    <p class="text-on-surface-variant text-lg leading-relaxed max-w-2xl">
+      Gestiona tu información personal y de contacto para mantener tu perfil actualizado en el sistema.
+    </p>
+  </div>
+
+  <!-- Form Card -->
+  <div class="bg-white rounded-[2rem] p-8 md:p-12 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] border border-stone-50">
+
+    @if (errorMessage) {
+    <div class="bg-error/10 border border-error/20 rounded-xl p-4 flex gap-3 text-error mb-8">
+      <span class="material-symbols-outlined mt-0.5">error</span>
+      <p class="font-medium text-sm">{{ errorMessage }}</p>
+    </div>
+    }
+
+    @if (successMessage) {
+    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex gap-3 text-emerald-700 mb-8">
+      <span class="material-symbols-outlined mt-0.5">check_circle</span>
+      <p class="font-medium text-sm">{{ successMessage }}</p>
+    </div>
+    }
+
+    <form class="space-y-10" [formGroup]="perfilForm" (ngSubmit)="actualizarPerfil()">
+
+      <!-- Section: Identity -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        <div class="md:col-span-4">
+          <h3 class="text-xl font-bold text-orange-900 font-headline">Identidad</h3>
+          <p class="text-sm text-neutral-400 mt-1">Tus nombres y apellidos oficiales.</p>
+        </div>
+        <div class="md:col-span-8 space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label for="nombreInput" class="block text-sm font-bold text-on-surface">Nombre <span class="text-error">*</span></label>
+              <input id="nombreInput" formControlName="nombre"
+                class="w-full bg-surface-container border-none rounded-xl py-4 px-5 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all"
+                placeholder="Ej. Juan" type="text" />
+            </div>
+            <div class="space-y-2">
+              <label for="apellidosInput" class="block text-sm font-bold text-on-surface">Apellidos <span class="text-error">*</span></label>
+              <input id="apellidosInput" formControlName="apellidos"
+                class="w-full bg-surface-container border-none rounded-xl py-4 px-5 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all"
+                placeholder="Ej. Pérez" type="text" />
+            </div>
+          </div>
+          @if ((nombreControl?.invalid && nombreControl?.touched) || (apellidosControl?.invalid &&
+          apellidosControl?.touched)) {
+          <p class="text-error text-xs flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">error</span> Verifica los nombres (solo letras, máx. 50).
+          </p>
+          }
+        </div>
+      </div>
+
+      <div class="h-[1px] bg-neutral-100 w-full"></div>
+
+      <!-- Section: Contact -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        <div class="md:col-span-4">
+          <h3 class="text-xl font-bold text-orange-900 font-headline">Contacto</h3>
+          <p class="text-sm text-neutral-400 mt-1">Cómo podemos localizarte.</p>
+        </div>
+        <div class="md:col-span-8">
+          <label for="telefonoInput" class="block text-sm font-bold text-on-surface mb-2">Teléfono Móvil <span
+              class="text-error">*</span></label>
+          <div class="relative group">
+            <span
+              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">phone</span>
+            <input id="telefonoInput" formControlName="telefono"
+              class="w-full bg-surface-container border-none rounded-xl py-4 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all"
+              placeholder="3001234567" type="text" maxlength="10" />
+          </div>
+          @if (telefonoControl?.invalid && telefonoControl?.touched) {
+          <p class="text-error text-xs mt-2 flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">error</span> El teléfono debe tener 10 dígitos.
+          </p>
+          }
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex justify-end gap-4 pt-10 border-t border-neutral-100">
+        <button (click)="goBack()" type="button"
+          class="px-8 py-4 rounded-xl text-neutral-600 font-bold hover:bg-neutral-100 transition-colors">
+          Descartar
+        </button>
+        <button type="submit" [disabled]="isLoading || perfilForm.invalid"
+          class="px-10 py-4 rounded-xl bg-gradient-to-br from-[#974300] to-[#fd8e4a] text-white font-bold shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2">
+          @if (isLoading) {
+          <span class="material-symbols-outlined animate-spin">progress_activity</span>
+          }
+          <span>Aceptar</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

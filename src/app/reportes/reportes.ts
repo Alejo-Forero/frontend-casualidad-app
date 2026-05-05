@@ -1,18 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectorRef, DestroyRef, inject, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PaginationComponent } from '../shared/pagination/pagination';
 import { IncomeReportDTO, PendingBalanceDTO, TopProductDTO } from '../core/models/report.dto';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
+import { MatSortModule, MatSort } from '@angular/material/sort';
+import { PaymentService } from '../core/services/payment.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-reportes',
   standalone: true,
-  imports: [CommonModule, FormsModule, PaginationComponent],
+  imports: [CommonModule, FormsModule, MatTableModule, MatPaginatorModule, MatSortModule],
   templateUrl: './reportes.html',
   styleUrls: ['./reportes.css']
 })
-export class ReportesComponent implements OnInit {
-  // Estado Limpio (Clean UI)
+export class ReportesComponent implements OnInit, AfterViewInit {
+  private readonly paymentService = inject(PaymentService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
+
   incomeReport: IncomeReportDTO = {
     dateFrom: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0],
     dateTo: new Date().toISOString().split('T')[0],
@@ -22,20 +29,24 @@ export class ReportesComponent implements OnInit {
     breakdown: []
   };
 
-  pendingBalances: PendingBalanceDTO[] = [];
-  paginatedPendingBalances: PendingBalanceDTO[] = [];
-  
+  dataSource = new MatTableDataSource<PendingBalanceDTO>([]);
+  displayedColumns: string[] = ['cliente', 'codigo', 'fechaEntrega', 'montoTotal', 'pendiente'];
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
   topProducts: TopProductDTO[] = [];
 
-  // Paginación para tabla de saldos
-  currentPage = 1;
-  pageSize = 5;
-
   ngOnInit() {
-    this.updatePaginatedBalances();
+    this.fetchIngresos();
+    this.fetchSaldos();
   }
 
-  // Helper para el porcentaje de métodos de pago
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
   get cashPercentage(): number {
     if (this.incomeReport.totalIncome === 0) return 0;
     return (this.incomeReport.cashTotal / this.incomeReport.totalIncome) * 100;
@@ -46,24 +57,64 @@ export class ReportesComponent implements OnInit {
     return (this.incomeReport.transferTotal / this.incomeReport.totalIncome) * 100;
   }
 
-  // Paginación
-  onPageChange(page: number) {
-    this.currentPage = page;
-    this.updatePaginatedBalances();
-  }
-
-  private updatePaginatedBalances() {
-    const start = (this.currentPage - 1) * this.pageSize;
-    const end = start + this.pageSize;
-    this.paginatedPendingBalances = this.pendingBalances.slice(start, end);
-  }
-
-  // Simulación de actualización al cambiar fechas
   onDateChange() {
-    // Aquí se llamaría al servicio HTTP para traer los nuevos datos según el rango de fechas.
-    // Por ahora, solo reiniciamos la paginación.
-    this.currentPage = 1;
-    this.updatePaginatedBalances();
+    this.fetchIngresos();
+  }
+
+  fetchIngresos() {
+    this.paymentService.getReporteIngresos(this.incomeReport.dateFrom, this.incomeReport.dateTo)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res: any) => {
+          this.incomeReport.totalIncome = res?.totalGeneral || 0;
+          this.incomeReport.cashTotal = res?.totalEfectivo || 0;
+          this.incomeReport.transferTotal = res?.totalTransferencia || 0;
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => console.error('Error fetching ingresos:', err)
+      });
+  }
+
+  fetchSaldos() {
+    this.paymentService.getUnifiedSaldos()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res: any[]) => {
+          this.dataSource.data = res.map(p => {
+             const deliveryDate = new Date(p.date);
+             const diffTime = deliveryDate.getTime() - Date.now();
+             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+             return {
+               orderId: String(p.id),
+               orderCode: p.code,
+               clientName: p.client,
+               deliveryDate: p.date,
+               totalAmount: p.total,
+               pendingBalance: p.pending,
+               daysUntilDelivery: diffDays
+             };
+          });
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => console.error('Error fetching saldos:', err)
+      });
+  }
+
+  exportExcel() {
+    this.paymentService.exportarSaldosPendientes()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+      next: (blob: Blob) => {
+        const url = globalThis.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Saldos_Pendientes_${new Date().toISOString().split('T')[0]}.xlsx`;
+        a.click();
+        globalThis.URL.revokeObjectURL(url);
+      },
+      error: (err: any) => console.error('Error exportando:', err)
+    });
   }
 
   // Ranking colors

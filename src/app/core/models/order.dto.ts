@@ -9,29 +9,23 @@ export interface OrderProductDTO {
   cantidad: number;
   precioUnitario: number;
   subtotal: number;
+  observaciones?: string;
 }
 
-/**
- * Mapea PedidoResumenDto del backend (GET /api/v1/pedidos):
- *   { idPedido, codigoUnico, nombreCliente, estadoPedido, fechaEntrega, total, saldoPendiente }
- *
- * El campo `cliente` (objeto) solo viene en PedidoDetalleCompletoDto (GET /api/v1/pedidos/{id}).
- */
 export interface OrderSummaryDTO {
-  // ─── Campos PedidoResumenDto (listado) ───────────────────────────────────
   idPedido:       number;
   codigoUnico:    string;
-  nombreCliente:  string;         // campo directo en PedidoResumenDto
+  nombreCliente:  string;
   estadoPedido:   OrderStatus;
   fechaEntrega:   string;
   total:          number | null;
   saldoPendiente: number | null;
 
-  // ─── Campos PedidoDetalleCompletoDto (detalle) ───────────────────────────
-  cliente?:   OrderClientDTO;     // solo viene en /pedidos/{id}
-  idCliente?: number;             // puede venir en el cliente anidado
+  // Campos opcionales para detalle
+  cliente?:   OrderClientDTO;
+  idCliente?: number;
 
-  // ─── Aliases legacy para compatibilidad con templates ────────────────────
+  // Aliases legacy
   id:             string;
   code:           string | null;
   clientName:     string;
@@ -43,19 +37,44 @@ export interface OrderSummaryDTO {
 }
 
 export interface OrderItemDTO {
-  productId:     string;
+  productId:     string | number;
   productName:   string;
   quantity:      number;
   unitPrice:     number;
   subtotal:      number;
-  customization: string | null;
+  customization?: string | null;
+  observaciones?: string | null;
+  idDetalle?:     number | null;
 }
 
 export interface OrderDetailDTO extends OrderSummaryDTO {
   productos: OrderProductDTO[];
-  // Legacy fields
-  client?:          any;
+  client?:          OrderClientDTO;
   items?:           OrderItemDTO[];
+  historialAbonos?: {
+    data: any[];
+    totalElements: number;
+  };
   paymentsHistory?: any[];
 }
 
+export interface CreateOrderDTO {
+  idCliente:    number;
+  idUsuario:    number;
+  fechaEntrega: string;
+  detalles: {
+    idProducto:    number;
+    cantidad:      number;
+    observaciones: string;
+  }[];
+}
+
+export interface UpdateOrderDTO {
+  fechaEntrega?: string;
+  detalles: {
+    idDetalle?:    number | null;
+    idProducto:    number;
+    cantidad:      number;
+    observaciones: string;
+  }[];
+}

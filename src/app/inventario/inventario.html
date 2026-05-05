@@ -85,24 +85,41 @@
         </div>
 
         <!-- Desktop Table View -->
-        <div class="hidden md:block overflow-x-auto">
+        @if (!isMobile) {
+        <div class="overflow-x-auto">
             <table mat-table [dataSource]="dataSource" matSort class="w-full text-left">
+
+                <!-- ID Column -->
+                <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header
+                        class="px-8 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50">
+                        ID </th>
+                    <td mat-cell *matCellDef="let product" class="px-8 py-5 text-on-surface-variant font-medium text-xs">
+                        #{{ product.id }}
+                    </td>
+                </ng-container>
 
                 <!-- Artículo Column -->
                 <ng-container matColumnDef="name">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-8 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50"> Artículo </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header
+                        class="px-8 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50">
+                        Artículo </th>
                     <td mat-cell *matCellDef="let product" class="px-8 py-5">
                         <div>
-                            <p class="font-bold text-on-surface group-hover:text-primary transition-colors">{{ product.name }}</p>
+                            <p class="font-bold text-on-surface group-hover:text-primary transition-colors">{{
+                                product.name }}</p>
                         </div>
                     </td>
                 </ng-container>
 
                 <!-- Categoría Column -->
                 <ng-container matColumnDef="type">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50"> Categoría </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header
+                        class="px-6 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50">
+                        Categoría </th>
                     <td mat-cell *matCellDef="let product" class="px-6 py-5">
-                        <span class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full">
+                        <span
+                            class="px-3 py-1 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full">
                             {{ product.type | titlecase }}
                         </span>
                     </td>
@@ -110,10 +127,13 @@
 
                 <!-- Stock Column -->
                 <ng-container matColumnDef="stock">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50"> Stock </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header
+                        class="px-6 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50">
+                        Stock </th>
                     <td mat-cell *matCellDef="let product" class="px-6 py-5">
                         <div class="space-y-1">
-                            <p class="text-sm font-bold" [ngClass]="product.isLowStock ? 'text-error' : 'text-on-surface'">
+                            <p class="text-sm font-bold"
+                                [ngClass]="product.isLowStock ? 'text-error' : 'text-on-surface'">
                                 {{ product.stock }} {{ product.unit.name }}
                             </p>
                             <div class="w-24 h-1.5 bg-surface-container rounded-full overflow-hidden">
@@ -127,7 +147,9 @@
 
                 <!-- Estado Column -->
                 <ng-container matColumnDef="estado">
-                    <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50"> Estado </th>
+                    <th mat-header-cell *matHeaderCellDef
+                        class="px-6 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50">
+                        Estado </th>
                     <td mat-cell *matCellDef="let product" class="px-6 py-5">
                         @if (product.stock === 0) {
                         <span class="flex items-center gap-1.5 text-error text-[11px] font-black uppercase">
@@ -145,45 +167,41 @@
                     </td>
                 </ng-container>
 
-                <!-- Precio Column -->
-                <ng-container matColumnDef="precio">
-                    <th mat-header-cell *matHeaderCellDef class="px-6 py-4 text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50"> Precio (Compra) </th>
-                    <td mat-cell *matCellDef="let product" class="px-6 py-5 font-bold text-on-surface">
-                        {{ product.purchasePrice || product.productionCost || 0 | currency:'USD' }}
-                    </td>
-                </ng-container>
 
                 <!-- Acciones Column -->
                 <ng-container matColumnDef="acciones">
-                    <th mat-header-cell *matHeaderCellDef class="px-8 py-4 text-right text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50"> Acciones </th>
+                    <th mat-header-cell *matHeaderCellDef
+                        class="px-8 py-4 text-right text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50">
+                        Acciones </th>
                     <td mat-cell *matCellDef="let product" class="px-8 py-5 text-right">
-                        <div class="flex items-center justify-end gap-2">
-                            <button mat-icon-button (click)="openEntradaModal(product)"
-                                color="primary"
+                        <div class="flex items-center justify-end gap-1">
+                            <button (click)="openEntradaModal(product)"
+                                class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
                                 title="Registrar Entrada de Stock">
-                                <mat-icon>add_circle</mat-icon>
+                                <span class="material-symbols-outlined text-xl">add_circle</span>
                             </button>
-                            <button mat-icon-button (click)="openAjusteModal(product)"
-                                color="primary"
+                            <button (click)="openAjusteModal(product)"
+                                class="p-2 text-zinc-500 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                                 title="Ajustar Inventario">
-                                <mat-icon>tune</mat-icon>
+                                <span class="material-symbols-outlined text-xl">tune</span>
                             </button>
-                            <button mat-icon-button (click)="openEditForm(product)"
-                                class="text-zinc-400 hover:text-primary transition-colors"
+                            <button (click)="openEditForm(product)"
+                                class="p-2 text-zinc-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                                 title="Editar">
-                                <mat-icon>edit</mat-icon>
+                                <span class="material-symbols-outlined text-xl">edit</span>
                             </button>
-                            <button mat-icon-button (click)="openDeleteModal(product)"
-                                color="warn"
+                            <button (click)="openDeleteModal(product)"
+                                class="p-2 text-zinc-400 hover:text-error hover:bg-error/10 rounded-lg transition-colors"
                                 title="Eliminar">
-                                <mat-icon>delete</mat-icon>
+                                <span class="material-symbols-outlined text-xl">delete</span>
                             </button>
                         </div>
                     </td>
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-stone-50/50 transition-colors group"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                    class="hover:bg-stone-50/50 transition-colors group"></tr>
 
                 <!-- Row shown when there is no matching data. -->
                 <tr class="mat-row" *matNoDataRow>
@@ -193,47 +211,58 @@
                 </tr>
             </table>
         </div>
-
+        } @else {
         <!-- Mobile Cards View -->
-        <div class="block md:hidden divide-y divide-zinc-100">
-            @for (product of dataSource.filteredData | slice:(paginator?.pageIndex || 0)*(paginator?.pageSize || 5):((paginator?.pageIndex || 0) + 1)*(paginator?.pageSize || 5); track product.id) {
+        <div class="divide-y divide-zinc-100">
+            @for (product of dataSource.filteredData | slice:(paginator?.pageIndex || 0)*(paginator?.pageSize ||
+            5):((paginator?.pageIndex || 0) + 1)*(paginator?.pageSize || 5); track product.id) {
             <div class="p-6 bg-white hover:bg-stone-50/50 transition-colors">
                 <div class="flex justify-between items-start mb-3">
                     <div>
                         <p class="font-bold text-on-surface">{{ product.name }}</p>
-                        <span class="px-2 py-0.5 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full mt-1 inline-block">{{ product.type | titlecase }}</span>
+                        <span
+                            class="px-2 py-0.5 bg-surface-container text-on-surface-variant text-xs font-bold rounded-full mt-1 inline-block">{{
+                            product.type | titlecase }}</span>
                     </div>
                     @if (product.stock === 0) {
-                    <span class="flex items-center gap-1.5 text-error text-[11px] font-black uppercase"><span class="w-2 h-2 rounded-full bg-error"></span>Sin Stock</span>
+                    <span class="flex items-center gap-1.5 text-error text-[11px] font-black uppercase"><span
+                            class="w-2 h-2 rounded-full bg-error"></span>Sin Stock</span>
                     } @else if (product.isLowStock) {
-                    <span class="flex items-center gap-1.5 text-error text-[11px] font-black uppercase"><span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>Stock Bajo</span>
+                    <span class="flex items-center gap-1.5 text-error text-[11px] font-black uppercase"><span
+                            class="w-2 h-2 rounded-full bg-error animate-pulse"></span>Stock Bajo</span>
                     } @else {
-                    <span class="flex items-center gap-1.5 text-emerald-600 text-[11px] font-black uppercase"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Disponible</span>
+                    <span class="flex items-center gap-1.5 text-emerald-600 text-[11px] font-black uppercase"><span
+                            class="w-2 h-2 rounded-full bg-emerald-500"></span>Disponible</span>
                     }
                 </div>
 
                 <div class="flex justify-between items-center mb-4">
                     <div>
                         <div class="text-xs font-bold text-stone-400 mb-1">STOCK</div>
-                        <p class="text-sm font-bold" [ngClass]="product.isLowStock ? 'text-error' : 'text-on-surface'">{{ product.stock }} {{ product.unit.name }}</p>
+                        <p class="text-sm font-bold" [ngClass]="product.isLowStock ? 'text-error' : 'text-on-surface'">
+                            {{ product.stock }} {{ product.unit.name }}</p>
                     </div>
                     <div class="text-right">
-                        <div class="text-xs font-bold text-stone-400 mb-1">PRECIO COMPRA</div>
-                        <p class="text-sm font-bold text-on-surface">{{ product.purchasePrice || product.productionCost || 0 | currency:'USD' }}</p>
+                        <div class="text-xs font-bold text-stone-400 mb-1">ID</div>
+                        <p class="text-sm font-bold text-on-surface">#{{ product.id }}</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2 pt-4 border-t border-zinc-100">
-                    <button (click)="openEntradaModal(product)" class="flex-1 py-2 text-primary bg-primary/10 hover:bg-primary/20 font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
+                    <button (click)="openEntradaModal(product)"
+                        class="flex-1 py-2 text-primary bg-primary/10 hover:bg-primary/20 font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
                         <span class="material-symbols-outlined text-sm">add_circle</span> Entrada
                     </button>
-                    <button (click)="openAjusteModal(product)" class="flex-1 py-2 text-zinc-600 bg-surface-container hover:bg-surface-container-high font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
+                    <button (click)="openAjusteModal(product)"
+                        class="flex-1 py-2 text-zinc-600 bg-surface-container hover:bg-surface-container-high font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
                         <span class="material-symbols-outlined text-sm">tune</span> Ajustar
                     </button>
-                    <button (click)="openEditForm(product)" class="py-2 px-3 text-zinc-600 bg-surface-container hover:bg-surface-container-high rounded-lg transition-colors flex justify-center items-center">
+                    <button (click)="openEditForm(product)"
+                        class="py-2 px-3 text-zinc-600 bg-surface-container hover:bg-surface-container-high rounded-lg transition-colors flex justify-center items-center">
                         <span class="material-symbols-outlined text-sm">edit</span>
                     </button>
-                    <button (click)="openDeleteModal(product)" class="py-2 px-3 text-error bg-error-container/10 hover:bg-error-container/20 rounded-lg transition-colors flex justify-center items-center">
+                    <button (click)="openDeleteModal(product)"
+                        class="py-2 px-3 bg-error-container/10 text-error hover:bg-error-container/20 font-bold rounded-lg transition-colors flex justify-center items-center">
                         <span class="material-symbols-outlined text-sm">delete</span>
                     </button>
                 </div>
@@ -245,8 +274,10 @@
             </div>
             }
         </div>
+        }
 
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Seleccionar página de inventario"></mat-paginator>
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"
+            aria-label="Seleccionar página de inventario"></mat-paginator>
     </section>
 </div>
 }
@@ -268,142 +299,184 @@
         </p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <div
-            class="md:col-span-8 bg-surface-container-lowest rounded-xl p-8 shadow-[0px_12px_32px_rgba(45,47,47,0.06)]">
-            <form [formGroup]="inventoryForm" (ngSubmit)="saveProduct()" class="space-y-8">
+            class="lg:col-span-8 bg-surface-container-lowest rounded-2xl p-8 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] border border-orange-100/50">
+            <form [formGroup]="inventoryForm" (ngSubmit)="saveProduct()" class="space-y-12">
                 @if (errorMessage) {
-                    <div class="bg-red-50 border-l-4 border-error p-4 rounded-r-lg flex items-start gap-3 animate-[dropdownFadeIn_0.2s_ease-out]">
-                        <span class="material-symbols-outlined text-error">error</span>
-                        <p class="text-error font-medium text-sm">{{ errorMessage }}</p>
-                    </div>
+                <div
+                    class="bg-red-50 border-l-4 border-error p-4 rounded-r-lg flex items-start gap-3 animate-[dropdownFadeIn_0.2s_ease-out]">
+                    <span class="material-symbols-outlined text-error">error</span>
+                    <p class="text-error font-medium text-sm">{{ errorMessage }}</p>
+                </div>
                 }
-                <div class="space-y-2">
-                    <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>Nombre del Artículo</mat-label>
-                        <input matInput formControlName="name" placeholder="Ej: Papel Bond 80g" />
-                        @if (inventoryForm.get('name')?.invalid && (inventoryForm.get('name')?.dirty || inventoryForm.get('name')?.touched)) {
-                            <mat-error>El nombre es obligatorio.</mat-error>
-                        }
-                    </mat-form-field>
-                </div>
 
-                <div class="space-y-2">
-                    <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>Cantidad Inicial (Stock)</mat-label>
-                        <input matInput type="number" formControlName="stock" step="any" />
-                        @if (inventoryForm.get('stock')?.invalid && (inventoryForm.get('stock')?.dirty || inventoryForm.get('stock')?.touched)) {
-                            <mat-error>La cantidad no puede ser negativa ni estar vacía.</mat-error>
-                        }
-                    </mat-form-field>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>Tipo de Artículo</mat-label>
-                        <mat-select formControlName="type">
-                            <mat-option value="" disabled>Selecciona un tipo...</mat-option>
-                            <mat-option value="INSUMO">Insumo</mat-option>
-                            <mat-option value="ELABORADO">Elaborado</mat-option>
-                            <mat-option value="TRANSFORMADO">Transformado</mat-option>
-                            <mat-option value="REVENTA">Reventa</mat-option>
-                        </mat-select>
-                        @if (inventoryForm.get('type')?.invalid && (inventoryForm.get('type')?.dirty || inventoryForm.get('type')?.touched)) {
-                            <mat-error>El tipo es obligatorio.</mat-error>
-                        }
-                    </mat-form-field>
-                    
-                    <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>Unidad de Medida</mat-label>
-                        <input matInput formControlName="unit" placeholder="Ej: Resma, Kg, Unidad" />
-                        @if (inventoryForm.get('unit')?.invalid && (inventoryForm.get('unit')?.dirty || inventoryForm.get('unit')?.touched)) {
-                            <mat-error>La unidad es obligatoria.</mat-error>
-                        }
-                    </mat-form-field>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>Stock mínimo</mat-label>
-                        <input matInput type="number" formControlName="minStock" step="any" placeholder="0" />
-                        <mat-icon matPrefix>inventory</mat-icon>
-                    </mat-form-field>
-                    
-                    <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>Costo de producción</mat-label>
-                        <span matTextPrefix>$&nbsp;</span>
-                        <input matInput type="number" formControlName="productionCost" step="0.01" />
-                        @if (inventoryForm.get('productionCost')?.invalid && (inventoryForm.get('productionCost')?.dirty || inventoryForm.get('productionCost')?.touched)) {
-                            <mat-error>El costo debe ser al menos 1.</mat-error>
-                        }
-                    </mat-form-field>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>Precio de venta (Opcional)</mat-label>
-                        <span matTextPrefix>$&nbsp;</span>
-                        <input matInput type="number" formControlName="salePrice" step="0.01" placeholder="0.00" />
-                        @if (inventoryForm.get('salePrice')?.invalid && (inventoryForm.get('salePrice')?.dirty || inventoryForm.get('salePrice')?.touched)) {
-                            <mat-error>El precio debe ser al menos 1.</mat-error>
-                        }
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline" class="w-full">
-                        <mat-label>% Sobrante o residuos</mat-label>
-                        <input matInput type="number" formControlName="wastePercent" step="0.1" max="100" placeholder="0" />
-                        <mat-icon matPrefix>recycling</mat-icon>
-                    </mat-form-field>
-                </div>
-
-                <!-- Components Section -->
-                @if (inventoryForm.get('type')?.value === 'ELABORADO' || inventoryForm.get('type')?.value ===
-                'TRANSFORMADO') {
-                <div class="pt-6 border-t border-stone-100">
-                    <h3 class="font-headline font-bold text-lg text-on-background tracking-tight mb-4">Componentes del
-                        Artículo</h3>
-                    <div class="space-y-4" formArrayName="components">
-                        <div class="flex justify-between items-center">
-                            <span class="font-headline font-bold text-xs tracking-tight text-stone-500 uppercase">Lista
-                                de Componentes</span>
-                            <button type="button" (click)="addComponent()"
-                                class="bg-primary/10 text-primary px-4 py-2 rounded-lg font-bold hover:bg-primary/20 transition-colors text-sm flex items-center gap-2">
-                                <span class="material-symbols-outlined text-sm">add</span> Añadir
-                            </button>
+                <!-- Sección 1: Identificación del Artículo -->
+                <section>
+                    <div class="flex items-center gap-3 mb-6">
+                        <span
+                            class="w-8 h-8 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm">01</span>
+                        <h2 class="text-xl font-bold tracking-tight text-on-surface">Información General</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2 md:col-span-2">
+                            <label for="nameInput"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Nombre del Artículo</label>
+                            <div class="relative">
+                                <span
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">inventory_2</span>
+                                <input id="nameInput" formControlName="name" placeholder="Ej: Papel Bond 80g"
+                                    class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium">
+                            </div>
+                            @if (inventoryForm.get('name')?.invalid && (inventoryForm.get('name')?.dirty ||
+                            inventoryForm.get('name')?.touched)) {
+                            <p class="text-[10px] text-error font-bold mt-1 ml-2">El nombre es obligatorio.</p>
+                            }
                         </div>
 
+                        <div class="space-y-2">
+                            <label for="typeSelect"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Tipo
+                                de Artículo</label>
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-select id="typeSelect" formControlName="type">
+                                    <mat-option value="INSUMO">Insumo</mat-option>
+                                    <mat-option value="ELABORADO">Elaborado</mat-option>
+                                    <mat-option value="TRANSFORMADO">Transformado</mat-option>
+                                    <mat-option value="REVENTA">Reventa</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="unidadInput"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Unidad
+                                de Medida</label>
+                            <input id="unidadInput" formControlName="unit" placeholder="Ej: Resma, Kg, Unidad"
+                                class="w-full bg-surface-container border-none rounded-xl py-3.5 px-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sección 2: Stock y Costos -->
+                <section>
+                    <div class="flex items-center gap-3 mb-6">
+                        <span
+                            class="w-8 h-8 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm">02</span>
+                        <h2 class="text-xl font-bold tracking-tight text-on-surface">Gestión de Stock y Costos</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label for="stockInput"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Stock
+                                Actual</label>
+                            <div class="relative">
+                                <span
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">inventory</span>
+                                <input id="stockInput" type="number" formControlName="stock" step="any"
+                                    class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="minStockInput"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Stock
+                                Mínimo</label>
+                            <div class="relative">
+                                <span
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">notifications_active</span>
+                                <input id="minStockInput" type="number" formControlName="minStock" step="any"
+                                    class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="costInput"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Costo
+                                de Producción</label>
+                            <div class="relative">
+                                <span
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">$</span>
+                                <input id="costInput" type="number" formControlName="productionCost" step="0.01"
+                                    class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="priceInput"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Precio
+                                de Venta</label>
+                            <div class="relative">
+                                <span
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">$</span>
+                                <input id="priceInput" type="number" formControlName="salePrice" step="0.01"
+                                    class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 md:col-span-2">
+                            <label for="wasteInput" class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">% Desperdicio / Sobrante</label>
+                            <div class="relative">
+                                <span
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">recycling</span>
+                                <input id="wasteInput" type="number" formControlName="wastePercent" step="0.1" max="100"
+                                    class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
+                                <span
+                                    class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">%</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sección 3: Componentes (Dinámico) -->
+                @if (inventoryForm.get('type')?.value === 'ELABORADO' || inventoryForm.get('type')?.value ===
+                'TRANSFORMADO') {
+                <section class="animate-[dropdownFadeIn_0.3s_ease-out]">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <span
+                                class="w-8 h-8 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm">03</span>
+                            <h2 class="text-xl font-bold tracking-tight text-on-surface">Composición</h2>
+                        </div>
+                        <button type="button" (click)="addComponent()"
+                            class="px-4 py-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 font-bold transition-all flex items-center gap-2 text-sm shadow-sm">
+                            <span class="material-symbols-outlined text-[18px]">add_circle</span> Añadir Componente
+                        </button>
+                    </div>
+
+                    <div class="space-y-4" formArrayName="components">
                         @if (componentsFormArray.length > 0) {
-                        <div class="overflow-x-auto rounded-lg border border-stone-100">
-                            <table class="w-full text-left text-sm font-body">
-                                <thead class="bg-stone-50 border-b border-stone-100">
+                        <div class="bg-surface-container-low rounded-2xl overflow-hidden border border-zinc-100">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-zinc-50/50">
                                     <tr>
                                         <th
-                                            class="px-4 py-3 font-bold text-stone-600 uppercase tracking-wider text-[11px]">
+                                            class="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">
                                             ID Insumo</th>
                                         <th
-                                            class="px-4 py-3 font-bold text-stone-600 uppercase tracking-wider text-[11px] w-28">
-                                            Cantidad usada</th>
+                                            class="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest text-center">
+                                            Cant. Usada</th>
                                         <th
-                                            class="px-4 py-3 font-bold text-stone-600 uppercase tracking-wider text-[11px] w-16 text-center">
-                                            Acciones</th>
+                                            class="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest text-right w-20">
+                                            Acción</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-stone-50">
+                                <tbody class="divide-y divide-zinc-50">
                                     @for (comp of componentsFormArray.controls; track $index; let i = $index) {
-                                    <tr [formGroupName]="i" class="hover:bg-stone-50/50 transition-colors group">
-                                        <td class="px-4 py-2">
-                                            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
-                                                <input matInput type="number" formControlName="idInsumo" min="1" step="1" placeholder="ID del insumo" />
-                                            </mat-form-field>
+                                    <tr [formGroupName]="i" class="hover:bg-orange-50/20 transition-colors">
+                                        <td class="px-6 py-3">
+                                            <input type="number" formControlName="idInsumo" placeholder="ID"
+                                                class="w-full bg-white border border-zinc-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all">
                                         </td>
-                                        <td class="px-4 py-2">
-                                            <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
-                                                <input matInput type="number" formControlName="cantidadUsada" step="0.001" min="0.001" placeholder="0.000" class="text-right" />
-                                            </mat-form-field>
+                                        <td class="px-6 py-3">
+                                            <input type="number" formControlName="cantidadUsada" step="0.001"
+                                                placeholder="0.000"
+                                                class="w-32 mx-auto block bg-white border border-zinc-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all text-center font-medium">
                                         </td>
-                                        <td class="px-4 py-2 text-center">
-                                            <button mat-icon-button type="button" color="warn" (click)="removeComponent(i)">
-                                                <mat-icon>delete</mat-icon>
+                                        <td class="px-6 py-3 text-right">
+                                            <button type="button" (click)="removeComponent(i)"
+                                                class="text-stone-300 hover:text-error transition-colors">
+                                                <span class="material-symbols-outlined text-lg">delete</span>
                                             </button>
                                         </td>
                                     </tr>
@@ -413,22 +486,25 @@
                         </div>
                         } @else {
                         <div
-                            class="bg-stone-50 text-stone-500 text-center p-6 rounded-lg text-sm border border-dashed border-stone-200">
-                            No se han añadido componentes.
+                            class="bg-surface-container-low border-2 border-dashed border-zinc-200 rounded-2xl p-10 text-center">
+                            <span class="material-symbols-outlined text-zinc-300 text-5xl mb-3">list_alt</span>
+                            <p class="text-stone-400 font-medium">No se han definido componentes para este artículo.</p>
                         </div>
                         }
                     </div>
-                </div>
+                </section>
                 }
 
-                <div class="pt-6 border-t border-stone-100 flex items-center justify-end gap-4">
-                    <button (click)="closeForm()"
-                        class="px-6 py-3 rounded-lg font-bold text-stone-500 hover:bg-stone-50 transition-colors"
-                        type="button">Cancelar</button>
-                    <button [disabled]="!inventoryForm.valid"
-                        class="bg-gradient-to-br from-primary to-primary-container text-on-primary px-8 py-3 rounded-lg font-bold shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                        type="submit">
-                        {{ viewMode === 'add' ? 'Agregar Artículo' : 'Actualizar Artículo' }}
+                <div class="pt-8 border-t border-orange-100 flex items-center justify-end gap-4">
+                    <button (click)="closeForm()" type="button"
+                        class="px-8 py-3.5 rounded-xl text-stone-500 font-bold hover:bg-stone-50 transition-all">
+                        Cancelar
+                    </button>
+                    <button [disabled]="!inventoryForm.valid" type="submit"
+                        class="px-10 py-3.5 rounded-xl bg-gradient-to-br from-primary to-primary-container text-white font-bold shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[20px]">{{ viewMode === 'add' ? 'add_circle' :
+                            'save' }}</span>
+                        {{ viewMode === 'add' ? 'Registrar Artículo' : 'Guardar Cambios' }}
                     </button>
                 </div>
             </form>
@@ -439,7 +515,8 @@
                 <h3 class="font-headline font-bold text-primary mb-2">Consejo</h3>
                 <p class="text-sm text-stone-600 leading-relaxed">Para artículos <b>Elaborados</b> o
                     <b>Transformados</b>, asegúrate de agregar todos los componentes necesarios para calcular
-                    correctamente el costo de producción.</p>
+                    correctamente el costo de producción.
+                </p>
             </div>
             <div class="bg-stone-100 rounded-xl p-6 border-l-4 border-stone-400">
                 <h3 class="font-headline font-bold text-stone-700 mb-2">Ayuda</h3>
@@ -451,7 +528,3 @@
     </div>
 </main>
 }
-
-
-
-

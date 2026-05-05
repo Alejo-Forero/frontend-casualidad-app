@@ -134,7 +134,7 @@
                         <p class="text-[10px] text-neutral-500 uppercase">{{ currentUser.email }}</p>
                     </div>
                     <a class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
-                        href="javascript:void(0)">
+                        routerLink="/perfil" (click)="closeProfileDropdown()">
                         <span class="material-symbols-outlined text-xl opacity-70">account_circle</span>
                         <span class="font-semibold">Mi Perfil</span>
                     </a>
@@ -144,11 +144,11 @@
                         <span class="font-semibold">Configuración</span>
                     </a>
                     <div class="mx-2 my-1 border-t border-surface-variant/10"></div>
-                    <a class="flex items-center gap-3 px-4 py-2.5 text-sm text-white bg-primary mx-2 rounded-lg hover:opacity-90 shadow-sm transition-all"
-                        routerLink="/login">
+                    <button class="flex items-center gap-3 px-4 py-2.5 text-sm text-white bg-primary mx-2 rounded-lg hover:opacity-90 shadow-sm transition-all"
+                        (click)="openLogoutModal($event)">
                         <span class="material-symbols-outlined text-xl">logout</span>
                         <span class="font-bold">Cerrar Sesión</span>
-                    </a>
+                    </button>
                 </div>
                 }
             </div>
@@ -186,7 +186,7 @@
             <p class="px-4 py-2 text-[10px] font-black text-neutral-400 uppercase tracking-[0.15em]">Seguridad y
                 Cuenta</p>
             <a class="flex items-center justify-between px-4 py-4 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors group"
-                href="javascript:void(0)">
+                routerLink="/cambiar-contrasena" (click)="closeConfigModal()">
                 <div class="flex items-center gap-4">
                     <div
                         class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-primary">
@@ -198,7 +198,7 @@
                     class="material-symbols-outlined text-neutral-300 group-hover:text-primary transition-colors">chevron_right</span>
             </a>
             <a class="flex items-center justify-between px-4 py-4 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors group"
-                href="javascript:void(0)">
+                routerLink="/restablecer-correo" (click)="closeConfigModal()">
                 <div class="flex items-center gap-4">
                     <div
                         class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-primary">
@@ -210,7 +210,7 @@
                     class="material-symbols-outlined text-neutral-300 group-hover:text-primary transition-colors">chevron_right</span>
             </a>
             <a class="flex items-center justify-between px-4 py-4 rounded-xl hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors group"
-                href="javascript:void(0)">
+                routerLink="/perfil" (click)="closeConfigModal()">
                 <div class="flex items-center gap-4">
                     <div
                         class="w-10 h-10 rounded-full bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center text-primary">
@@ -242,19 +242,18 @@
 @if (showDeleteModal) {
 <div class="fixed inset-0 z-[80] flex items-center justify-center p-4">
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeDeleteModal()"
-        (keydown.enter)="closeDeleteModal()"></div>
+    <button type="button" aria-label="Cerrar modal" class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm cursor-default border-none" (click)="closeDeleteModal()"></button>
     <!-- Modal Container -->
     <div
         class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
         <!-- Top Accent Glow - Red for danger -->
-        <div class="h-2 w-full bg-gradient-to-r from-error to-error-container"></div>
+        <div class="h-2 w-full bg-error"></div>
         <div class="p-8 text-center">
             <!-- Warning Icon -->
             <div class="relative mb-6 flex justify-center">
                 <div class="absolute inset-0 bg-error/10 rounded-full scale-150 blur-xl"></div>
                 <div
-                    class="relative w-20 h-20 bg-gradient-to-br from-error to-error-container rounded-full flex items-center justify-center shadow-lg">
+                    class="relative w-20 h-20 bg-error rounded-full flex items-center justify-center shadow-lg">
                     <span class="material-symbols-outlined text-white text-4xl"
                         style="font-variation-settings: 'wght' 600;">warning</span>
                 </div>
@@ -273,7 +272,7 @@
             <div class="mt-8 flex flex-col gap-3">
                 <!-- Confirm Delete Button -->
                 <button (click)="confirmDelete()"
-                    class="group relative flex items-center justify-center gap-2 w-full py-3.5 px-6 bg-gradient-to-br from-error to-error-container text-white font-bold rounded-lg shadow-sm active:scale-[0.98] transition-all overflow-hidden">
+                    class="group relative flex items-center justify-center gap-2 w-full py-3.5 px-6 bg-error text-white font-bold rounded-lg shadow-sm hover:opacity-90 active:scale-[0.98] transition-all overflow-hidden">
                     <span class="relative z-10">Sí, eliminar usuario</span>
                     <span
                         class="material-symbols-outlined relative z-10 text-xl group-hover:translate-x-1 transition-transform">delete_forever</span>
@@ -281,6 +280,54 @@
 
                 <!-- Cancel Button -->
                 <button (click)="closeDeleteModal()"
+                    class="w-full py-3.5 px-6 bg-surface-container text-on-surface font-bold rounded-lg hover:bg-surface-container-high active:scale-[0.98] transition-all">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Logout Confirmation Modal -->
+@if (showLogoutModal) {
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <!-- Backdrop -->
+    <button type="button" aria-label="Cerrar sesión" class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm cursor-default border-none" (click)="closeLogoutModal()"></button>
+    <!-- Modal Container -->
+    <div
+        class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
+        <!-- Top Accent Glow - Orange for logout -->
+        <div class="h-2 w-full bg-primary"></div>
+        <div class="p-8 text-center">
+            <!-- Logout Icon -->
+            <div class="relative mb-6 flex justify-center">
+                <div class="absolute inset-0 bg-primary/10 rounded-full scale-150 blur-xl"></div>
+                <div
+                    class="relative w-20 h-20 bg-primary rounded-full flex items-center justify-center shadow-lg">
+                    <span class="material-symbols-outlined text-white text-4xl">logout</span>
+                </div>
+            </div>
+
+            <!-- Text Content -->
+            <h2 class="text-2xl font-extrabold text-on-surface tracking-tight mb-3 font-headline">
+                ¿Cerrar sesión?
+            </h2>
+            <p class="text-on-surface-variant text-base leading-relaxed font-body">
+                ¿Estás seguro de que deseas salir de la plataforma? Deberás ingresar tus credenciales nuevamente para acceder.
+            </p>
+
+            <!-- Action Buttons -->
+            <div class="mt-8 flex flex-col gap-3">
+                <!-- Confirm Logout Button -->
+                <button (click)="confirmLogout()"
+                    class="group relative flex items-center justify-center gap-2 w-full py-3.5 px-6 bg-primary text-white font-bold rounded-lg shadow-sm hover:opacity-90 active:scale-[0.98] transition-all">
+                    <span>Sí, cerrar sesión</span>
+                    <span class="material-symbols-outlined text-xl">logout</span>
+                </button>
+
+                <!-- Cancel Button -->
+                <button (click)="closeLogoutModal()"
                     class="w-full py-3.5 px-6 bg-surface-container text-on-surface font-bold rounded-lg hover:bg-surface-container-high active:scale-[0.98] transition-all">
                     Cancelar
                 </button>

@@ -6,6 +6,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 import { ClientDTO } from '../core/models/client.dto';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
+import { Subject } from 'rxjs';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -37,16 +40,32 @@ describe('ClientesComponent', () => {
       getAll: jest.fn(() => of([])),
       create: jest.fn(() => of({ id: 1 })),
       update: jest.fn(() => of({})),
-      delete: jest.fn(() => of<void>()),
+      delete: jest.fn(() => of(undefined)),
     };
 
     mockDialog = { open: jest.fn(() => dialogRefStub({ action: 'primary' })) };
+
+    const breakpointSubject = new Subject<BreakpointState>();
+    const mockBreakpointObserver = {
+      observe: jest.fn(() => breakpointSubject.asObservable()),
+    };
+
+    const mockRouter = {
+      navigate: jest.fn(),
+    };
+
+    const mockActivatedRoute = {
+      queryParams: of({}),
+    };
 
     await TestBed.configureTestingModule({
       imports: [ClientesComponent, BrowserAnimationsModule],
       providers: [
         { provide: ClientService, useValue: mockClientService },
         { provide: MatDialog, useValue: mockDialog },
+        { provide: BreakpointObserver, useValue: mockBreakpointObserver },
+        { provide: Router, useValue: mockRouter },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
       ],
     }).overrideProvider(MatDialog, { useValue: mockDialog })
       .compileComponents();
@@ -243,32 +262,37 @@ describe('ClientesComponent', () => {
     expect(mockDialog.open).toHaveBeenCalled();
   });
 
-  // ── openDeleteModal ───────────────────────────────────────────────────────
+  // ── openDeleteModal & confirmDelete ───────────────────────────────────────
 
-  it('openDeleteModal should skip dialog when client has orders', () => {
+  it('openDeleteModal should skip when client has orders', () => {
     const client = makeClient({ ordersSummary: { total: 3 } } as any);
     component.openDeleteModal(client);
     expect(mockDialog.open).not.toHaveBeenCalled();
   });
 
-  it('openDeleteModal should call delete when confirmed', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(true));
-    component.openDeleteModal(makeClient());
+  it('openDeleteModal should open confirm dialog', () => {
+    const client = makeClient();
+    component.openDeleteModal(client);
+    expect(mockDialog.open).toHaveBeenCalled();
+  });
+
+  it('confirmDelete should call delete and open success dialog on success', () => {
+    const client = makeClient();
+    component.confirmDelete(client);
     expect(mockClientService.delete).toHaveBeenCalledWith('1');
+    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ accentColor: 'success' })
+    }));
   });
 
-  it('openDeleteModal should NOT call delete when cancelled', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(false));
-    component.openDeleteModal(makeClient());
-    expect(mockClientService.delete).not.toHaveBeenCalled();
-  });
-
-  it('openDeleteModal should log error when delete fails', () => {
+  it('confirmDelete should open error dialog when delete fails', () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-    mockDialog.open.mockReturnValue(dialogRefStub(true));
     (mockClientService.delete as jest.Mock).mockReturnValue(throwError(() => new Error('delete failed')));
-    component.openDeleteModal(makeClient());
-    expect(consoleSpy).toHaveBeenCalledWith('Error deleting client', expect.any(Error));
+    const client = makeClient();
+    component.confirmDelete(client);
+    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ accentColor: 'warning' })
+    }));
     consoleSpy.mockRestore();
   });
 
@@ -339,40 +363,47 @@ describe('ClientesComponent', () => {
   });
 
   // ── saveClient — errores HTTP ─────────────────────────────────────────────
-
   it('saveClient should set duplicate-phone error for status 400', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     (mockClientService.create as jest.Mock).mockReturnValue(throwError(() => ({ status: 400 })));
     component.openAddForm();
     component.clientForm.patchValue({ name: 'N' });
     component.phonesFormArray.at(0).setValue('300');
     component.saveClient();
     expect(component.errorMessage).toContain('teléfono');
+    consoleSpy.mockRestore();
   });
 
   it('saveClient should set duplicate-phone error for status 409', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     (mockClientService.create as jest.Mock).mockReturnValue(throwError(() => ({ status: 409 })));
     component.openAddForm();
     component.clientForm.patchValue({ name: 'N' });
     component.phonesFormArray.at(0).setValue('300');
     component.saveClient();
     expect(component.errorMessage).toContain('teléfono');
+    consoleSpy.mockRestore();
   });
 
   it('saveClient should set duplicate-phone error for status 500', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     (mockClientService.create as jest.Mock).mockReturnValue(throwError(() => ({ status: 500 })));
     component.openAddForm();
     component.clientForm.patchValue({ name: 'N' });
     component.phonesFormArray.at(0).setValue('300');
     component.saveClient();
     expect(component.errorMessage).toContain('teléfono');
+    consoleSpy.mockRestore();
   });
 
   it('saveClient should set generic error for other status codes', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     (mockClientService.create as jest.Mock).mockReturnValue(throwError(() => ({ status: 503 })));
     component.openAddForm();
     component.clientForm.patchValue({ name: 'N' });
     component.phonesFormArray.at(0).setValue('300');
     component.saveClient();
     expect(component.errorMessage).toContain('error al guardar');
+    consoleSpy.mockRestore();
   });
 });

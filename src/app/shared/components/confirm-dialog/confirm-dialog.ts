@@ -23,9 +23,9 @@ export interface ConfirmDialogData {
       <!-- Top accent bar -->
       <div class="h-1.5 w-full"
         [ngClass]="{
-          'bg-gradient-to-r from-error to-error-container': data.accentColor === 'error' || !data.accentColor,
-          'bg-gradient-to-r from-primary to-primary-container': data.accentColor === 'primary',
-          'bg-gradient-to-r from-amber-500 to-amber-400': data.accentColor === 'warning'
+          'bg-gradient-to-r from-error to-error-dim': data.accentColor === 'error' || !data.accentColor,
+          'bg-gradient-to-r from-primary to-primary-dim': data.accentColor === 'primary',
+          'bg-gradient-to-r from-tertiary to-tertiary-dim': data.accentColor === 'warning'
         }">
       </div>
 
@@ -36,14 +36,14 @@ export interface ConfirmDialogData {
             [ngClass]="{
               'bg-error': data.accentColor === 'error' || !data.accentColor,
               'bg-primary': data.accentColor === 'primary',
-              'bg-amber-500': data.accentColor === 'warning'
+              'bg-tertiary': data.accentColor === 'warning'
             }">
           </div>
           <div class="relative w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
             [ngClass]="{
-              'bg-gradient-to-br from-error to-error-container': data.accentColor === 'error' || !data.accentColor,
-              'bg-gradient-to-br from-primary to-primary-dim': data.accentColor === 'primary',
-              'bg-gradient-to-br from-amber-500 to-amber-400': data.accentColor === 'warning'
+              'bg-error': data.accentColor === 'error' || !data.accentColor,
+              'bg-primary': data.accentColor === 'primary',
+              'bg-tertiary': data.accentColor === 'warning'
             }">
             <span class="material-symbols-outlined text-white text-4xl"
               style="font-variation-settings: 'FILL' 0, 'wght' 600">
@@ -80,9 +80,9 @@ export interface ConfirmDialogData {
           <button (click)="onConfirm()"
             class="group relative flex items-center justify-center gap-2 w-full py-3.5 px-6 font-bold rounded-lg shadow-sm active:scale-[0.98] transition-all text-white"
             [ngClass]="{
-              'bg-gradient-to-br from-error to-error-container': data.accentColor === 'error' || !data.accentColor,
-              'bg-gradient-to-br from-primary to-primary-dim': data.accentColor === 'primary',
-              'bg-gradient-to-br from-amber-500 to-amber-400': data.accentColor === 'warning'
+              'bg-error hover:opacity-90 shadow-error/20': data.accentColor === 'error' || !data.accentColor,
+              'bg-primary hover:opacity-90 shadow-primary/20': data.accentColor === 'primary',
+              'bg-tertiary hover:opacity-90 shadow-tertiary/20': data.accentColor === 'warning'
             }">
             <span>{{ data.confirmLabel || 'Confirmar' }}</span>
             <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">

@@ -1,81 +1,78 @@
-<div class="p-8 space-y-8">
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Main Dashboard Summary -->
-        <div class="lg:col-span-8 bg-surface-container-lowest p-8 rounded-xl relative overflow-hidden flex flex-col justify-between min-h-[320px]">
-            <div class="relative z-10">
-                <span class="inline-block px-3 py-1 bg-orange-100 text-orange-700 text-[10px] font-bold uppercase tracking-widest rounded-full mb-4">Resumen</span>
-                <h2 class="text-4xl font-extrabold text-on-surface max-w-md leading-tight mb-2 tracking-tighter">Bienvenido al panel.</h2>
-                <p class="text-on-surface-variant max-w-sm body-md">Aquí verás la evolución de tus ingresos operativos y pedidos una vez se obtengan los datos.</p>
-            </div>
-            <div class="absolute right-0 top-0 h-full w-1/3 pointer-events-none opacity-20">
-                <img class="h-full w-full object-cover" alt="Abstract smooth orange and amber liquid waves" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARB69iSwdBCxfX1HC3JIWT5yFNTAPbsV7gVlNyKi6yMOtnq5Cxdilm9yTNNmD1i2pjXqTqV6KKbwY4aU4PeN5FaKNtM9jCv57oOVJVFdzyL5z5tvknayqGF7xqsc2-vNxfSkt6wo2G3rOq4c9Z4IFCSI9O8oNdt1H62sh2B6ZssWXs6Nl_hks2CklQ-QFV0dnFUbkAd6r15UPCiBA-3W3g1LBReBYKoYRVXoRSeuCANRlDuTdt8iC88Wcis6vVk_y9ry-NZA_TWeo" />
-            </div>
-        </div>
-        
-        <!-- Alerts Card -->
-        <div class="lg:col-span-4 bg-brand-orange rounded-xl p-8 text-on-brand-orange flex flex-col justify-between shadow-[0px_12px_32px_rgba(151,67,0,0.15)] bg-gradient-to-br from-brand-orange to-primary-container">
-            <div class="mb-6">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="p-2 bg-white/20 rounded-lg">
-                        <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div class="p-8 space-y-6 max-w-[1600px] mx-auto bg-[#f8f9fa] min-h-screen font-body">
+    <!-- Top Row -->
+    <!-- Top Row: Highlights -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (card of dashboardCards; track card.title) {
+            @if (card.link) {
+                <a [routerLink]="card.link" class="bg-white rounded-2xl p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.03)] border border-stone-100 group transition-all hover:border-orange-200">
+                    <div class="flex justify-between items-start mb-4">
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">{{ card.title }}</p>
+                        <span class="material-symbols-outlined group-hover:scale-110 transition-transform" [ngClass]="card.iconClass">{{ card.icon }}</span>
                     </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-white">Stock Bajo</h3>
-                        <p class="text-white/70 text-xs">Avisos del inventario</p>
+                    <p class="text-3xl font-black text-stone-900 tracking-tight">{{ card.value }}</p>
+                    <p class="text-[11px] text-stone-400 font-medium mt-2">{{ card.footer }}</p>
+                </a>
+            } @else {
+                <div class="bg-white rounded-2xl p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.03)] border border-stone-100">
+                    <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">{{ card.title }}</p>
+                    <p class="text-3xl font-black text-orange-600 tracking-tight">{{ card.value | currency:'USD' }}</p>
+                    <div class="mt-4 flex items-center gap-2">
+                        <span class="text-[11px] font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center">
+                            <span class="material-symbols-outlined text-[14px]">{{ card.icon }}</span> {{ card.trend }}
+                        </span>
+                        <span class="text-[10px] text-stone-400 font-medium">{{ card.trendText }}</span>
                     </div>
                 </div>
-                <div class="mt-4">
-                    <p class="text-3xl font-black text-white">{{ dashboardData.lowStockCount }}</p>
-                    <p class="text-[10px] text-white/70 uppercase">Artículos bajo el umbral</p>
-                </div>
-            </div>
-        </div>
+            }
+        }
     </section>
 
-    <!-- Lower Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Lower Row -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Performance Chart -->
-        <div class="lg:col-span-2 bg-surface-container-lowest p-8 rounded-xl">
-            <div class="flex justify-between items-center mb-8">
+        <div class="lg:col-span-12 bg-white rounded-2xl p-8 shadow-[0px_4px_20px_rgba(0,0,0,0.03)] border border-stone-100 flex flex-col">
+            <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h3 class="text-lg font-bold text-on-surface">Rendimiento Financiero</h3>
-                    <p class="text-xs text-on-surface-variant">Comparativa de flujo de caja semestral</p>
+                    <h3 class="text-lg font-extrabold text-stone-900 tracking-tight font-headline">Rendimiento Financiero</h3>
+                    <p class="text-[11px] font-medium text-stone-400 mt-1">Comparativa de flujo de caja semestral</p>
+                </div>
+                <div class="flex items-center gap-4 bg-stone-50 px-3 py-1.5 rounded-lg">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-sm bg-[#fd8e4a]"></span>
+                        <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider">Ganancias</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-sm bg-stone-300"></span>
+                        <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider">Gastos</span>
+                    </div>
                 </div>
             </div>
             
-            @if (dashboardData.profitVsExpense.months.length === 0) {
-                <div class="w-full h-56 flex items-center justify-center text-on-surface-variant bg-surface-container-low/50 rounded-lg">
-                    Sin datos financieros para mostrar.
+            <!-- Summary Boxes -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+                <div class="bg-orange-50/50 border border-orange-100/50 rounded-xl p-4">
+                    <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Total Ganancias</p>
+                    <p class="text-lg font-black text-emerald-500">{{ totalProfit | currency:'USD':'symbol':'1.0-0' }}</p>
                 </div>
-            } @else {
-                <div class="relative w-full h-56">
-                    <canvas #casualChart aria-label="Gráfico de barras de ganancias y gastos mensuales"></canvas>
+                <div class="bg-orange-50/50 border border-orange-100/50 rounded-xl p-4">
+                    <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Total Gastos</p>
+                    <p class="text-lg font-black text-orange-600">{{ totalExpense | currency:'USD':'symbol':'1.0-0' }}</p>
                 </div>
-            }
-        </div>
-        
-        <!-- Recent Activity -->
-        <div class="bg-surface-container-low p-8 rounded-xl flex flex-col">
-            <h3 class="text-lg font-bold text-on-surface mb-6">Actividad de Pedidos</h3>
-            <div class="space-y-6 flex-1">
-                <div class="flex gap-4">
-                    <div class="bg-surface-container-low p-6 rounded-xl border border-surface-variant/30 w-full">
-                        <p class="text-[10px] font-bold text-neutral-400 uppercase mb-4">Pedidos pendientes de Abono/Prod.</p>
-                        <div class="flex items-baseline gap-2">
-                            <span class="text-3xl font-black text-on-surface">{{ dashboardData.pendingOrders }}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex gap-4">
-                    <div class="bg-surface-container-low p-6 rounded-xl border border-surface-variant/30 w-full">
-                        <p class="text-[10px] font-bold text-neutral-400 uppercase mb-4">Pedidos con deuda activa</p>
-                        <div class="flex items-baseline gap-2">
-                            <p class="text-2xl font-black text-error">{{ dashboardData.ordersWithDebt }}</p>
-                            <span class="material-symbols-outlined text-error text-base">money_off</span>
-                        </div>
-                    </div>
+                <div class="bg-orange-50/50 border border-orange-100/50 rounded-xl p-4">
+                    <p class="text-[9px] font-bold text-stone-400 uppercase tracking-widest mb-1">Balance Neto</p>
+                    <p class="text-lg font-black text-orange-400">{{ netBalance | currency:'USD':'symbol':'1.0-0' }}</p>
                 </div>
             </div>
+            
+            <div class="flex-1 relative min-h-[300px]">
+                @if (dashboardData.profitVsExpense.months.length === 0) {
+                    <div class="absolute inset-0 flex items-center justify-center text-stone-400 font-medium text-sm">
+                        Sin datos financieros para mostrar.
+                    </div>
+                } @else {
+                    <canvas #casualChart aria-label="Gráfico de barras de ganancias y gastos mensuales"></canvas>
+                }
+            </div>
         </div>
-    </div>
+    </section>
 </div>

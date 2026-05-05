@@ -27,31 +27,32 @@ export class InventoryService {
       map(res => {
         const page = res.data;
         const list: any[] = page?.data || page?.content || [];
-        return list.map((item: any) => ({
-          // Campos originales del backend
-          idProducto: item.idProducto,
-          nombre: item.nombre,
-          tipo: item.tipo,
-          unidadMedida: item.unidadMedida,
-          cantidadDisponible: item.cantidadDisponible,
-          stockBajo: item.stockBajo,
-          // Aliases para compatibilidad con la UI
-          id: String(item.idProducto),
-          name: item.nombre,
-          type: item.tipo,
-          stock: Number(item.cantidadDisponible) || 0,
-          isLowStock: item.stockBajo ?? false,
-          unit: { name: item.unidadMedida || 'Unidad' },
-          // Campos no disponibles en el listado del backend
-          purchasePrice: item.precioCompra || null,
-          salePrice: item.precioVenta || null,
-          productionCost: item.precioCompra || null,
-          wastePercent: item.porcentajeSobrante || null,
-          minStock: Number(item.stockMinimo) || 0,
-          composition: null
-        }));
+        return list.map(item => this.mapInventoryItem(item));
       })
     );
+  }
+
+  private mapInventoryItem(item: any) {
+    return {
+      idProducto: item.idProducto,
+      nombre: item.nombre,
+      tipo: item.tipo,
+      unidadMedida: item.unidadMedida,
+      cantidadDisponible: item.cantidadDisponible,
+      stockBajo: item.stockBajo,
+      id: String(item.idProducto),
+      name: item.nombre,
+      type: item.tipo,
+      stock: Number(item.cantidadDisponible) || 0,
+      isLowStock: item.stockBajo ?? false,
+      unit: { name: item.unidadMedida || 'Unidad' },
+      purchasePrice: item.precioCompra || null,
+      salePrice: item.precioVenta || null,
+      productionCost: item.precioCompra || null,
+      wastePercent: item.porcentajeSobrante || null,
+      minStock: Number(item.stockMinimo) || 0,
+      composition: null
+    };
   }
 
   /**

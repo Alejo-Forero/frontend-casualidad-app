@@ -23,7 +23,7 @@ export interface SuccessDialogResult {
   standalone: true,
   imports: [CommonModule, MatDialogModule],
   template: `
-    <div class="overflow-hidden rounded-xl w-full max-w-lg">
+    <div class="overflow-hidden rounded-xl w-full max-w-lg bg-surface-container-lowest">
       <!-- Top accent bar -->
       <div class="h-1.5 w-full"
         [ngClass]="{
@@ -39,15 +39,15 @@ export interface SuccessDialogResult {
           <div class="absolute inset-0 rounded-full scale-150 blur-xl opacity-20"
             [ngClass]="{
               'bg-primary': data.accentColor === 'primary' || !data.accentColor,
-              'bg-emerald-500': data.accentColor === 'success',
-              'bg-amber-500': data.accentColor === 'warning'
+              'bg-secondary': data.accentColor === 'success',
+              'bg-tertiary': data.accentColor === 'warning'
             }">
           </div>
           <div class="relative w-24 h-24 rounded-full flex items-center justify-center shadow-lg"
             [ngClass]="{
               'bg-gradient-to-br from-primary to-primary-container': data.accentColor === 'primary' || !data.accentColor,
-              'bg-gradient-to-br from-emerald-500 to-emerald-400': data.accentColor === 'success',
-              'bg-gradient-to-br from-amber-500 to-amber-400': data.accentColor === 'warning'
+              'bg-gradient-to-br from-secondary to-secondary-container': data.accentColor === 'success',
+              'bg-gradient-to-br from-tertiary to-tertiary-container': data.accentColor === 'warning'
             }">
             <span class="material-symbols-outlined text-white text-5xl"
               style="font-variation-settings: 'FILL' 1, 'wght' 600">
@@ -76,11 +76,10 @@ export interface SuccessDialogResult {
         <div class="mt-10 flex flex-col gap-3">
           @if (data.primaryActionLabel) {
             <button (click)="onPrimary()"
-              class="group relative flex items-center justify-center gap-2 w-full py-4 px-6 font-bold rounded-lg shadow-sm active:scale-[0.98] transition-all overflow-hidden text-white"
+              class="group relative flex items-center justify-center gap-2 w-full py-4 px-6 font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all overflow-hidden text-white"
               [ngClass]="{
-                'bg-gradient-to-br from-primary to-primary-container': data.accentColor === 'primary' || !data.accentColor,
-                'bg-gradient-to-br from-emerald-500 to-emerald-400': data.accentColor === 'success',
-                'bg-gradient-to-br from-amber-500 to-amber-400': data.accentColor === 'warning'
+                'bg-primary shadow-primary/20 hover:opacity-90': data.accentColor === 'success' || data.accentColor === 'primary' || !data.accentColor,
+                'bg-gradient-to-br from-tertiary to-tertiary-container shadow-tertiary/20': data.accentColor === 'warning'
               }">
               <span class="relative z-10">{{ data.primaryActionLabel }}</span>
               <span class="material-symbols-outlined relative z-10 text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -88,12 +87,12 @@ export interface SuccessDialogResult {
           }
           @if (data.secondaryActionLabel) {
             <button (click)="onSecondary()"
-              class="w-full py-4 px-6 bg-secondary-container/30 text-on-secondary-container font-bold rounded-lg hover:bg-secondary-container/50 active:scale-[0.98] transition-all">
+              class="w-full py-4 px-6 bg-secondary-container text-on-secondary-container font-bold rounded-xl hover:opacity-90 active:scale-[0.98] transition-all">
               {{ data.secondaryActionLabel }}
             </button>
           }
           <button (click)="onClose()"
-            class="mt-2 text-stone-400 hover:text-primary transition-colors text-sm font-medium tracking-wide">
+            class="mt-4 text-stone-400 hover:text-primary transition-colors text-xs font-bold uppercase tracking-widest">
             Cerrar ventana
           </button>
         </div>

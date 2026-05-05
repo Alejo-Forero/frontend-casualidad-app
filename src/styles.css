@@ -7,16 +7,17 @@
 @tailwind utilities;
 
 :root {
-  --mdc-theme-primary: #974300;
-  --mdc-theme-on-primary: #ffffff;
-  --mdc-theme-secondary: #725800;
-  --mdc-theme-on-secondary: #ffffff;
-  --mat-primary-color: #974300;
-  --mat-accent-color: #725800;
+    --mdc-theme-primary: #974300;
+    --mdc-theme-on-primary: #ffffff;
+    --mdc-theme-secondary: #725800;
+    --mdc-theme-on-secondary: #ffffff;
+    --mat-primary-color: #974300;
+    --mat-accent-color: #725800;
 }
 
-html, body {
-  height: 100%;
+html,
+body {
+    height: 100%;
 }
 
 .material-symbols-outlined {
@@ -46,6 +47,7 @@ html, body {
         opacity: 0;
         transform: scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -66,9 +68,26 @@ html, body {
 }
 
 @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
-    20%, 40%, 60%, 80% { transform: translateX(3px); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-3px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(3px);
+    }
 }
 
 /* ====== MatDialog global panel styles ====== */
@@ -93,8 +112,96 @@ html, body {
     backdrop-filter: blur(4px);
 }
 
-/* Dialog enter animation */
-@keyframes dialogEnter {
-    from { opacity: 0; transform: scale(0.94) translateY(8px); }
-    to   { opacity: 1; transform: scale(1)   translateY(0); }
+/* ====== MatPaginator global styles ====== */
+.mat-mdc-paginator {
+    background: transparent !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    color: #52525b !important;
+}
+
+.mat-mdc-paginator-container {
+    justify-content: flex-end !important;
+    padding: 1rem 1.5rem !important;
+    min-height: 64px !important;
+}
+
+.mat-mdc-paginator-page-size-label {
+    font-weight: 800 !important;
+    font-size: 10px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    color: #a1a1aa !important;
+}
+
+.mat-mdc-paginator-range-label {
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    color: #3f3f46 !important;
+    margin: 0 24px !important;
+}
+
+.mat-mdc-paginator-page-size-select {
+    margin-left: 12px !important;
+}
+
+/* Style for the select trigger */
+.mat-mdc-paginator .mat-mdc-select-value {
+    font-weight: 800 !important;
+    font-size: 13px !important;
+    color: #974300 !important;
+}
+
+.mat-mdc-paginator .mat-mdc-select-trigger {
+    background: #f8fafc !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 4px 12px !important;
+    transition: all 0.2s ease !important;
+}
+
+/* Remove default focus ring and outer borders from form field */
+.mat-mdc-paginator .mat-mdc-form-field-focus-overlay,
+.mat-mdc-paginator .mdc-notched-outline {
+    display: none !important;
+}
+
+.mat-mdc-paginator .mat-mdc-select-trigger:hover {
+    border-color: #e2e8f0 !important;
+    background: #f1f5f9 !important;
+}
+
+/* Navigation buttons */
+.mat-mdc-paginator-navigation-next,
+.mat-mdc-paginator-navigation-previous {
+    width: 36px !important;
+    height: 36px !important;
+    background: #f8fafc !important;
+    border: none !important;
+    border-radius: 10px !important;
+    margin: 0 4px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+}
+
+.mat-mdc-paginator-navigation-next:not(:disabled):hover,
+.mat-mdc-paginator-navigation-previous:not(:disabled):hover {
+    background: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    color: #974300 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+}
+
+.mat-mdc-paginator-icon {
+    width: 20px !important;
+    fill: currentColor !important;
+}
+
+.mat-mdc-paginator-navigation-next:disabled,
+.mat-mdc-paginator-navigation-previous:disabled {
+    opacity: 0.4 !important;
+    border-color: transparent !important;
+    background: transparent !important;
 }

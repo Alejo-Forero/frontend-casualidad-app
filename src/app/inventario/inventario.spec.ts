@@ -421,36 +421,34 @@ describe('InventarioComponent', () => {
     expect(component.viewMode).toBe('list');
   });
 
-  // ── openDeleteModal ───────────────────────────────────────────────────────
+  // ── openDeleteModal & confirmDelete ───────────────────────────────────────
 
-  it('should call delete service when confirmed', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(true));
-    component.openDeleteModal(makeProduct());
+  it('openDeleteModal should open confirm dialog', () => {
+    const product = makeProduct();
+    component.openDeleteModal(product);
+    expect(mockDialog.open).toHaveBeenCalled();
+  });
+
+  it('confirmDelete should call delete service and open success dialog when confirmed', () => {
+    const product = makeProduct();
+    component.confirmDelete(product);
     expect(mockInventoryService.delete).toHaveBeenCalledWith('1');
+    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ accentColor: 'success' })
+    }));
   });
 
-  it('should NOT call delete service when dialog is cancelled', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(false));
-    component.openDeleteModal(makeProduct());
-    expect(mockInventoryService.delete).not.toHaveBeenCalled();
-  });
-
-  it('should set errorMessage when delete fails', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(true));
+  it('confirmDelete should open error dialog when delete fails', () => {
     (mockInventoryService.delete as jest.Mock).mockReturnValue(
       throwError(() => new Error('Delete failed'))
     );
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-    component.openDeleteModal(makeProduct());
-    expect(component.errorMessage).toBeTruthy();
+    const product = makeProduct();
+    component.confirmDelete(product);
+    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ accentColor: 'warning' })
+    }));
     consoleSpy.mockRestore();
-  });
-
-  it('should clear errorMessage at the start of openDeleteModal', () => {
-    component.errorMessage = 'old error';
-    mockDialog.open.mockReturnValue(dialogRefStub(false));
-    component.openDeleteModal(makeProduct());
-    expect(component.errorMessage).toBeNull();
   });
 
   // ── openEntradaModal ──────────────────────────────────────────────────────

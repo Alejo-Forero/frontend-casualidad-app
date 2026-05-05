@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { OrderSummaryDTO, OrderDetailDTO, CreateOrderDTO, UpdateOrderDTO } from '../models/order.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -10,13 +11,20 @@ import { environment } from '../../../environments/environment';
 export class OrderService {
   private readonly apiUrl = `${environment.apiUrl}/pedidos`;
   private readonly http = inject(HttpClient);
+  private _orderDraft: any = null;
 
-  /**
-   * GET /api/v1/pedidos?page=0&size=100
-   * Retorna PageResponse<PedidoResumenDto>:
-   *   { idPedido, codigoUnico, nombreCliente, estadoPedido, fechaEntrega, total, saldoPendiente }
-   * El backend devuelve el objeto PageResponse directamente (sin wrapper ApiResponse).
-   */
+  setOrderDraft(draft: any) {
+    this._orderDraft = draft;
+  }
+
+  getOrderDraft(): any {
+    return this._orderDraft;
+  }
+
+  clearOrderDraft() {
+    this._orderDraft = null;
+  }
+
   getAll(filtros?: {
     idCliente?: number;
     estado?: string;
@@ -24,7 +32,7 @@ export class OrderService {
     fechaFin?: string;
     page?: number;
     size?: number;
-  }): Observable<any[]> {
+  }): Observable<OrderSummaryDTO[]> {
     let params = new HttpParams()
       .set('page', String(filtros?.page ?? 0))
       .set('size', String(filtros?.size ?? 100));
@@ -36,113 +44,82 @@ export class OrderService {
 
     return this.http.get<any>(this.apiUrl, { params }).pipe(
       map(res => {
-        // El backend devuelve PageResponse<PedidoResumenDto> DIRECTAMENTE (sin wrapper ApiResponse)
-        // PageResponse tiene: { pageNumber, pageSize, totalElements, totalPages, data: [] }
         const items: any[] = res?.data ?? res?.content ?? [];
-        return items.map((p: any) => ({
-          // Campos originales del backend (PedidoResumenDto)
-          idPedido:       p.idPedido,
-          codigoUnico:    p.codigoUnico,
-          nombreCliente:  p.nombreCliente,   // PedidoResumenDto usa nombreCliente (string plano)
-          estadoPedido:   p.estadoPedido,
-          fechaEntrega:   p.fechaEntrega,
-          total:          p.total,
-          saldoPendiente: p.saldoPendiente,
-          // Aliases para compatibilidad con templates existentes
-          id:             String(p.idPedido),
-          code:           p.codigoUnico,
-          status:         p.estadoPedido,
-          clientName:     p.nombreCliente ?? '',
-          totalAmount:    p.total,
-          pendingBalance: p.saldoPendiente,
-          deliveryDate:   p.fechaEntrega,
-          paymentStatus:  Number(p.saldoPendiente) === 0 ? 'PAID' : 'PARTIAL',
-          // Objeto cliente como alias para templates que usan order.cliente?.nombreCompleto
-          cliente: { nombreCompleto: p.nombreCliente ?? '', idCliente: null, telefono: '' }
-        }));
+        return items.map(p => this.mapOrderSummary(p));
       })
     );
   }
 
-  /**
-   * GET /api/v1/pedidos/{id}?abonosPage=0&abonosSize=5
-   * Retorna PedidoDetalleCompletoDto directamente (sin wrapper ApiResponse):
-   *   { idPedido, codigoUnico, estadoPedido, fechaEntrega, total, saldoPendiente,
-   *     cliente: { idCliente, nombreCompleto, telefono },
-   *     productos: [{ idDetalle, nombreProducto, cantidad, precioUnitario, subtotal, observaciones }],
-   *     historialAbonos: PageResponse<AbonoDto> }
-   */
-  getById(id: string | number, abonosPage = 0, abonosSize = 5): Observable<any> {
+  private mapOrderSummary(p: any): OrderSummaryDTO {
+    const idPedido = p.idPedido;
+    return {
+      idPedido:       idPedido,
+      codigoUnico:    p.codigoUnico,
+      nombreCliente:  p.nombreCliente,
+      estadoPedido:   p.estadoPedido,
+      fechaEntrega:   p.fechaEntrega,
+      total:          p.total,
+      saldoPendiente: p.saldoPendiente,
+      id:             idPedido ? String(idPedido) : `tmp-${crypto.getRandomValues(new Uint32Array(1))[0] % 1000000}`,
+      code:           p.codigoUnico,
+      status:         p.estadoPedido,
+      clientName:     p.nombreCliente ?? '',
+      totalAmount:    p.total ?? 0,
+      pendingBalance: p.saldoPendiente ?? 0,
+      deliveryDate:   p.fechaEntrega,
+      paymentStatus:  Number(p.saldoPendiente) === 0 ? 'PAID' : 'PARTIAL',
+      cliente: { nombreCompleto: p.nombreCliente ?? '', idCliente: p.idCliente ?? null, telefono: '' }
+    };
+  }
+
+  getById(id: string | number, abonosPage = 0, abonosSize = 5): Observable<OrderDetailDTO> {
     const params = new HttpParams()
       .set('abonosPage', String(abonosPage))
       .set('abonosSize', String(abonosSize));
-    return this.http.get<any>(`${this.apiUrl}/${id}`, { params });
+    return this.http.get<OrderDetailDTO>(`${this.apiUrl}/${id}`, { params });
   }
 
-  /**
-   * POST /api/v1/pedidos
-   * Body: CrearPedidoDto { idCliente, idUsuario, fechaEntrega, detalles[] }
-   * Retorna: PedidoResponseDto (201 CREATED)
-   */
-  create(data: any): Observable<any> {
-    const payload = {
+  create(data: any): Observable<OrderDetailDTO> {
+    const payload: CreateOrderDTO = {
       idCliente:    Number(data.clientId   || data.idCliente  || 1),
       idUsuario:    Number(data.idUsuario  || 1),
       fechaEntrega: data.deliveryDate || data.fechaEntrega || new Date().toISOString().split('T')[0],
-      detalles: (data.items || []).map((item: any) => ({
-        idProducto:    Number(item.productId || item.idProducto || 1),
-        cantidad:      Number(item.quantity  || item.cantidad   || 1),
-        observaciones: item.customization || item.observaciones || ''
-      }))
+      detalles: (data.items || []).map((item: any) => this.mapOrderItem(item))
     };
-    return this.http.post<any>(this.apiUrl, payload);
+    return this.http.post<OrderDetailDTO>(this.apiUrl, payload);
   }
 
-  /**
-   * POST /api/v1/pedidos/{idPedido}/activar-produccion
-   * Cambia el estado PENDIENTE → EN_PRODUCCION y genera código único.
-   * Retorna: { mensaje, codigoUnico, estado }
-   */
-  activarProduccion(idPedido: number): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/${idPedido}/activar-produccion`, {});
+  activarProduccion(idPedido: number): Observable<{ mensaje: string; codigoUnico: string; estado: string }> {
+    return this.http.post<{ mensaje: string; codigoUnico: string; estado: string }>(`${this.apiUrl}/${idPedido}/activar-produccion`, {});
   }
 
-  /**
-   * PUT /api/v1/pedidos/{id}
-   * Body: ActualizarPedidoDto { fechaEntrega?, detalles[] }
-   * Solo disponible para pedidos en estado PENDIENTE.
-   * Retorna: { estado: "EXITO", mensaje }
-   */
-  update(id: string | number, data: any): Observable<any> {
-    const payload: any = {
-      detalles: (data.items || data.detalles || []).map((item: any) => ({
-        idDetalle:     item.idDetalle  ?? null,
-        idProducto:    Number(item.productId  || item.idProducto  || 1),
-        cantidad:      Number(item.quantity   || item.cantidad    || 1),
-        observaciones: item.customization || item.observaciones || ''
-      }))
+  update(id: string | number, data: any): Observable<{ estado: string; mensaje: string }> {
+    const payload: UpdateOrderDTO = {
+      detalles: (data.items || data.detalles || []).map((item: any) => {
+        const mapped = this.mapOrderItem(item);
+        return { ...mapped, idDetalle: item.idDetalle ?? null };
+      })
     };
     if (data.deliveryDate || data.fechaEntrega) {
       payload.fechaEntrega = data.deliveryDate || data.fechaEntrega;
     }
-    return this.http.put<any>(`${this.apiUrl}/${id}`, payload);
+    return this.http.put<{ estado: string; mensaje: string }>(`${this.apiUrl}/${id}`, payload);
   }
 
-  /**
-   * PATCH /api/v1/pedidos/{id}/cancelar?reintegrarMateriales=false
-   * Cancela el pedido. Solo disponible si no está CANCELADO ni TERMINADO.
-   * Retorna: { estado: "EXITO", mensaje, materialesReintegrados }
-   */
-  cancelar(id: string | number, reintegrarMateriales = false): Observable<any> {
+  cancelar(id: string | number, reintegrarMateriales = false): Observable<{ estado: string; mensaje: string }> {
     const params = new HttpParams().set('reintegrarMateriales', String(reintegrarMateriales));
-    return this.http.patch<any>(`${this.apiUrl}/${id}/cancelar`, {}, { params });
+    return this.http.delete<{ estado: string; mensaje: string }>(`${this.apiUrl}/${id}/cancelar`, { params });
   }
 
-  /**
-   * @deprecated Usar cancelar() en su lugar.
-   * Mantenido para no romper referencias existentes.
-   */
   delete(id: string | number): Observable<void> {
     return this.cancelar(id).pipe(map(() => undefined));
+  }
+
+  private mapOrderItem(item: any) {
+    return {
+      idProducto:    Number(item.productId || item.idProducto || 1),
+      cantidad:      Number(item.quantity  || item.cantidad   || 1),
+      observaciones: item.customization || item.observaciones || ''
+    };
   }
 }

@@ -8,14 +8,15 @@
     </div>
 
     <!-- Quick Action Cards -->
-    <section class="mb-8">
-        <!-- Action 1 -->
+    <!-- Quick Action Cards -->
+    <section class="flex flex-col md:flex-row gap-6 mb-8">
+        <!-- Action 1: Registrar Pedido -->
         <button type="button" (click)="openAddForm()"
-            class="text-left w-full max-w-sm border-none appearance-none block group relative bg-surface-container-lowest p-6 rounded-xl overflow-hidden hover:bg-primary transition-all duration-300 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] cursor-pointer">
+            class="text-left w-full md:max-w-[320px] border-none appearance-none block group relative bg-surface-container-lowest p-6 rounded-2xl overflow-hidden hover:bg-primary transition-all duration-300 shadow-[0px_12px_32px_rgba(45,47,47,0.04)] cursor-pointer">
             <div class="relative z-10 flex flex-col h-full justify-between gap-8">
                 <div class="flex justify-between items-start">
-                    <span
-                        class="material-symbols-outlined text-primary group-hover:text-white text-4xl">assignment_add</span>
+                    <span class="material-symbols-outlined text-primary group-hover:text-white text-4xl"
+                        style="font-variation-settings: 'FILL' 1;">assignment_add</span>
                     <span class="material-symbols-outlined text-zinc-300 group-hover:text-white/50">north_east</span>
                 </div>
                 <div>
@@ -25,7 +26,29 @@
                 </div>
             </div>
             <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                <span class="material-symbols-outlined text-[120px]">assignment_add</span>
+                <span class="material-symbols-outlined text-[120px]"
+                    style="font-variation-settings: 'FILL' 1;">assignment_add</span>
+            </div>
+        </button>
+
+        <!-- Action 2: Formalizar Pedido -->
+        <button type="button" (click)="openFormalizeView()"
+            class="text-left w-full md:max-w-[320px] border-none appearance-none block group relative bg-surface-container-lowest p-6 rounded-2xl overflow-hidden hover:bg-primary transition-all duration-300 shadow-[0px_12px_32px_rgba(45,47,47,0.04)] cursor-pointer">
+            <div class="relative z-10 flex flex-col h-full justify-between gap-8">
+                <div class="flex justify-between items-start">
+                    <span class="material-symbols-outlined text-primary group-hover:text-white text-4xl"
+                        style="font-variation-settings: 'FILL' 1;">verified</span>
+                    <span class="material-symbols-outlined text-zinc-300 group-hover:text-white/50">north_east</span>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold group-hover:text-white transition-colors">Formalizar Pedido</h3>
+                    <p class="text-sm text-on-surface-variant group-hover:text-white/80 mt-1">Valida pagos y autoriza el
+                        inicio de producción.</p>
+                </div>
+            </div>
+            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <span class="material-symbols-outlined text-[120px]"
+                    style="font-variation-settings: 'FILL' 1;">verified</span>
             </div>
         </button>
     </section>
@@ -45,77 +68,106 @@
 
 
         <!-- Desktop Table View -->
-        <div class="hidden md:block overflow-x-auto">
+        @if (!isMobile) {
+        <div class="overflow-x-auto">
             <table mat-table [dataSource]="dataSource" matSort class="w-full text-left">
                 <!-- ID Pedido Column -->
                 <ng-container matColumnDef="codigo">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"> ID Pedido </th>
-                    <td mat-cell *matCellDef="let order" class="px-8 py-4 text-xs font-bold text-on-surface"> {{ order.codigoUnico || order.idPedido }} </td>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header
+                        class="casualidad-table-header">
+                        ID Pedido </th>
+                    <td mat-cell *matCellDef="let order" class="px-8 py-4 text-xs font-bold text-on-surface"> {{
+                        order.codigoUnico || order.idPedido }} </td>
                 </ng-container>
 
                 <!-- Cliente Column -->
                 <ng-container matColumnDef="cliente">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"> Cliente </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header
+                        class="casualidad-table-header">
+                        Cliente </th>
                     <td mat-cell *matCellDef="let order" class="px-8 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-surface-container-high border border-surface-variant/20 flex items-center justify-center text-on-surface font-bold text-[10px]">
+                            <div
+                                class="w-8 h-8 rounded-full bg-surface-container-high border border-surface-variant/20 flex items-center justify-center text-on-surface font-bold text-[10px]">
                                 {{ (order.nombreCliente || order.clientName || '?').charAt(0) }}
                             </div>
-                            <span class="font-bold text-sm text-on-surface">{{ order.nombreCliente || order.clientName || '—' }}</span>
+                            <span class="font-bold text-sm text-on-surface">{{ order.nombreCliente || order.clientName
+                                || '—' }}</span>
                         </div>
                     </td>
                 </ng-container>
 
                 <!-- Estado Column -->
                 <ng-container matColumnDef="estado">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"> Estado </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header
+                        class="casualidad-table-header">
+                        Estado </th>
                     <td mat-cell *matCellDef="let order" class="px-8 py-4">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold" [ngClass]="(statusMap[order.estadoPedido] || statusMap[order.status])?.css ?? 'bg-stone-100 text-stone-500'">
-                            {{ (statusMap[order.estadoPedido] || statusMap[order.status])?.text ?? (order.estadoPedido || order.status || 'Sin estado') }}
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold"
+                            [ngClass]="(statusMap[order.estadoPedido] || statusMap[order.status])?.css ?? 'bg-stone-100 text-stone-500'">
+                            {{ (statusMap[order.estadoPedido] || statusMap[order.status])?.text ?? (order.estadoPedido
+                            || order.status || 'Sin estado') }}
                         </span>
                     </td>
                 </ng-container>
 
                 <!-- Fecha de entrega Column -->
                 <ng-container matColumnDef="fecha">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"> Fecha de entrega </th>
-                    <td mat-cell *matCellDef="let order" class="px-8 py-4 text-sm font-medium text-on-surface-variant"> {{ order.fechaEntrega | date:'dd MMM yyyy' }} </td>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header
+                        class="casualidad-table-header">
+                        Fecha de entrega </th>
+                    <td mat-cell *matCellDef="let order" class="px-8 py-4 text-sm font-medium text-on-surface-variant">
+                        {{ order.fechaEntrega | date:'dd MMM yyyy' }} </td>
                 </ng-container>
 
                 <!-- Saldo Column -->
                 <ng-container matColumnDef="saldo">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100"> Saldo </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header
+                        class="casualidad-table-header">
+                        Saldo </th>
                     <td mat-cell *matCellDef="let order" class="px-8 py-4">
-                        <span class="text-sm font-bold text-on-surface">{{ order.saldoPendiente | currency:'USD' }}</span>
+                        <span class="text-sm font-bold text-on-surface">{{ order.saldoPendiente | currency:'USD'
+                            }}</span>
                     </td>
                 </ng-container>
 
                 <!-- Acciones Column -->
                 <ng-container matColumnDef="acciones">
-                    <th mat-header-cell *matHeaderCellDef class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100 text-right"> Acciones </th>
+                    <th mat-header-cell *matHeaderCellDef
+                        class="casualidad-table-header text-right">
+                        Acciones </th>
                     <td mat-cell *matCellDef="let order" class="px-8 py-5 text-right">
-                        <div class="flex items-center justify-end gap-2">
-                            @if (order.estadoPedido === 'PENDIENTE' || order.estadoPedido === 'PENDING_ACCEPTANCE' || order.estadoPedido === 'PENDING_PAYMENT') {
-                            <button mat-icon-button (click)="openActivarProduccionModal(order)"
-                                color="primary"
-                                title="Activar Producción">
-                                <mat-icon>play_circle</mat-icon>
+                        <div class="flex items-center justify-end gap-1">
+                            @if (order.estadoPedido === 'PENDIENTE') {
+                            <button (click)="openActivarProduccionModal(order)"
+                                class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                title="Activar Producci\u00f3n">
+                                <span class="material-symbols-outlined text-xl"
+                                    style="font-variation-settings: 'FILL' 1;">play_circle</span>
                             </button>
                             }
-                            <button mat-icon-button (click)="openEditForm(order)"
-                                class="text-zinc-400 hover:text-secondary transition-colors" title="Ver/Editar">
-                                <mat-icon>edit</mat-icon>
+                            <button (click)="openDetail(order)"
+                                class="p-2 text-zinc-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                title="Ver Detalles">
+                                <span class="material-symbols-outlined text-xl">visibility</span>
                             </button>
-                            <button mat-icon-button (click)="openDeleteModal(order)"
-                                color="warn" title="Eliminar">
-                                <mat-icon>delete</mat-icon>
+                            <button (click)="openEditForm(order)"
+                                class="p-2 text-zinc-400 hover:text-secondary hover:bg-secondary/10 rounded-lg transition-colors"
+                                title="Editar">
+                                <span class="material-symbols-outlined text-xl">edit</span>
+                            </button>
+                            <button (click)="openDeleteModal(order)"
+                                class="p-2 text-zinc-400 hover:text-error hover:bg-error/10 rounded-lg transition-colors"
+                                title="Eliminar">
+                                <span class="material-symbols-outlined text-xl">delete</span>
                             </button>
                         </div>
                     </td>
                 </ng-container>
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-zinc-50/50"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-orange-50/30 transition-colors group"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                    class="hover:bg-orange-50/30 transition-colors group"></tr>
 
                 <!-- Row shown when there is no matching data. -->
                 <tr class="mat-row" *matNoDataRow>
@@ -125,35 +177,40 @@
                 </tr>
             </table>
         </div>
-
+        } @else {
         <!-- Mobile Cards View -->
-        <div class="block md:hidden divide-y divide-zinc-100">
-            @for (order of dataSource.filteredData | slice:(paginator.pageIndex || 0)*(paginator.pageSize || 5):((paginator.pageIndex || 0) + 1)*(paginator.pageSize || 5); track order.id) {
+        <div class="divide-y divide-zinc-100">
+            @for (order of dataSource.filteredData | slice:(paginator?.pageIndex || 0)*(paginator?.pageSize || 10):((paginator?.pageIndex || 0)+1)*(paginator?.pageSize || 10); track (order.idPedido || order.id || $index)) {
             <div class="p-6 bg-white hover:bg-orange-50/30 transition-colors">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <div class="text-xs font-bold text-stone-400 mb-1">PEDIDO</div>
                         <div class="font-bold text-on-surface">{{ order.codigoUnico || order.idPedido }}</div>
                     </div>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold" [ngClass]="(statusMap[order.estadoPedido] || statusMap[order.status])?.css ?? 'bg-stone-100 text-stone-500'">
-                        {{ (statusMap[order.estadoPedido] || statusMap[order.status])?.text ?? (order.estadoPedido || order.status || 'Sin estado') }}
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold"
+                        [ngClass]="(statusMap[order.estadoPedido] || statusMap[order.status])?.css ?? 'bg-stone-100 text-stone-500'">
+                        {{ (statusMap[order.estadoPedido] || statusMap[order.status])?.text ?? (order.estadoPedido ||
+                        order.status || 'Sin estado') }}
                     </span>
                 </div>
-                
+
                 <div class="mb-4">
                     <div class="text-xs font-bold text-stone-400 mb-1">CLIENTE</div>
                     <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-full bg-surface-container-high border border-surface-variant/20 flex items-center justify-center text-on-surface font-bold text-[10px]">
+                        <div
+                            class="w-6 h-6 rounded-full bg-surface-container-high border border-surface-variant/20 flex items-center justify-center text-on-surface font-bold text-[10px]">
                             {{ (order.nombreCliente || order.clientName || '?').charAt(0) }}
                         </div>
-                        <span class="font-bold text-sm text-on-surface">{{ order.nombreCliente || order.clientName || '—' }}</span>
+                        <span class="font-bold text-sm text-on-surface">{{ order.nombreCliente || order.clientName ||
+                            '—' }}</span>
                     </div>
                 </div>
 
                 <div class="flex justify-between items-end mb-4">
                     <div>
                         <div class="text-xs font-bold text-stone-400 mb-1">ENTREGA</div>
-                        <div class="text-sm font-medium text-on-surface-variant">{{ order.fechaEntrega | date:'dd MMM yyyy' }}</div>
+                        <div class="text-sm font-medium text-on-surface-variant">{{ order.fechaEntrega | date:'dd MMM
+                            yyyy' }}</div>
                     </div>
                     <div class="text-right">
                         <div class="text-xs font-bold text-stone-400 mb-1">SALDO</div>
@@ -162,15 +219,23 @@
                 </div>
 
                 <div class="flex items-center gap-2 pt-4 border-t border-zinc-100">
-                    @if (order.estadoPedido === 'PENDIENTE' || order.estadoPedido === 'PENDING_ACCEPTANCE' || order.estadoPedido === 'PENDING_PAYMENT') {
-                    <button (click)="openActivarProduccionModal(order)" class="flex-1 py-2 text-primary bg-primary/10 hover:bg-primary/20 font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">play_circle</span> Activar
+                    @if (order.estadoPedido === 'PENDIENTE') {
+                    <button (click)="openActivarProduccionModal(order)"
+                        class="py-2 px-3 text-primary bg-primary/10 hover:bg-primary/20 font-bold rounded-lg transition-colors flex justify-center items-center gap-1">
+                        <span class="material-symbols-outlined text-sm"
+                            style="font-variation-settings: 'FILL' 1;">play_circle</span>
                     </button>
                     }
-                    <button (click)="openEditForm(order)" class="flex-1 py-2 text-zinc-600 bg-surface-container hover:bg-surface-container-high font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
+                    <button (click)="openDetail(order)"
+                        class="py-2 px-3 text-zinc-500 bg-surface-container hover:bg-surface-container-high hover:text-primary font-bold rounded-lg transition-colors flex justify-center items-center">
+                        <span class="material-symbols-outlined text-sm">visibility</span>
+                    </button>
+                    <button (click)="openEditForm(order)"
+                        class="flex-1 py-2 text-zinc-600 bg-surface-container hover:bg-surface-container-high font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
                         <span class="material-symbols-outlined text-sm">edit</span> Editar
                     </button>
-                    <button (click)="openDeleteModal(order)" class="py-2 px-3 text-error bg-error-container/10 hover:bg-error-container/20 font-bold rounded-lg transition-colors flex justify-center items-center">
+                    <button (click)="openDeleteModal(order)"
+                        class="py-2 px-3 text-error bg-error-container/10 hover:bg-error-container/20 font-bold rounded-lg transition-colors flex justify-center items-center">
                         <span class="material-symbols-outlined text-sm">delete</span>
                     </button>
                 </div>
@@ -182,6 +247,7 @@
             </div>
             }
         </div>
+        }
 
         <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of orders"></mat-paginator>
     </section>
@@ -193,7 +259,7 @@
     <!-- Header Section -->
     <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-            <nav class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4">
+            <nav aria-label="Migas de pan de edición" class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4">
                 <button type="button" class="opacity-50 hover:opacity-100 transition-opacity"
                     (click)="closeForm()">PEDIDOS</button>
                 <span class="opacity-50">/</span>
@@ -224,119 +290,191 @@
                         <h2 class="text-xl font-bold tracking-tight text-on-surface">Identificación</h2>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        @if (viewMode === 'add') {
+                        <div class="space-y-2">
+                            <label [attr.for]="viewMode === 'add' ? 'clientSelect' : 'clientDisplay'"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Cliente</label>
+                            @if (viewMode === 'add') {
                             <mat-form-field appearance="outline" class="w-full">
-                                <mat-label>Cliente</mat-label>
-                                <mat-select formControlName="clientId">
-                                    <mat-option [value]="null" disabled>Selecciona un cliente...</mat-option>
-                                    @for (client of clientsList; track client.id) {
+                                <mat-select id="clientSelect" formControlName="clientId" placeholder="Selecciona un cliente...">
+                                    @for (client of clientsList; track (client.id || $index)) {
                                     <mat-option [value]="client.id">{{ client.nombre }}</mat-option>
                                     }
                                 </mat-select>
-                                @if (orderForm.get('clientId')?.invalid && orderForm.get('clientId')?.touched) {
-                                <mat-error>El cliente es requerido</mat-error>
-                                }
                             </mat-form-field>
+                            <div class="mt-2">
+                                <button type="button" (click)="crearCliente()"
+                                    class="text-xs font-bold text-primary hover:text-orange-700 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">person_add</span>
+                                    ¿No encuentras el cliente? Crear uno nuevo
+                                </button>
+                            </div>
+                            @if (orderForm.get('clientId')?.invalid && orderForm.get('clientId')?.touched) {
+                            <p class="text-error text-xs font-bold mt-1">El cliente es requerido</p>
+                            }
                             } @else {
-                            <mat-form-field appearance="outline" class="w-full">
-                                <mat-label>Cliente</mat-label>
-                                <input matInput [value]="selectedClientName" disabled>
-                            </mat-form-field>
+                            <input id="clientDisplay" [value]="selectedClientName" disabled
+                                class="w-full bg-surface-container border-none rounded-xl py-3.5 px-4 text-on-surface opacity-70 cursor-not-allowed">
                             }
                             @if (clientsList.length === 0) {
                             <p class="text-xs text-amber-600 font-medium">Cargando clientes del sistema...</p>
                             }
+                        </div>
                         <div class="space-y-2">
+                            <label for="deliveryDateInput"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Fecha
+                                de Entrega</label>
+                            <input id="deliveryDateInput" type="date" formControlName="deliveryDate"
+                                class="w-full bg-surface-container border-none rounded-xl py-3.5 px-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all">
+                        </div>
+                        @if (viewMode === 'edit') {
+                        <div class="space-y-2 md:col-span-2">
+                            <label for="statusInput"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Estado
+                                del Pedido</label>
+                            <input id="statusInput"
+                                [value]="(statusMap[orderForm.get('status')?.value])?.text || orderForm.get('status')?.value || 'Desconocido'"
+                                disabled
+                                class="w-full bg-surface-container border-none rounded-xl py-3.5 px-4 text-on-surface opacity-70 cursor-not-allowed">
+                            <p class="text-[10px] text-stone-400 mt-1 flex items-center gap-1"><span
+                                    class="material-symbols-outlined text-[12px]">info</span> *El estado se actualiza
+                                automáticamente al procesar pagos o autorizar producción.</p>
+                        </div>
+                        }
+                    </div>
+                </section>
+
+                <!-- Sección 2: Contexto del Evento -->
+                <section>
+                    <div class="flex items-center gap-3 mb-6 mt-10">
+                        <span
+                            class="w-8 h-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center font-bold text-sm">02</span>
+                        <h2 class="text-xl font-bold tracking-tight text-on-surface">Contexto del Evento</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label for="eventTypeSelect"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Tipo
+                                de evento o celebración</label>
                             <mat-form-field appearance="outline" class="w-full">
-                                <mat-label>Fecha de Entrega (Estimada)</mat-label>
-                                <input matInput type="date" formControlName="deliveryDate">
+                                <mat-select id="eventTypeSelect" formControlName="eventType" placeholder="Selecciona un tipo...">
+                                    <mat-option value="Cumpleaños">Cumpleaños</mat-option>
+                                    <mat-option value="Boda">Boda</mat-option>
+                                    <mat-option value="Bautizo">Bautizo</mat-option>
+                                    <mat-option value="Aniversario">Aniversario</mat-option>
+                                    <mat-option value="Otro">Otro</mat-option>
+                                </mat-select>
                             </mat-form-field>
+                        </div>
+                        <div class="space-y-2">
+                            <label for="eventForInput"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">¿Para quién es?</label>
+                            <input id="eventForInput" formControlName="eventFor" placeholder="Ej. Hija (Valentina)"
+                                class="w-full bg-surface-container border-none rounded-xl py-3.5 px-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all">
                         </div>
                     </div>
                 </section>
 
-
-
-
-                <!-- Sección 2: Detalle de Productos -->
+                <!-- Sección 3: Ítems del Pedido -->
                 <section>
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center justify-between mb-6 mt-10">
                         <div class="flex items-center gap-3">
                             <span
-                                class="w-8 h-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center font-bold text-sm">02</span>
+                                class="w-8 h-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center font-bold text-sm">03</span>
                             <h2 class="text-xl font-bold tracking-tight text-on-surface">Ítems del Pedido</h2>
                         </div>
                         <button type="button" (click)="addItem()"
-                            class="flex items-center gap-2 px-3 py-1.5 bg-orange-50 text-orange-700 rounded-lg text-xs font-bold hover:bg-orange-100 transition-colors">
+                            class="flex items-center gap-2 px-4 py-2 bg-orange-50 text-orange-700 rounded-lg text-sm font-bold hover:bg-orange-100 transition-colors">
                             <span class="material-symbols-outlined text-sm">add_circle</span> Agregar ítem
                         </button>
                     </div>
-                    <div class="overflow-x-auto rounded-xl border border-stone-100 shadow-sm">
+                    <div
+                        class="overflow-x-auto rounded-xl border border-stone-100 shadow-[0px_4px_12px_rgba(0,0,0,0.02)]">
                         <table class="w-full text-left border-collapse" formArrayName="items">
                             <thead>
                                 <tr class="bg-stone-50/50">
                                     <th
-                                        class="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100">
+                                        class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100">
                                         Producto</th>
                                     <th
-                                        class="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 w-24">
+                                        class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 w-24">
                                         Cant.</th>
                                     <th
-                                        class="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 w-32">
+                                        class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 w-32">
                                         P. Unitario</th>
                                     <th
-                                        class="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 w-32">
+                                        class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 w-32">
                                         Total</th>
                                     <th
-                                        class="px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 w-12">
+                                        class="px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-stone-400 border-b border-stone-100 w-12">
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody class="bg-white">
+                            <tbody class="bg-white divide-y divide-stone-50">
                                 @for (item of itemsFormArray.controls; track $index; let i = $index) {
                                 <tr [formGroupName]="i" class="group hover:bg-stone-50/30 transition-colors">
-                                    <td class="p-2 border-b border-stone-50">
-                                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
-                                            <mat-select formControlName="productId" placeholder="Seleccionar producto...">
-                                                @for (prod of productsList; track prod.id) {
+                                    <td class="p-4">
+                                        <mat-form-field appearance="outline" subscriptSizing="dynamic"
+                                            class="w-full min-w-[200px]">
+                                            <mat-select formControlName="productId"
+                                                placeholder="Seleccionar producto...">
+                                                @for (prod of productsList; track (prod.id || $index)) {
                                                 <mat-option [value]="prod.id">{{ prod.nombre }}</mat-option>
                                                 }
                                             </mat-select>
                                         </mat-form-field>
                                     </td>
-                                    <td class="p-2 border-b border-stone-50">
-                                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
-                                            <input matInput type="number" formControlName="quantity" step="1" min="1" class="text-center" />
-                                        </mat-form-field>
+                                    <td class="p-4">
+                                        <input type="number" formControlName="quantity" step="1" min="1"
+                                            class="w-full text-center bg-transparent border-none focus:ring-0 p-0 text-sm" />
                                     </td>
-                                    <td class="p-2 border-b border-stone-50">
-                                        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="w-full">
-                                            <span matTextPrefix class="text-stone-400 mr-1">$</span>
-                                            <input matInput type="number" formControlName="unitPrice" step="any" min="0" placeholder="0" class="text-right" />
-                                        </mat-form-field>
+                                    <td class="p-4">
+                                        <div class="flex items-center gap-1">
+                                            <span class="text-stone-300">$</span>
+                                            <input type="number" formControlName="unitPrice" step="any" min="0"
+                                                placeholder="0"
+                                                class="w-full bg-transparent border-none font-bold text-sm focus:ring-0 p-0" />
+                                        </div>
                                     </td>
-                                    <td class="p-2 border-b border-stone-50 text-right pr-4">
-                                        <span class="text-sm font-bold text-orange-800">{{ (item.get('quantity')?.value
-                                            || 0) * (item.get('unitPrice')?.value || 0) | currency:'USD' }}</span>
+                                    <td class="p-4 text-left font-bold text-[#c25e23]">
+                                        {{ (item.get('quantity')?.value || 0) * (item.get('unitPrice')?.value || 0) |
+                                        currency:'USD' }}
                                     </td>
-                                    <td class="p-2 border-b border-stone-50">
-                                        <button mat-icon-button type="button" color="warn" (click)="removeItem(i)">
-                                            <mat-icon>delete</mat-icon>
+                                    <td class="p-4 text-right">
+                                        <button type="button" class="text-stone-300 hover:text-error transition-colors"
+                                            (click)="removeItem(i)">
+                                            <span class="material-symbols-outlined text-lg">delete</span>
                                         </button>
                                     </td>
                                 </tr>
                                 }
                             </tbody>
                             <tfoot>
-                                <tr class="bg-stone-50/30">
-                                    <td class="px-4 py-3 text-right text-[10px] font-extrabold uppercase tracking-widest text-stone-500"
+                                <tr>
+                                    <td class="px-6 py-5 text-right text-[11px] font-bold uppercase tracking-widest text-stone-500"
                                         colspan="3">Subtotal Estimado</td>
-                                    <td class="px-4 py-3 text-right font-black text-on-surface">{{ subtotalEstimate |
-                                        currency:'USD' }}</td>
-                                    <td class="px-4 py-3"></td>
+                                    <td class="px-6 py-5 text-left font-black text-lg text-on-surface">{{
+                                        subtotalEstimate | currency:'USD' }}</td>
+                                    <td></td>
                                 </tr>
                             </tfoot>
                         </table>
+                    </div>
+                </section>
+
+                <!-- Sección 4: Detalles y Personalización -->
+                <section>
+                    <div class="flex items-center gap-3 mb-6 mt-10">
+                        <span
+                            class="w-8 h-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center font-bold text-sm">04</span>
+                        <h2 class="text-xl font-bold tracking-tight text-on-surface">Detalles y Personalización</h2>
+                    </div>
+                    <div class="space-y-2">
+                        <label for="specificationsInput"
+                            class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Especificaciones
+                            del pedido</label>
+                        <textarea id="specificationsInput" formControlName="specifications" rows="4"
+                            class="w-full bg-surface-container border-none rounded-xl p-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all resize-none"
+                            placeholder="Paleta de colores pasteles..."></textarea>
                     </div>
                 </section>
 
@@ -357,3 +495,353 @@
 </div>
 }
 
+@if (viewMode === 'detail' && selectedOrderDetails) {
+<div class="p-8 md:p-12 max-w-7xl mx-auto w-full animate-[dropdownFadeIn_0.2s_ease-out]">
+    <!-- Header -->
+    <header class="mb-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
+        <div>
+            <nav aria-label="Navegación de detalle" class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4 uppercase">
+                <button type="button" class="opacity-50 hover:opacity-100 transition-opacity"
+                    (click)="closeForm()">PEDIDOS</button>
+                <span class="opacity-50">/</span>
+                <span>VISUALIZAR PEDIDO</span>
+            </nav>
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface">Detalle del Pedido</h1>
+            <p class="mt-3 text-stone-500 text-lg max-w-xl">Información completa del pedido, productos, personalización
+                e historial de pagos.</p>
+        </div>
+        <div class="flex items-center gap-3 mt-4 md:mt-0">
+            <button (click)="openEditFromDetail()"
+                class="px-6 py-2.5 rounded-lg bg-[#f28b4b] hover:bg-[#e27a3a] text-white font-bold transition-colors flex items-center gap-2 shadow-sm">
+                <span class="material-symbols-outlined text-[18px]">edit</span> Editar Pedido
+            </button>
+            <div class="px-4 py-2.5 rounded-lg bg-blue-50 border border-blue-100 text-blue-600 font-bold text-sm">
+                ID: {{ selectedOrderDetails.codigoUnico || selectedOrderDetails.idPedido }}
+            </div>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
+        <!-- Left Column -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Datos del Cliente -->
+            <div class="bg-white rounded-2xl border border-orange-100/50 overflow-hidden shadow-sm">
+                <div class="bg-orange-50/50 px-6 py-4 border-b border-orange-100 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-orange-600 text-[20px]">person</span>
+                    <h3 class="font-bold text-on-surface">Datos del Cliente</h3>
+                </div>
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <div class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Nombre Completo
+                        </div>
+                        <div class="font-bold text-on-surface">{{ selectedOrderDetails.cliente?.nombreCompleto ||
+                            selectedOrderDetails.clientName }}</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Teléfono</div>
+                        <div class="font-bold text-on-surface">{{ selectedOrderDetails.cliente?.telefono || 'No
+                            disponible' }}</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">Dirección</div>
+                        <div class="font-bold text-on-surface">{{ selectedOrderDetails.cliente?.direccion || 'No
+                            disponible' }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Productos y Personalización -->
+            <div class="bg-white rounded-2xl border border-orange-100/50 overflow-hidden shadow-sm">
+                <div class="bg-orange-50/50 px-6 py-4 border-b border-orange-100 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-orange-600 text-[20px]">shopping_bag</span>
+                    <h3 class="font-bold text-on-surface">Productos y Personalización</h3>
+                </div>
+                <div class="p-6">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr>
+                                <th
+                                    class="pb-3 text-[10px] font-bold text-stone-400 uppercase tracking-widest border-b border-zinc-100">
+                                    Producto</th>
+                                <th
+                                    class="pb-3 text-[10px] font-bold text-stone-400 uppercase tracking-widest border-b border-zinc-100 w-20 text-center">
+                                    Cant.</th>
+                                <th
+                                    class="pb-3 text-[10px] font-bold text-stone-400 uppercase tracking-widest border-b border-zinc-100 w-32 text-right">
+                                    P. Unitario</th>
+                                <th
+                                    class="pb-3 text-[10px] font-bold text-stone-400 uppercase tracking-widest border-b border-zinc-100 w-32 text-right">
+                                    Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            @for (prod of selectedOrderDetails.productos; track (prod.idDetalle || $index)) {
+                            <tr class="border-b border-zinc-50 last:border-0">
+                                <td class="py-4 font-medium text-on-surface">{{ prod.nombreProducto }}</td>
+                                <td class="py-4 text-center">{{ prod.cantidad }}</td>
+                                <td class="py-4 text-right text-stone-500">{{ prod.precioUnitario | currency:'USD' }}
+                                </td>
+                                <td class="py-4 text-right font-bold text-orange-800">{{ prod.subtotal | currency:'USD'
+                                    }}</td>
+                            </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="pt-6 text-right font-bold text-on-surface">Subtotal</td>
+                                <td class="pt-6 text-right font-extrabold text-lg text-on-surface">{{
+                                    selectedOrderDetails.total | currency:'USD' }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="mt-8 pt-8 border-t border-zinc-100">
+                        <div class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-3">
+                            Especificaciones del Pedido</div>
+                        <div
+                            class="bg-surface-container-lowest p-5 rounded-xl border border-zinc-100 text-sm text-stone-600 leading-relaxed min-h-[80px] whitespace-pre-wrap">
+                            {{ selectedOrderDetails.productos[0]?.observaciones || 'No hay especificaciones
+                            adicionales.' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center mt-4">
+                <button (click)="closeForm()"
+                    class="text-sm font-bold text-stone-600 hover:text-stone-900 flex items-center gap-1 transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">arrow_back</span> Volver a Pedidos
+                </button>
+                <button (click)="openEditFromDetail()"
+                    class="md:hidden px-6 py-2.5 rounded-lg bg-[#f28b4b] hover:bg-[#e27a3a] text-white font-bold transition-colors flex items-center gap-2 shadow-sm">
+                    <span class="material-symbols-outlined text-[18px]">edit</span> Editar Pedido
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="space-y-6">
+            <!-- Estado Actual -->
+            <div class="bg-white rounded-2xl border border-zinc-100 overflow-hidden shadow-sm">
+                <div class="bg-zinc-50/80 px-6 py-4 border-b border-zinc-100 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-stone-500 text-[20px]">info</span>
+                    <h3 class="font-bold text-on-surface">Estado Actual</h3>
+                </div>
+                <div class="p-6 space-y-4 text-sm">
+                    <div class="flex justify-between items-center pb-4 border-b border-zinc-50">
+                        <span class="text-stone-500">Estado:</span>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold"
+                            [ngClass]="(statusMap[selectedOrderDetails.estadoPedido])?.css ?? 'bg-stone-100 text-stone-500'">
+                            {{ (statusMap[selectedOrderDetails.estadoPedido])?.text ?? selectedOrderDetails.estadoPedido
+                            }}
+                        </span>
+                    </div>
+                    <div class="flex justify-between items-center pb-4 border-b border-zinc-50">
+                        <span class="text-stone-500">Fecha de entrega:</span>
+                        <span class="font-bold text-on-surface">{{ selectedOrderDetails.fechaEntrega | date:'dd MMMM,
+                            yyyy' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen Financiero -->
+            <div class="bg-white rounded-2xl border border-zinc-100 overflow-hidden shadow-sm">
+                <div class="bg-zinc-50/80 px-6 py-4 border-b border-zinc-100 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-stone-500 text-[20px]">payments</span>
+                    <h3 class="font-bold text-on-surface">Resumen Financiero</h3>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-stone-500 text-sm">Precio Total:</span>
+                        <span class="font-extrabold text-lg">{{ selectedOrderDetails.total | currency:'USD' }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-stone-500">Total Abonado:</span>
+                        <span class="font-bold text-green-600">{{ ((selectedOrderDetails.total ?? 0) -
+                            (selectedOrderDetails.saldoPendiente ?? 0)) | currency:'USD' }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-stone-500">Saldo Pendiente:</span>
+                        <span class="font-bold text-orange-600">{{ selectedOrderDetails.saldoPendiente | currency:'USD'
+                            }}</span>
+                    </div>
+                    <div class="pt-4 mt-2">
+                        <div
+                            class="flex justify-between text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1.5">
+                            <span>Abonado</span>
+                            <span>{{ getPaymentPercentage(selectedOrderDetails.total ?? 0,
+                                selectedOrderDetails.saldoPendiente ?? 0) }}%</span>
+                        </div>
+                        <div class="w-full bg-zinc-100 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full"
+                                [style.width.%]="getPaymentPercentage(selectedOrderDetails.total ?? 0, selectedOrderDetails.saldoPendiente ?? 0)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Historial de Abonos -->
+            <div class="bg-white rounded-2xl border border-zinc-100 overflow-hidden shadow-sm">
+                <div class="bg-zinc-50/80 px-6 py-4 border-b border-zinc-100 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-stone-500 text-[20px]">history</span>
+                    <h3 class="font-bold text-on-surface">Historial de Abonos</h3>
+                </div>
+                <div class="p-6 space-y-5">
+                    @if (!selectedOrderDetails.historialAbonos?.data?.length) {
+                    <p class="text-sm text-stone-500 text-center py-4">No hay abonos registrados.</p>
+                    }
+                    @for (abono of selectedOrderDetails.historialAbonos?.data; track (abono.idPago || i); let i = $index) {
+                    <div class="flex justify-between items-start pb-4 border-b border-zinc-50 last:border-0 last:pb-0">
+                        <div>
+                            <div class="font-bold text-sm text-on-surface">Abono #{{ i + 1 }}</div>
+                            <div class="text-xs text-stone-400 mt-0.5">{{ abono.fechaPago | date:'dd MMMM, yyyy' }}
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-bold text-green-600 text-sm">{{ abono.monto | currency:'USD' }}</div>
+                            <div class="flex items-center justify-end gap-1.5 mt-0.5">
+                                <span class="text-[10px] text-stone-400">{{ abono.metodoPago }}</span>
+                                <span
+                                    class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-green-50 text-green-700">Completado</span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+@if (viewMode === 'formalize') {
+<div class="p-8 md:p-12 max-w-7xl mx-auto w-full animate-[dropdownFadeIn_0.2s_ease-out]">
+    <header class="mb-10">
+        <nav aria-label="Navegación de formalización" class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4 uppercase">
+            <button type="button" class="opacity-50 hover:opacity-100 transition-opacity"
+                (click)="closeForm()">PEDIDOS</button>
+            <span class="opacity-50">/</span>
+            <span>FORMALIZAR PEDIDO</span>
+        </nav>
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-on-surface">Formalizar Pedido</h1>
+        <p class="mt-3 text-stone-500 text-lg max-w-xl">Autoriza y procesa los pedidos pendientes para iniciar la
+            producción.</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div
+            class="bg-white p-6 rounded-2xl border border-zinc-100 flex flex-col items-center justify-center shadow-sm">
+            <span class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-2">TOTAL PENDIENTE</span>
+            <span class="text-4xl font-extrabold text-orange-500">{{ totalPendienteFormalizar | currency:'USD' }}</span>
+        </div>
+        <div
+            class="bg-white p-6 rounded-2xl border border-zinc-100 flex flex-col items-center justify-center shadow-sm">
+            <span class="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-2">ÓRDENES CRÍTICAS</span>
+            <span class="text-4xl font-extrabold text-orange-500">{{ ordenesCriticas }}</span>
+        </div>
+    </div>
+
+    <!-- Cola de formalización table -->
+    <div class="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-zinc-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-orange-500 text-[20px]">assignment</span>
+                <h3 class="font-bold text-on-surface">Cola de Formalización</h3>
+            </div>
+            <div class="flex bg-stone-50 rounded-lg p-1 text-xs font-bold">
+                <button (click)="setFormalizeFilter('TODOS')" [class.bg-white]="formalizeFilter === 'TODOS'"
+                    [class.text-orange-600]="formalizeFilter === 'TODOS'"
+                    [class.shadow-sm]="formalizeFilter === 'TODOS'"
+                    class="px-3 py-1.5 rounded-md transition-all">Todos</button>
+                <button (click)="setFormalizeFilter('PENDIENTES')" [class.bg-white]="formalizeFilter === 'PENDIENTES'"
+                    [class.text-orange-600]="formalizeFilter === 'PENDIENTES'"
+                    [class.shadow-sm]="formalizeFilter === 'PENDIENTES'"
+                    class="px-3 py-1.5 rounded-md text-stone-500 hover:text-stone-700 transition-all">Pendientes</button>
+                <button (click)="setFormalizeFilter('PRODUCCION')" [class.bg-white]="formalizeFilter === 'PRODUCCION'"
+                    [class.text-orange-600]="formalizeFilter === 'PRODUCCION'"
+                    [class.shadow-sm]="formalizeFilter === 'PRODUCCION'"
+                    class="px-3 py-1.5 rounded-md text-stone-500 hover:text-stone-700 transition-all">Producción</button>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left min-w-[800px]">
+                <thead>
+                    <tr
+                        class="bg-stone-50/50 border-b border-zinc-100 text-[10px] font-bold text-stone-400 uppercase tracking-widest">
+                        <th class="px-6 py-4">CLIENTE</th>
+                        <th class="px-6 py-4 text-center">PEDIDOS</th>
+                        <th class="px-6 py-4">REGISTRO</th>
+                        <th class="px-6 py-4">ENTREGA</th>
+                        <th class="px-6 py-4">ESTADO</th>
+                        <th class="px-6 py-4 text-right">TOTAL</th>
+                        <th class="px-6 py-4 text-center">ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm divide-y divide-zinc-50">
+                    @for (order of formalizeDataSource.data | slice:(formalizePaginator?.pageIndex ||
+                    0)*(formalizePaginator?.pageSize || 5):((formalizePaginator?.pageIndex || 0) +
+                    1)*(formalizePaginator?.pageSize || 5); track (order.idPedido || $index)) {
+                    <tr class="hover:bg-orange-50/30 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-on-surface">{{ order.nombreCliente || order.clientName }}</div>
+                            <div class="text-[10px] text-stone-400">ID: {{ order.codigoUnico || order.idPedido }}</div>
+                        </td>
+                        <td class="px-6 py-4 text-center font-bold text-orange-600">
+                            <span class="px-2 py-1 bg-orange-50 rounded-md text-[11px]">{{ order.detalles?.length || 1
+                                }} items</span>
+                        </td>
+                        <td class="px-6 py-4 text-stone-500">
+                            {{ (order.fechaCreacion || order.fechaEntrega) | date:'dd MMM yyyy' }}
+                        </td>
+                        <td class="px-6 py-4 font-medium text-stone-600">{{ order.fechaEntrega | date:'dd MMM yyyy' }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold"
+                                [ngClass]="(statusMap[order.estadoPedido] || statusMap[order.status])?.css ?? 'bg-stone-100 text-stone-500'">
+                                {{ (statusMap[order.estadoPedido] || statusMap[order.status])?.text ??
+                                (order.estadoPedido || order.status || 'Sin estado') }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-right font-bold text-on-surface">{{ order.totalAmount || order.total |
+                            currency:'USD' }}</td>
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex items-center justify-center gap-1">
+                                <button class="text-blue-500 hover:bg-blue-50 p-2 rounded transition-colors"
+                                    title="Formalizar / Activar Producción" (click)="openActivarProduccionModal(order)">
+                                    <span class="material-symbols-outlined text-[20px]">factory</span>
+                                </button>
+                                <button class="text-error hover:bg-red-50 p-2 rounded transition-colors"
+                                    title="Eliminar" (click)="openDeleteModal(order)">
+                                    <span class="material-symbols-outlined text-[20px]">delete</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    }
+                    @if (formalizeList.length === 0) {
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-stone-400 font-medium">No hay pedidos
+                            pendientes por formalizar.</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <mat-paginator #formalizePaginator [pageSizeOptions]="[5, 10, 25]"
+            aria-label="Select page of formalization orders"></mat-paginator>
+
+        <div
+            class="p-4 border-t border-zinc-100 flex justify-between items-center text-[10px] font-bold text-stone-400">
+            <span>Mostrando {{ formalizeDataSource.data.length }} pedidos</span>
+        </div>
+    </div>
+
+    <div class="mt-8 flex">
+        <button (click)="closeForm()"
+            class="px-8 py-3.5 rounded-xl bg-orange-400 hover:bg-orange-500 text-white font-bold transition-all shadow-md shadow-orange-500/20 flex items-center gap-2">
+            <span class="material-symbols-outlined text-[20px]">arrow_back</span> Regresar
+        </button>
+    </div>
+</div>
+}

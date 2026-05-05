@@ -33,4 +33,5 @@ export interface OrderClientDTO {
   idCliente: number;
   nombreCompleto: string;
   telefono: string;
+  direccion?: string;
 }

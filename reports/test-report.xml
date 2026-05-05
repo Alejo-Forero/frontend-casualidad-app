@@ -1,186 +1,412 @@
 <testExecutions version="1">
-<file path="src/app/core/services/order.service.spec.ts">
-<testCase name="OrderService should fetch all orders" duration="42" />
-<testCase name="OrderService should create order with various payload options" duration="22" />
-<testCase name="OrderService should update order with various payload options" duration="13" />
-<testCase name="OrderService should handle actions" duration="16" />
-</file>
-<file path="src/app/core/services/client.service.spec.ts">
-<testCase name="ClientService should fetch all clients" duration="49" />
-<testCase name="ClientService should create client" duration="24" />
-<testCase name="ClientService should update client" duration="16" />
-<testCase name="ClientService should delete client" duration="15" />
-</file>
-<file path="src/app/shared/pagination/pagination.spec.ts">
-<testCase name="PaginationComponent should create" duration="86" />
-<testCase name="PaginationComponent should calculate pagination correctly on changes" duration="35" />
-<testCase name="PaginationComponent should calculate displayed items correctly for last page" duration="50" />
-<testCase name="PaginationComponent should prevent negative displayed items" duration="64" />
-<testCase name="PaginationComponent should default totalPages to 1 if totalItems is 0" duration="23" />
-<testCase name="PaginationComponent should emit pageChange when onPageChange is called with a valid page" duration="21" />
-<testCase name="PaginationComponent should not emit pageChange for out of bounds or same page" duration="13" />
-</file>
-<file path="src/app/pagos/pagos.spec.ts">
-<testCase name="PagosComponent should create" duration="107" />
-<testCase name="PagosComponent should compute totalMonthlyBalance correctly" duration="39" />
-<testCase name="PagosComponent should handle sorting all directions" duration="18" />
-<testCase name="PagosComponent should handle applyFilters branches" duration="25" />
-<testCase name="PagosComponent should handle savePayment branches" duration="25" />
-<testCase name="PagosComponent should handle closeFormSuccessModal branches" duration="15" />
-<testCase name="PagosComponent should handle mapPaymentType branches" duration="58" />
-<testCase name="PagosComponent should handle delete confirmation" duration="54" />
-<testCase name="PagosComponent should handle pagination edge cases" duration="16" />
-<testCase name="PagosComponent should handle view modal lifecycle" duration="11" />
-</file>
-<file path="src/app/clientes/components/client-products-dialog/client-products-dialog.spec.ts">
-<testCase name="ClientProductsDialogComponent should create" duration="218" />
-<testCase name="ClientProductsDialogComponent should show empty message if no orders" duration="36" />
-<testCase name="ClientProductsDialogComponent should show loading message if has orders" duration="39" />
-</file>
-<file path="src/app/reportes/reportes.spec.ts">
-<testCase name="ReportesComponent should create" duration="86" />
-<testCase name="ReportesComponent should calculate cashPercentage correctly" duration="31" />
-<testCase name="ReportesComponent should calculate transferPercentage correctly" duration="31" />
-<testCase name="ReportesComponent should handle onPageChange properly" duration="15" />
-<testCase name="ReportesComponent should reset pagination on date change" duration="55" />
-<testCase name="ReportesComponent should return correct rank color class" duration="18" />
-<testCase name="ReportesComponent should return correct rank progress class" duration="13" />
-</file>
 <file path="src/app/login/login.spec.ts">
-<testCase name="LoginComponent should create" duration="91" />
-<testCase name="LoginComponent should navigate on successful login" duration="67" />
-<testCase name="LoginComponent should show error modal on failed login" duration="62" />
-<testCase name="LoginComponent should mark form as touched when invalid" duration="19" />
-<testCase name="LoginComponent should toggle help modal" duration="17" />
-<testCase name="LoginComponent should expose email and password getters" duration="16" />
+<testCase name="LoginComponent should create" duration="89" />
+<testCase name="LoginComponent should navigate on successful login" duration="22" />
+<testCase name="LoginComponent should show error modal on failed login" duration="98" />
+<testCase name="LoginComponent should mark form as touched when invalid" duration="21" />
+<testCase name="LoginComponent should toggle help modal" duration="18" />
+<testCase name="LoginComponent should expose email and password getters" duration="17" />
+</file>
+<file path="src/app/cambiar-contrasena/cambiar-contrasena.spec.ts">
+<testCase name="CambiarContrasenaComponent should create" duration="84" />
+<testCase name="CambiarContrasenaComponent should have invalid form initially" duration="22" />
+<testCase name="CambiarContrasenaComponent solicitarCodigo should set state correctly on success" duration="20" />
+<testCase name="CambiarContrasenaComponent solicitarCodigo should handle error" duration="18" />
+<testCase name="CambiarContrasenaComponent solicitarCodigo should handle error fallback" duration="17" />
+<testCase name="CambiarContrasenaComponent cambiarPassword should not submit if form is invalid" duration="18" />
+<testCase name="CambiarContrasenaComponent cambiarPassword should not submit if passwords do not match" duration="26" />
+<testCase name="CambiarContrasenaComponent cambiarPassword should set showSuccessModal to true on success" duration="13" />
+<testCase name="CambiarContrasenaComponent cambiarPassword should set error message on failure" duration="13" />
+<testCase name="CambiarContrasenaComponent cambiarPassword should use fallback error message on failure" duration="10" />
+<testCase name="CambiarContrasenaComponent modals and navigation should navigate home on goBack" duration="8" />
+<testCase name="CambiarContrasenaComponent modals and navigation should navigate home and close modal on closeSuccessAndGoBack" duration="10" />
+<testCase name="CambiarContrasenaComponent modals and navigation should toggle help modal" duration="10" />
+<testCase name="CambiarContrasenaComponent getters should return controls" duration="9" />
 </file>
 <file path="src/app/layout/layout.spec.ts">
-<testCase name="LayoutComponent should create" duration="112" />
-<testCase name="LayoutComponent should toggle profile dropdown on button click" duration="29" />
-<testCase name="LayoutComponent should close profile dropdown only when open" duration="25" />
-<testCase name="LayoutComponent should open and close config modal" duration="25" />
-<testCase name="LayoutComponent should open and close delete modal" duration="22" />
-<testCase name="LayoutComponent should confirm delete and close modal" duration="20" />
-<testCase name="LayoutComponent should close profile dropdown on document click" duration="17" />
+<testCase name="LayoutComponent should create" duration="90" />
+<testCase name="LayoutComponent should toggle profile dropdown on button click" duration="21" />
+<testCase name="LayoutComponent should close profile dropdown only when open" duration="21" />
+<testCase name="LayoutComponent should open and close config modal" duration="19" />
+<testCase name="LayoutComponent should open and close delete modal" duration="20" />
+<testCase name="LayoutComponent should confirm delete and close modal" duration="25" />
+<testCase name="LayoutComponent should close profile dropdown on document click" duration="21" />
+<testCase name="LayoutComponent should navigate to nuevo pedido" duration="19" />
+<testCase name="LayoutComponent should open and close logout modal" duration="14" />
+<testCase name="LayoutComponent should confirm logout" duration="24" />
+</file>
+<file path="src/app/perfil/perfil.spec.ts">
+<testCase name="PerfilComponent should create" duration="109" />
+<testCase name="PerfilComponent ngOnInit should initialize form with user data" duration="18" />
+<testCase name="PerfilComponent ngOnInit should handle user without space in name" duration="15" />
+<testCase name="PerfilComponent ngOnInit should handle user with empty nombre" duration="28" />
+<testCase name="PerfilComponent ngOnInit should handle null user gracefully" duration="26" />
+<testCase name="PerfilComponent actualizarPerfil should not call service if form is invalid" duration="19" />
+<testCase name="PerfilComponent actualizarPerfil should call service and update state on success" duration="19" />
+<testCase name="PerfilComponent actualizarPerfil should handle missing user on success without crashing" duration="13" />
+<testCase name="PerfilComponent actualizarPerfil should set error on failure" duration="20" />
+<testCase name="PerfilComponent actualizarPerfil should set fallback error on failure" duration="16" />
+<testCase name="PerfilComponent navigation should navigate home on goBack" duration="18" />
+<testCase name="PerfilComponent getters should return controls" duration="14" />
+</file>
+<file path="src/app/restablecer-correo/restablecer-correo.spec.ts">
+<testCase name="RestablecerCorreoComponent should create" duration="89" />
+<testCase name="RestablecerCorreoComponent solicitarCodigoActual should set state on success" duration="23" />
+<testCase name="RestablecerCorreoComponent solicitarCodigoActual should set error on failure" duration="18" />
+<testCase name="RestablecerCorreoComponent solicitarCodigoActual should use fallback error message on failure" duration="17" />
+<testCase name="RestablecerCorreoComponent validarActualYSolicitarNuevo should move to step 3 if step is 2 and form is valid" duration="18" />
+<testCase name="RestablecerCorreoComponent validarActualYSolicitarNuevo should not move to step 3 if step is 2 and form is invalid" duration="16" />
+<testCase name="RestablecerCorreoComponent validarActualYSolicitarNuevo should call service if step is 3 and forms are valid" duration="16" />
+<testCase name="RestablecerCorreoComponent validarActualYSolicitarNuevo should not proceed if form is invalid in step 3" duration="16" />
+<testCase name="RestablecerCorreoComponent validarActualYSolicitarNuevo should not proceed if step2 form is invalid in step 3" duration="20" />
+<testCase name="RestablecerCorreoComponent validarActualYSolicitarNuevo should do nothing if step is not 2 or 3" duration="14" />
+<testCase name="RestablecerCorreoComponent validarActualYSolicitarNuevo should set error on failure in step 3" duration="11" />
+<testCase name="RestablecerCorreoComponent validarActualYSolicitarNuevo should set fallback error on failure in step 3" duration="7" />
+<testCase name="RestablecerCorreoComponent confirmarNuevoCorreo should not call service if step4Form is invalid" duration="8" />
+<testCase name="RestablecerCorreoComponent confirmarNuevoCorreo should call service and update state on success" duration="12" />
+<testCase name="RestablecerCorreoComponent confirmarNuevoCorreo should set error on failure" duration="11" />
+<testCase name="RestablecerCorreoComponent confirmarNuevoCorreo should set fallback error on failure" duration="11" />
+<testCase name="RestablecerCorreoComponent navigation should close modal and navigate to home on closeSuccessAndGoBack" duration="13" />
+<testCase name="RestablecerCorreoComponent navigation should go back a step if step &gt; 1 on goBack" duration="12" />
+<testCase name="RestablecerCorreoComponent navigation should navigate to home if step === 1 on goBack" duration="10" />
+<testCase name="RestablecerCorreoComponent getters should return form controls" duration="12" />
 </file>
 <file path="src/app/inventario/components/ajuste-dialog/ajuste-dialog.spec.ts">
-<testCase name="AjusteDialogComponent should create" duration="307" />
-<testCase name="AjusteDialogComponent should initialize form with data" duration="86" />
-<testCase name="AjusteDialogComponent should close dialog with form value on submit when valid" duration="88" />
-<testCase name="AjusteDialogComponent should not close dialog if reason is too short" duration="54" />
-</file>
-<file path="src/app/shared/components/success-dialog/success-dialog.spec.ts">
-<testCase name="SuccessDialogComponent should create" duration="344" />
-<testCase name="SuccessDialogComponent should have correct data bound" duration="48" />
-<testCase name="SuccessDialogComponent should close with primary action" duration="48" />
-<testCase name="SuccessDialogComponent should close with secondary action" duration="40" />
-<testCase name="SuccessDialogComponent should close with close action" duration="36" />
-<testCase name="SuccessDialogComponent should work with success accent color" duration="58" />
-<testCase name="SuccessDialogComponent should work with warning accent color" duration="65" />
-<testCase name="SuccessDialogComponent should work without optional fields" duration="72" />
-</file>
-<file path="src/app/core/guards/guest.guard.spec.ts">
-<testCase name="guestGuard should return true if not authenticated" duration="25" />
-<testCase name="guestGuard should navigate to /home and return false if authenticated" duration="12" />
+<testCase name="AjusteDialogComponent should create" duration="326" />
+<testCase name="AjusteDialogComponent should initialize form with data" duration="53" />
+<testCase name="AjusteDialogComponent should close dialog with form value on submit when valid" duration="49" />
+<testCase name="AjusteDialogComponent should not close dialog if reason is too short" duration="64" />
 </file>
 <file path="src/app/shared/components/confirm-dialog/confirm-dialog.spec.ts">
-<testCase name="ConfirmDialogComponent should create" duration="269" />
-<testCase name="ConfirmDialogComponent should have correct data" duration="47" />
-<testCase name="ConfirmDialogComponent should close with true when confirmed" duration="47" />
-<testCase name="ConfirmDialogComponent should close with false when cancelled" duration="51" />
-<testCase name="ConfirmDialogComponent should work with primary accent color" duration="66" />
-<testCase name="ConfirmDialogComponent should work with warning accent color" duration="63" />
-<testCase name="ConfirmDialogComponent should work without optional fields" duration="58" />
+<testCase name="ConfirmDialogComponent should create" duration="273" />
+<testCase name="ConfirmDialogComponent should have correct data" duration="53" />
+<testCase name="ConfirmDialogComponent should close with true when confirmed" duration="51" />
+<testCase name="ConfirmDialogComponent should close with false when cancelled" duration="37" />
+<testCase name="ConfirmDialogComponent should work with primary accent color" duration="72" />
+<testCase name="ConfirmDialogComponent should work with warning accent color" duration="60" />
+<testCase name="ConfirmDialogComponent should work without optional fields" duration="64" />
 </file>
-<file path="src/app/core/services/inventory.service.spec.ts">
-<testCase name="InventoryService should be created" duration="24" />
-<testCase name="InventoryService should getAll and map data array" duration="16" />
-<testCase name="InventoryService should getAll using content fallback" duration="9" />
-<testCase name="InventoryService should create a product with string unit" duration="14" />
-<testCase name="InventoryService should create a product with numeric unit ID" duration="11" />
-<testCase name="InventoryService should create a product with empty unit fallback" duration="11" />
-<testCase name="InventoryService should update a product with string unit" duration="13" />
-<testCase name="InventoryService should update a product with numeric unit ID" duration="11" />
-<testCase name="InventoryService should delete (ajuste a 0)" duration="15" />
-<testCase name="InventoryService should registrarEntrada" duration="10" />
-<testCase name="InventoryService should ajustarInventario" duration="8" />
-<testCase name="InventoryService should addComposicion" duration="8" />
+<file path="src/app/shared/components/success-dialog/success-dialog.spec.ts">
+<testCase name="SuccessDialogComponent should create" duration="341" />
+<testCase name="SuccessDialogComponent should have correct data bound" duration="47" />
+<testCase name="SuccessDialogComponent should close with primary action" duration="43" />
+<testCase name="SuccessDialogComponent should close with secondary action" duration="37" />
+<testCase name="SuccessDialogComponent should close with close action" duration="35" />
+<testCase name="SuccessDialogComponent should work with success accent color" duration="58" />
+<testCase name="SuccessDialogComponent should work with warning accent color" duration="71" />
+<testCase name="SuccessDialogComponent should work without optional fields" duration="78" />
 </file>
 <file path="src/app/inventario/components/entrada-dialog/entrada-dialog.spec.ts">
-<testCase name="EntradaDialogComponent should create" duration="352" />
-<testCase name="EntradaDialogComponent should initialize form with data" duration="64" />
-<testCase name="EntradaDialogComponent should close dialog with form value on submit" duration="63" />
-<testCase name="EntradaDialogComponent should not close dialog if form is invalid" duration="91" />
+<testCase name="EntradaDialogComponent should create" duration="315" />
+<testCase name="EntradaDialogComponent should initialize form with data" duration="65" />
+<testCase name="EntradaDialogComponent should close dialog with form value on submit" duration="55" />
+<testCase name="EntradaDialogComponent should not close dialog if form is invalid" duration="77" />
 </file>
-<file path="src/app/home/home.spec.ts">
-<testCase name="HomeComponent should create" duration="107" />
-<testCase name="HomeComponent should initialize empty chart logic without errors" duration="267" />
-</file>
-<file path="src/app/clientes/clientes.spec.ts">
-<testCase name="ClientesComponent should handle phone helpers" duration="196" />
-<testCase name="ClientesComponent should save client (create and update)" duration="28" />
+<file path="src/app/shared/components/base-table.component.spec.ts">
+<testCase name="BaseTableComponent should be created" duration="308" />
+<testCase name="BaseTableComponent should set paginator on dataSource when ViewChild is initialized" duration="105" />
+<testCase name="BaseTableComponent should set sort on dataSource when ViewChild is initialized" duration="57" />
 </file>
 <file path="src/app/core/interceptors/auth.interceptor.spec.ts">
-<testCase name="authInterceptor should add Authorization header if token exists" duration="20" />
-<testCase name="authInterceptor should not add Authorization header if token does not exist" duration="6" />
-<testCase name="authInterceptor should clear session and navigate to /login on 401 error" duration="7" />
-<testCase name="authInterceptor should only throw error if status is not 401" duration="5" />
-</file>
-<file path="src/app/core/services/auth.service.spec.ts">
-<testCase name="AuthService should be created" duration="24" />
-<testCase name="AuthService should login and set session" duration="15" />
-<testCase name="AuthService should get access token" duration="6" />
-<testCase name="AuthService should get refresh token" duration="6" />
-<testCase name="AuthService should get user" duration="5" />
-<testCase name="AuthService should handle invalid user json" duration="32" />
-<testCase name="AuthService should handle no user json" duration="4" />
-<testCase name="AuthService should clear session" duration="5" />
-<testCase name="AuthService should check if authenticated" duration="4" />
+<testCase name="authInterceptor should add Authorization header if token exists" duration="34" />
+<testCase name="authInterceptor should not add Authorization header if token does not exist" duration="7" />
+<testCase name="authInterceptor should clear session and navigate to /login on 401 error" duration="11" />
+<testCase name="authInterceptor should only throw error if status is not 401" duration="21" />
 </file>
 <file path="src/app/core/services/payment.service.spec.ts">
 <testCase name="PaymentService should be created" duration="21" />
-<testCase name="PaymentService should registrarAbono" duration="13" />
-<testCase name="PaymentService should registrarAbono with transferencia and referencia" duration="10" />
-<testCase name="PaymentService should editarAbono" duration="12" />
-<testCase name="PaymentService should eliminarAbono" duration="8" />
-<testCase name="PaymentService should getReporteIngresos" duration="6" />
-<testCase name="PaymentService should exportarReporteIngresos" duration="6" />
-<testCase name="PaymentService should getSaldosPendientes" duration="6" />
-<testCase name="PaymentService should exportarSaldosPendientes" duration="8" />
-<testCase name="PaymentService should create via registrarAbono (deprecated)" duration="4" />
-<testCase name="PaymentService should emit error from create when idPedido is missing" duration="5" />
-<testCase name="PaymentService should emit error from delete (deprecated)" duration="4" />
+<testCase name="PaymentService should registrarAbono" duration="18" />
+<testCase name="PaymentService should registrarAbono with transferencia and referencia" duration="9" />
+<testCase name="PaymentService should editarAbono" duration="17" />
+<testCase name="PaymentService should eliminarAbono" duration="12" />
+<testCase name="PaymentService should getReporteIngresos" duration="8" />
+<testCase name="PaymentService should exportarReporteIngresos" duration="13" />
+<testCase name="PaymentService should getSaldosPendientes" duration="5" />
+<testCase name="PaymentService should exportarSaldosPendientes" duration="9" />
+<testCase name="PaymentService should create via registrarAbono (deprecated)" duration="8" />
+<testCase name="PaymentService should emit error from create when idPedido is missing" duration="14" />
+<testCase name="PaymentService should emit error from delete (deprecated)" duration="7" />
 </file>
-<file path="src/app/app.spec.ts">
-<testCase name="App should create the app" duration="38" />
+<file path="src/app/reportes/reportes.spec.ts">
+<testCase name="ReportesComponent should create" duration="212" />
+<testCase name="ReportesComponent should calculate cashPercentage correctly" duration="53" />
+<testCase name="ReportesComponent should calculate transferPercentage correctly" duration="65" />
+<testCase name="ReportesComponent should fetch ingresos on date change" duration="66" />
+<testCase name="ReportesComponent should fetch saldos and map correctly" duration="25" />
+<testCase name="ReportesComponent should export excel" duration="29" />
+<testCase name="ReportesComponent should return correct rank color class" duration="34" />
+<testCase name="ReportesComponent should return correct rank progress class" duration="24" />
 </file>
-<file path="src/app/pedidos/pedidos.spec.ts">
-<testCase name="PedidosComponent should handle search and sortingDataAccessor" duration="196" />
-<testCase name="PedidosComponent should handle item helpers (addItem, removeItem, subtotal)" duration="33" />
-<testCase name="PedidosComponent should handle populateOrderForm via openEditForm" duration="72" />
-<testCase name="PedidosComponent should handle save and delete" duration="17" />
+<file path="src/app/core/services/auth.service.spec.ts">
+<testCase name="AuthService should be created" duration="32" />
+<testCase name="AuthService should login and set session" duration="26" />
+<testCase name="AuthService should get access token" duration="16" />
+<testCase name="AuthService should get refresh token" duration="10" />
+<testCase name="AuthService should get user" duration="13" />
+<testCase name="AuthService should update user" duration="14" />
+<testCase name="AuthService should handle invalid user json" duration="41" />
+<testCase name="AuthService should handle no user json" duration="5" />
+<testCase name="AuthService should clear session" duration="16" />
+<testCase name="AuthService should check if authenticated" duration="6" />
+</file>
+<file path="src/app/core/services/inventory.service.spec.ts">
+<testCase name="InventoryService should be created" duration="24" />
+<testCase name="InventoryService should getAll and map data array" duration="12" />
+<testCase name="InventoryService should getAll using content fallback" duration="10" />
+<testCase name="InventoryService should create a product with string unit" duration="21" />
+<testCase name="InventoryService should create a product with numeric unit ID" duration="17" />
+<testCase name="InventoryService should create a product with empty unit fallback" duration="7" />
+<testCase name="InventoryService should update a product with string unit" duration="12" />
+<testCase name="InventoryService should update a product with numeric unit ID" duration="10" />
+<testCase name="InventoryService should delete (ajuste a 0)" duration="14" />
+<testCase name="InventoryService should registrarEntrada" duration="10" />
+<testCase name="InventoryService should ajustarInventario" duration="12" />
+<testCase name="InventoryService should addComposicion" duration="10" />
+</file>
+<file path="src/app/clientes/components/client-products-dialog/client-products-dialog.spec.ts">
+<testCase name="ClientProductsDialogComponent should create" duration="271" />
+<testCase name="ClientProductsDialogComponent should show empty message if no orders" duration="33" />
+<testCase name="ClientProductsDialogComponent should show loading message if has orders" duration="35" />
+</file>
+<file path="src/app/core/services/perfil.service.spec.ts">
+<testCase name="PerfilService should be created" duration="28" />
+<testCase name="PerfilService Password should solicitarCodigoPassword" duration="20" />
+<testCase name="PerfilService Password should cambiarPassword" duration="12" />
+<testCase name="PerfilService Correo should solicitarCodigoCorreoActual" duration="12" />
+<testCase name="PerfilService Correo should validarActualYSolicitarNuevo" duration="13" />
+<testCase name="PerfilService Correo should confirmarCambioCorreo" duration="11" />
+<testCase name="PerfilService Perfil should actualizarPerfil" duration="11" />
+</file>
+<file path="src/app/home/home.spec.ts">
+<testCase name="HomeComponent should create" duration="83" />
+<testCase name="HomeComponent should calculate getters correctly" duration="23" />
+<testCase name="HomeComponent should initialize chart with context" duration="257" />
+<testCase name="HomeComponent should handle missing context gracefully" duration="18" />
+</file>
+<file path="src/app/pagos/pagos.spec.ts">
+<testCase name="PagosComponent should create" duration="251" />
+<testCase name="PagosComponent should compute totalMonthlyBalance correctly" duration="58" />
+<testCase name="PagosComponent should trigger filter on search change" duration="30" />
+<testCase name="PagosComponent savePayment should not submit if form is invalid" duration="38" />
+<testCase name="PagosComponent savePayment should call registrarAbono and open success dialog on success" duration="99" />
+<testCase name="PagosComponent savePayment should log error when registrarAbono fails" duration="32" />
+<testCase name="PagosComponent should handle mapPaymentType branches" duration="30" />
+<testCase name="PagosComponent should handle delete confirmation" duration="34" />
+<testCase name="PagosComponent should handle view modal lifecycle" duration="27" />
+<testCase name="PagosComponent deber&#xed;a llamar a editarAbono cuando viewMode es &quot;edit&quot; y el id existe" duration="25" />
+<testCase name="PagosComponent should handle amount validation logic" duration="21" />
+<testCase name="PagosComponent should open edit form correctly" duration="20" />
+<testCase name="PagosComponent should close form and reset state" duration="28" />
+</file>
+<file path="src/app/core/services/client.service.spec.ts">
+<testCase name="ClientService should fetch all clients" duration="34" />
+<testCase name="ClientService should create client" duration="12" />
+<testCase name="ClientService should update client" duration="7" />
+<testCase name="ClientService should delete client" duration="7" />
 </file>
 <file path="src/app/core/guards/auth.guard.spec.ts">
-<testCase name="authGuard should return true if authenticated" duration="18" />
-<testCase name="authGuard should navigate to /login and return false if not authenticated" duration="6" />
+<testCase name="authGuard should return true if authenticated" duration="26" />
+<testCase name="authGuard should navigate to /login and return false if not authenticated" duration="12" />
 </file>
 <file path="src/app/shared/utils/list-helper.spec.ts">
-<testCase name="ListHelper should handle sort direction toggle" duration="4" />
+<testCase name="ListHelper should handle sort direction toggle" duration="3" />
 <testCase name="ListHelper should handle switching columns" duration="1" />
 <testCase name="ListHelper should get correct sort icon" duration="1" />
 <testCase name="ListHelper should sort array asc" duration="1" />
 <testCase name="ListHelper should sort array desc" duration="1" />
-<testCase name="ListHelper should not sort if no column" duration="2" />
+<testCase name="ListHelper should not sort if no column" duration="1" />
 <testCase name="ListHelper should handle equal values during sort" duration="1" />
 </file>
-<file path="src/app/core/services/user.service.spec.ts">
-<testCase name="UserService should fetch all users with different data structures" duration="17" />
-<testCase name="UserService should handle payload mapping in create" duration="7" />
-<testCase name="UserService should handle payload mapping in update" duration="4" />
-<testCase name="UserService should getById and delete" duration="4" />
+<file path="src/app/clientes/clientes.spec.ts">
+<testCase name="ClientesComponent should create the component" duration="182" />
+<testCase name="ClientesComponent should start in list view mode" duration="42" />
+<testCase name="ClientesComponent should load clients on init" duration="34" />
+<testCase name="ClientesComponent should log error when loading clients fails" duration="44" />
+<testCase name="ClientesComponent should apply filter on search change" duration="22" />
+<testCase name="ClientesComponent should reset paginator on search change" duration="39" />
+<testCase name="ClientesComponent filterPredicate should match by name" duration="29" />
+<testCase name="ClientesComponent filterPredicate should match by id" duration="58" />
+<testCase name="ClientesComponent filterPredicate should not match unrelated strings" duration="18" />
+<testCase name="ClientesComponent sortingDataAccessor should return lowercase name" duration="21" />
+<testCase name="ClientesComponent sortingDataAccessor should return 1 for active client" duration="28" />
+<testCase name="ClientesComponent sortingDataAccessor should return 0 for inactive client" duration="16" />
+<testCase name="ClientesComponent sortingDataAccessor should return pedidos total" duration="16" />
+<testCase name="ClientesComponent sortingDataAccessor should return empty string for unknown property" duration="15" />
+<testCase name="ClientesComponent addPhoneField should add a new phone control" duration="19" />
+<testCase name="ClientesComponent removePhoneField should remove a phone when more than one exists" duration="16" />
+<testCase name="ClientesComponent removePhoneField should NOT remove the last phone" duration="22" />
+<testCase name="ClientesComponent openAddForm should switch to add mode" duration="15" />
+<testCase name="ClientesComponent openAddForm should reset error message" duration="16" />
+<testCase name="ClientesComponent openAddForm should reset phones array with one empty control" duration="20" />
+<testCase name="ClientesComponent openEditForm should switch to edit mode" duration="17" />
+<testCase name="ClientesComponent openEditForm should patch form values" duration="16" />
+<testCase name="ClientesComponent openEditForm should populate phones from client.phones" duration="14" />
+<testCase name="ClientesComponent openEditForm should add empty phone control when client has no phones" duration="13" />
+<testCase name="ClientesComponent openEditForm should clear error message" duration="11" />
+<testCase name="ClientesComponent closeForm should return to list mode" duration="13" />
+<testCase name="ClientesComponent openProductsModal should open a dialog" duration="13" />
+<testCase name="ClientesComponent openDeleteModal should skip when client has orders" duration="12" />
+<testCase name="ClientesComponent openDeleteModal should open confirm dialog" duration="12" />
+<testCase name="ClientesComponent confirmDelete should call delete and open success dialog on success" duration="12" />
+<testCase name="ClientesComponent confirmDelete should open error dialog when delete fails" duration="8" />
+<testCase name="ClientesComponent saveClient should mark form as touched and not submit when invalid" duration="11" />
+<testCase name="ClientesComponent saveClient should call create when in add mode" duration="10" />
+<testCase name="ClientesComponent saveClient should go to list after primary action on success dialog" duration="9" />
+<testCase name="ClientesComponent saveClient should go to list when dialog result is null" duration="13" />
+<testCase name="ClientesComponent saveClient should call openAddForm again on secondary action after create" duration="11" />
+<testCase name="ClientesComponent saveClient should stay in edit mode on secondary action when editing" duration="13" />
+<testCase name="ClientesComponent saveClient should call update when in edit mode" duration="12" />
+<testCase name="ClientesComponent saveClient should set duplicate-phone error for status 400" duration="13" />
+<testCase name="ClientesComponent saveClient should set duplicate-phone error for status 409" duration="13" />
+<testCase name="ClientesComponent saveClient should set duplicate-phone error for status 500" duration="13" />
+<testCase name="ClientesComponent saveClient should set generic error for other status codes" duration="12" />
+</file>
+<file path="src/app/shared/pagination/pagination.spec.ts">
+<testCase name="PaginationComponent should create" duration="50" />
+<testCase name="PaginationComponent should calculate pagination correctly on changes" duration="8" />
+<testCase name="PaginationComponent should calculate displayed items correctly for last page" duration="7" />
+<testCase name="PaginationComponent should prevent negative displayed items" duration="7" />
+<testCase name="PaginationComponent should default totalPages to 1 if totalItems is 0" duration="10" />
+<testCase name="PaginationComponent should emit pageChange when onPageChange is called with a valid page" duration="10" />
+<testCase name="PaginationComponent should not emit pageChange for out of bounds or same page" duration="6" />
+</file>
+<file path="src/app/core/guards/guest.guard.spec.ts">
+<testCase name="guestGuard should return true if not authenticated" duration="15" />
+<testCase name="guestGuard should navigate to /home and return false if authenticated" duration="6" />
+</file>
+<file path="src/app/core/services/order.service.spec.ts">
+<testCase name="OrderService should fetch all orders" duration="25" />
+<testCase name="OrderService should create order with various payload options" duration="12" />
+<testCase name="OrderService should update order with various payload options" duration="7" />
+<testCase name="OrderService should handle actions" duration="9" />
+<testCase name="OrderService should manage order draft" duration="5" />
+</file>
+<file path="src/app/app.spec.ts">
+<testCase name="App should create the app" duration="32" />
 </file>
 <file path="src/app/inventario/inventario.spec.ts">
-<testCase name="InventarioComponent should populate composition in openEditForm" duration="75" />
-<testCase name="InventarioComponent should handle composition helpers" duration="13" />
+<testCase name="InventarioComponent should create the component" duration="193" />
+<testCase name="InventarioComponent should initialise with list view mode" duration="39" />
+<testCase name="InventarioComponent should load inventory on init" duration="39" />
+<testCase name="InventarioComponent should handle error when loading inventory" duration="41" />
+<testCase name="InventarioComponent should count low-stock products" duration="36" />
+<testCase name="InventarioComponent should return 0 when no low-stock products" duration="37" />
+<testCase name="InventarioComponent should calculate total inventory value using purchasePrice" duration="28" />
+<testCase name="InventarioComponent should fallback to productionCost when purchasePrice is 0" duration="29" />
+<testCase name="InventarioComponent should fallback to salePrice as last resort" duration="55" />
+<testCase name="InventarioComponent should return 0 when all prices are 0" duration="32" />
+<testCase name="InventarioComponent should set filter to lowstock" duration="29" />
+<testCase name="InventarioComponent should set filter to category" duration="20" />
+<testCase name="InventarioComponent should set filter to all" duration="19" />
+<testCase name="InventarioComponent should reset paginator on filter change" duration="20" />
+<testCase name="InventarioComponent should trigger filter on search change" duration="39" />
+<testCase name="InventarioComponent should disable salePrice and enable wastePercent for INSUMO" duration="42" />
+<testCase name="InventarioComponent should enable salePrice and disable wastePercent for ELABORADO" duration="19" />
+<testCase name="InventarioComponent should enable salePrice and disable wastePercent for TRANSFORMADO" duration="25" />
+<testCase name="InventarioComponent should enable both salePrice and wastePercent for other types" duration="19" />
+<testCase name="InventarioComponent should clear componentsFormArray on type change" duration="27" />
+<testCase name="InventarioComponent should add a component with default values" duration="17" />
+<testCase name="InventarioComponent should remove a component by index" duration="18" />
+<testCase name="InventarioComponent should switch to add view mode" duration="22" />
+<testCase name="InventarioComponent should clear composition array on openAddForm" duration="17" />
+<testCase name="InventarioComponent should clear error message on openAddForm" duration="21" />
+<testCase name="InventarioComponent should switch to edit view mode" duration="13" />
+<testCase name="InventarioComponent should patch form values on openEditForm" duration="12" />
+<testCase name="InventarioComponent should not add composition when composition is empty" duration="13" />
+<testCase name="InventarioComponent should use productionCost when purchasePrice is missing" duration="12" />
+<testCase name="InventarioComponent should switch back to list view mode on closeForm" duration="11" />
+<testCase name="InventarioComponent should mark form as touched and not submit if invalid" duration="12" />
+<testCase name="InventarioComponent should call create when viewMode is add and form is valid" duration="15" />
+<testCase name="InventarioComponent should call addComposicion after create when product has composition" duration="12" />
+<testCase name="InventarioComponent should NOT call addComposicion when id is 0" duration="13" />
+<testCase name="InventarioComponent should log error when create fails" duration="11" />
+<testCase name="InventarioComponent should log error when addComposicion fails" duration="12" />
+<testCase name="InventarioComponent should call update when viewMode is edit and form is valid" duration="9" />
+<testCase name="InventarioComponent should show error when update fails" duration="14" />
+<testCase name="InventarioComponent should call openAddForm again when secondary action is chosen after create" duration="16" />
+<testCase name="InventarioComponent should go to list when dialog closes with primary action" duration="14" />
+<testCase name="InventarioComponent should go to list when dialog closes with close action" duration="12" />
+<testCase name="InventarioComponent openDeleteModal should open confirm dialog" duration="12" />
+<testCase name="InventarioComponent confirmDelete should call delete service and open success dialog when confirmed" duration="13" />
+<testCase name="InventarioComponent confirmDelete should open error dialog when delete fails" duration="13" />
+<testCase name="InventarioComponent should call registrarEntrada when dialog returns a result" duration="13" />
+<testCase name="InventarioComponent should NOT call registrarEntrada when entrada dialog is cancelled" duration="12" />
+<testCase name="InventarioComponent should log error when registrarEntrada fails" duration="10" />
+<testCase name="InventarioComponent should call ajustarInventario when dialog returns a result" duration="22" />
+<testCase name="InventarioComponent should NOT call ajustarInventario when ajuste dialog is cancelled" duration="8" />
+<testCase name="InventarioComponent should log error when ajustarInventario fails" duration="10" />
+<testCase name="InventarioComponent filterPredicate should match by name" duration="8" />
+<testCase name="InventarioComponent filterPredicate should match by id" duration="8" />
+<testCase name="InventarioComponent filterPredicate should filter by lowstock" duration="8" />
+<testCase name="InventarioComponent filterPredicate should filter by category" duration="6" />
+<testCase name="InventarioComponent filterPredicate should pass all when category filter has no selectedCategory" duration="7" />
+<testCase name="InventarioComponent sortingDataAccessor should return lowercase name" duration="6" />
+<testCase name="InventarioComponent sortingDataAccessor should return type" duration="8" />
+<testCase name="InventarioComponent sortingDataAccessor should return stock" duration="6" />
+<testCase name="InventarioComponent sortingDataAccessor should return empty string for unknown property" duration="6" />
+</file>
+<file path="src/app/pedidos/pedidos.spec.ts">
+<testCase name="PedidosComponent should create the component" duration="110" />
+<testCase name="PedidosComponent should start in list view mode" duration="16" />
+<testCase name="PedidosComponent should open add form when queryParam new=true" duration="21" />
+<testCase name="PedidosComponent should populate dataSource on loadOrders" duration="8" />
+<testCase name="PedidosComponent should log error when loadOrders fails" duration="9" />
+<testCase name="PedidosComponent should map clients from loadClients" duration="8" />
+<testCase name="PedidosComponent should log error when loadClients fails" duration="6" />
+<testCase name="PedidosComponent should map products from loadProducts" duration="7" />
+<testCase name="PedidosComponent should log error when loadProducts fails" duration="8" />
+<testCase name="PedidosComponent should apply filter on search change" duration="6" />
+<testCase name="PedidosComponent should reset paginator on search change" duration="7" />
+<testCase name="PedidosComponent filterPredicate should match by nombreCliente" duration="6" />
+<testCase name="PedidosComponent filterPredicate should match by codigoUnico" duration="7" />
+<testCase name="PedidosComponent filterPredicate should not match unrelated strings" duration="6" />
+<testCase name="PedidosComponent sortingDataAccessor returns codigoUnico for codigo" duration="6" />
+<testCase name="PedidosComponent sortingDataAccessor falls back to idPedido when codigoUnico is empty" duration="7" />
+<testCase name="PedidosComponent sortingDataAccessor returns nombreCliente for cliente" duration="6" />
+<testCase name="PedidosComponent sortingDataAccessor returns clientName when nombreCliente is empty" duration="6" />
+<testCase name="PedidosComponent sortingDataAccessor returns estadoPedido for estado" duration="6" />
+<testCase name="PedidosComponent sortingDataAccessor returns timestamp for fecha" duration="6" />
+<testCase name="PedidosComponent sortingDataAccessor returns saldoPendiente for saldo" duration="6" />
+<testCase name="PedidosComponent sortingDataAccessor returns empty string for unknown property" duration="6" />
+<testCase name="PedidosComponent subtotalEstimate should calculate correctly" duration="7" />
+<testCase name="PedidosComponent subtotalEstimate should default missing values to 0" duration="7" />
+<testCase name="PedidosComponent selectedClientName should return client name when found in clientsList" duration="5" />
+<testCase name="PedidosComponent selectedClientName should return currentOrderClientName when client not found in list" duration="6" />
+<testCase name="PedidosComponent selectedClientName should return &quot;Cliente Desconocido&quot; when no id and no currentName" duration="6" />
+<testCase name="PedidosComponent selectedClientName should return currentOrderClientName when clientId is null" duration="5" />
+<testCase name="PedidosComponent addItem should add a new item to the form array" duration="7" />
+<testCase name="PedidosComponent removeItem should remove the item at given index" duration="8" />
+<testCase name="PedidosComponent openAddForm should switch to add mode" duration="6" />
+<testCase name="PedidosComponent openAddForm should clear items and add one default item" duration="8" />
+<testCase name="PedidosComponent openAddForm should set a default deliveryDate 14 days ahead" duration="6" />
+<testCase name="PedidosComponent closeForm should return to list mode and clear everything" duration="6" />
+<testCase name="PedidosComponent openEditForm should skip and show dialog when order is finished/cancelled" duration="7" />
+<testCase name="PedidosComponent openEditForm should call getById and populate form for editable order" duration="16" />
+<testCase name="PedidosComponent openEditForm should log error when getById fails" duration="6" />
+<testCase name="PedidosComponent populateOrderForm should add empty item when productos is empty" duration="16" />
+<testCase name="PedidosComponent crearCliente should save draft and navigate" duration="7" />
+<testCase name="PedidosComponent ngOnInit should restore draft if exists and new=true" duration="12" />
+<testCase name="PedidosComponent populateOrderForm should reset form before patching" duration="29" />
+<testCase name="PedidosComponent populateOrderForm should use idCliente when cliente is missing" duration="17" />
+<testCase name="PedidosComponent buildItemsFromProducts should set null productId when no matching product" duration="16" />
+<testCase name="PedidosComponent openActivarProduccionModal should open confirm dialog" duration="6" />
+<testCase name="PedidosComponent confirmActivarProduccion should call activarProduccion and open success dialog when confirmed" duration="5" />
+<testCase name="PedidosComponent confirmActivarProduccion should open error dialog when fails" duration="5" />
+<testCase name="PedidosComponent openDeleteModal should open confirm dialog" duration="6" />
+<testCase name="PedidosComponent confirmDelete should call cancelar and open success dialog on success" duration="5" />
+<testCase name="PedidosComponent confirmDelete should open error dialog when cancelar fails" duration="6" />
+<testCase name="PedidosComponent saveOrder should mark form as touched and not submit when invalid" duration="6" />
+<testCase name="PedidosComponent saveOrder should call create when form has no id" duration="7" />
+<testCase name="PedidosComponent saveOrder should go to list after primary action" duration="6" />
+<testCase name="PedidosComponent saveOrder should go to list when dialog result is null" duration="6" />
+<testCase name="PedidosComponent saveOrder should call openAddForm on secondary action when creating" duration="6" />
+<testCase name="PedidosComponent saveOrder should log error when create fails" duration="6" />
+<testCase name="PedidosComponent saveOrder should call update when form has an id" duration="29" />
+<testCase name="PedidosComponent saveOrder should NOT call openAddForm on secondary action when editing" duration="27" />
+<testCase name="PedidosComponent openDetail should call getById and show detail view" duration="17" />
+<testCase name="PedidosComponent openFormalizeView should switch to formalize mode and apply filter" duration="5" />
+<testCase name="PedidosComponent setFormalizeFilter should filter the formalize list" duration="5" />
+<testCase name="PedidosComponent openEditFromDetail should populate form from selectedOrderDetails" duration="17" />
+<testCase name="PedidosComponent getPaymentPercentage should calculate correctly" duration="7" />
 </file>
 </testExecutions>
