@@ -320,13 +320,12 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2 md:col-span-2">
-                            <label
-                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Nombre
-                                del Artículo</label>
+                            <label for="nameInput"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Nombre del Artículo</label>
                             <div class="relative">
                                 <span
                                     class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">inventory_2</span>
-                                <input formControlName="name" placeholder="Ej: Papel Bond 80g"
+                                <input id="nameInput" formControlName="name" placeholder="Ej: Papel Bond 80g"
                                     class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium">
                             </div>
                             @if (inventoryForm.get('name')?.invalid && (inventoryForm.get('name')?.dirty ||
@@ -336,11 +335,11 @@
                         </div>
 
                         <div class="space-y-2">
-                            <label
+                            <label for="typeSelect"
                                 class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Tipo
                                 de Artículo</label>
                             <mat-form-field appearance="outline" class="w-full">
-                                <mat-select formControlName="type">
+                                <mat-select id="typeSelect" formControlName="type">
                                     <mat-option value="INSUMO">Insumo</mat-option>
                                     <mat-option value="ELABORADO">Elaborado</mat-option>
                                     <mat-option value="TRANSFORMADO">Transformado</mat-option>
@@ -350,10 +349,10 @@
                         </div>
 
                         <div class="space-y-2">
-                            <label
+                            <label for="unidadInput"
                                 class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Unidad
                                 de Medida</label>
-                            <input formControlName="unit" placeholder="Ej: Resma, Kg, Unidad"
+                            <input id="unidadInput" formControlName="unit" placeholder="Ej: Resma, Kg, Unidad"
                                 class="w-full bg-surface-container border-none rounded-xl py-3.5 px-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium">
                         </div>
                     </div>
@@ -368,60 +367,59 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
-                            <label
+                            <label for="stockInput"
                                 class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Stock
                                 Actual</label>
                             <div class="relative">
                                 <span
                                     class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">inventory</span>
-                                <input type="number" formControlName="stock" step="any"
+                                <input id="stockInput" type="number" formControlName="stock" step="any"
                                     class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
                             </div>
                         </div>
 
                         <div class="space-y-2">
-                            <label
+                            <label for="minStockInput"
                                 class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Stock
                                 Mínimo</label>
                             <div class="relative">
                                 <span
                                     class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">notifications_active</span>
-                                <input type="number" formControlName="minStock" step="any"
+                                <input id="minStockInput" type="number" formControlName="minStock" step="any"
                                     class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
                             </div>
                         </div>
 
                         <div class="space-y-2">
-                            <label
+                            <label for="costInput"
                                 class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Costo
                                 de Producción</label>
                             <div class="relative">
                                 <span
                                     class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">$</span>
-                                <input type="number" formControlName="productionCost" step="0.01"
+                                <input id="costInput" type="number" formControlName="productionCost" step="0.01"
                                     class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
                             </div>
                         </div>
 
                         <div class="space-y-2">
-                            <label
+                            <label for="priceInput"
                                 class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Precio
                                 de Venta</label>
                             <div class="relative">
                                 <span
                                     class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">$</span>
-                                <input type="number" formControlName="salePrice" step="0.01"
+                                <input id="priceInput" type="number" formControlName="salePrice" step="0.01"
                                     class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
                             </div>
                         </div>
 
                         <div class="space-y-2 md:col-span-2">
-                            <label class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">%
-                                Desperdicio / Sobrante</label>
+                            <label for="wasteInput" class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">% Desperdicio / Sobrante</label>
                             <div class="relative">
                                 <span
                                     class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">recycling</span>
-                                <input type="number" formControlName="wastePercent" step="0.1" max="100"
+                                <input id="wasteInput" type="number" formControlName="wastePercent" step="0.1" max="100"
                                     class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
                                 <span
                                     class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">%</span>

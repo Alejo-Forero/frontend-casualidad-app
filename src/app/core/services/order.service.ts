@@ -49,7 +49,7 @@ export class OrderService {
           total:          p.total,
           saldoPendiente: p.saldoPendiente,
           // Aliases para compatibilidad con templates existentes
-          id:             p.idPedido ? String(p.idPedido) : `tmp-${Math.floor(Math.random() * 1000000)}`,
+          id:             p.idPedido ? String(p.idPedido) : `tmp-${crypto.getRandomValues(new Uint32Array(1))[0] % 1000000}`,
           code:           p.codigoUnico,
           status:         p.estadoPedido,
           clientName:     p.nombreCliente ?? '',

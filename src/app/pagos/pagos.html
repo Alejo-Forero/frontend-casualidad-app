@@ -43,8 +43,8 @@
                 <span class="material-symbols-outlined text-[160px]">payments</span>
             </div>
         </button>
-        <div (click)="verReportes()"
-            class="group relative overflow-hidden bg-surface-container-lowest rounded-xl p-8 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] hover:translate-y-[-4px] transition-all duration-300 cursor-pointer">
+        <button (click)="verReportes()" type="button"
+            class="group relative overflow-hidden bg-surface-container-lowest rounded-xl p-8 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] hover:translate-y-[-4px] transition-all duration-300 cursor-pointer text-left w-full">
             <div class="flex justify-between items-start mb-12">
                 <div
                     class="w-14 h-14 bg-stone-50 rounded-2xl flex items-center justify-center text-stone-600 transition-colors group-hover:bg-stone-900 group-hover:text-white">
@@ -61,7 +61,7 @@
             <div class="absolute -right-8 -bottom-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
                 <span class="material-symbols-outlined text-[160px]">analytics</span>
             </div>
-        </div>
+        </button>
     </div>
 
     <!-- Filtros rápidos -->
@@ -103,7 +103,7 @@
                 <!-- ID Pago Column -->
                 <ng-container matColumnDef="idPago">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100">
+                        class="casualidad-table-header">
                         ID PAGO </th>
                     <td mat-cell *matCellDef="let payment" class="px-8 py-5 text-sm font-bold text-primary"> #{{
                         payment.idPago.toString().substring(0,8) | uppercase }} </td>
@@ -112,7 +112,7 @@
                 <!-- Cliente Column -->
                 <ng-container matColumnDef="cliente">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100">
+                        class="casualidad-table-header">
                         Cliente </th>
                     <td mat-cell *matCellDef="let payment" class="px-8 py-5 text-sm font-medium"> {{
                         payment.nombreCliente || 'Desconocido' }} </td>
@@ -121,7 +121,7 @@
                 <!-- Estado Column -->
                 <ng-container matColumnDef="estado">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100">
+                        class="casualidad-table-header">
                         Estado </th>
                     <td mat-cell *matCellDef="let payment" class="px-8 py-5">
                         <span class="px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-full"
@@ -134,7 +134,7 @@
                 <!-- Fecha Column -->
                 <ng-container matColumnDef="fecha">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100">
+                        class="casualidad-table-header">
                         Fecha </th>
                     <td mat-cell *matCellDef="let payment" class="px-8 py-5 text-sm text-on-surface-variant font-body">
                         {{ payment.fechaPago | date:'mediumDate' }} </td>
@@ -143,7 +143,7 @@
                 <!-- Método Column -->
                 <ng-container matColumnDef="metodo">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100">
+                        class="casualidad-table-header">
                         Método </th>
                     <td mat-cell *matCellDef="let payment" class="px-8 py-5">
                         <div class="flex items-center gap-2 text-sm text-on-surface-variant">
@@ -157,7 +157,7 @@
                 <!-- Monto Column -->
                 <ng-container matColumnDef="monto">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100 text-right">
+                        class="casualidad-table-header text-right">
                         Monto </th>
                     <td mat-cell *matCellDef="let payment" class="px-8 py-5 font-black text-sm text-right"> {{
                         payment.monto | currency:'USD' }} </td>
@@ -166,7 +166,7 @@
                 <!-- Acciones Column -->
                 <ng-container matColumnDef="acciones">
                     <th mat-header-cell *matHeaderCellDef
-                        class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100 text-right">
+                        class="casualidad-table-header text-right">
                         Acciones </th>
                     <td mat-cell *matCellDef="let payment" class="px-8 py-5 text-right">
                         <div class="flex items-center justify-end gap-2">
@@ -264,7 +264,7 @@
 @if (viewMode === 'add' || viewMode === 'edit') {
 <div class="p-8 md:p-12 max-w-4xl mx-auto w-full animate-[dropdownFadeIn_0.2s_ease-out]">
     <!-- Breadcrumb -->
-    <nav class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4">
+    <nav aria-label="Migas de pan de edición" class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4">
         <button type="button" class="opacity-50 hover:opacity-100 transition-opacity"
             (click)="closeForm()">PAGOS</button>
         <span class="opacity-50">/</span>
@@ -320,11 +320,11 @@
                         }
                     </div>
                     <div class="space-y-2">
-                        <span
+                        <label
                             class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-2">
                             <span class="material-symbols-outlined text-xs">account_balance_wallet</span>
                             Método de Pago <span class="text-error">*</span>
-                        </span>
+                        </label>
                         <div class="flex gap-3">
                             <label class="flex-1">
                                 <input formControlName="type" class="hidden peer" type="radio" value="EFECTIVO" />
@@ -423,8 +423,8 @@
 
 <!-- View Payment Modal -->
 @if (showViewModal && selectedPayment) {
-<div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-background/20 backdrop-blur-sm">
-    <div class="absolute inset-0" (click)="closeViewModal()" (keydown.enter)="closeViewModal()"></div>
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-background/20 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Detalle del pago">
+    <div class="absolute inset-0" (click)="closeViewModal()" (keydown.enter)="closeViewModal()" tabindex="0"></div>
     <div
         class="relative w-full max-w-2xl bg-surface-container-lowest rounded-2xl shadow-[0px_24px_48px_rgba(45,47,47,0.12)] overflow-hidden flex flex-col animate-[dropdownFadeIn_0.2s_ease-out]">
         <!-- Modal Header -->

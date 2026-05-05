@@ -557,4 +557,45 @@ describe('PedidosComponent', () => {
     // secondary with id → does NOT call openAddForm
     expect(openAddSpy).not.toHaveBeenCalled();
   });
+
+  it('openDetail should call getById and show detail view', async () => {
+    component.openDetail(makeOrder());
+    await new Promise(r => setTimeout(r, 10));
+    expect(component.viewMode).toBe('detail');
+    expect(component.selectedOrderDetails).toBeDefined();
+  });
+
+  it('openFormalizeView should switch to formalize mode and apply filter', () => {
+    component.openFormalizeView();
+    expect(component.viewMode).toBe('formalize');
+    expect(component.formalizeList.length).toBeGreaterThan(0);
+  });
+
+  it('setFormalizeFilter should filter the formalize list', () => {
+    component.ordersData = [
+      makeOrder({ estadoPedido: 'PENDIENTE' }),
+      makeOrder({ estadoPedido: 'TERMINADO' })
+    ];
+    component.dataSource.data = component.ordersData;
+    
+    component.setFormalizeFilter('PENDIENTES');
+    expect(component.formalizeList.every(o => o.estadoPedido === 'PENDIENTE')).toBe(true);
+    
+    component.setFormalizeFilter('PRODUCCION');
+    expect(component.formalizeList.length).toBe(0);
+  });
+
+  it('openEditFromDetail should populate form from selectedOrderDetails', async () => {
+    component.selectedOrderDetails = makeOrderDetail({ idPedido: 123 });
+    component.openEditFromDetail();
+    await new Promise(r => setTimeout(r, 10));
+    expect(component.viewMode).toBe('edit');
+    expect(component.orderForm.get('id')?.value).toBe(123);
+  });
+
+  it('getPaymentPercentage should calculate correctly', () => {
+    expect(component.getPaymentPercentage(100, 30)).toBe(70);
+    expect(component.getPaymentPercentage(100, 100)).toBe(0);
+    expect(component.getPaymentPercentage(0, 0)).toBe(0);
+  });
 });

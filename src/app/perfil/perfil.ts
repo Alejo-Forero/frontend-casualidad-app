@@ -26,12 +26,12 @@ export class PerfilComponent implements OnInit {
     nombre: ['', [
       Validators.required, 
       Validators.maxLength(50),
-      Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$')
+      Validators.pattern(String.raw`^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$`)
     ]],
     apellidos: ['', [
       Validators.required, 
       Validators.maxLength(50),
-      Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$')
+      Validators.pattern(String.raw`^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$`)
     ]],
     telefono: ['', [
       Validators.required,

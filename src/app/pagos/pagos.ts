@@ -1,5 +1,4 @@
-import { ListHelper } from '../shared/utils/list-helper';
-import { Component, inject, OnInit, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef, DestroyRef, AfterViewInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -15,7 +14,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
-import { AfterViewInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Shape normalizada para la tabla — compatible con el HTML existente */
@@ -35,14 +33,14 @@ interface PaymentRow {
 }
 
 export type PaymentStatus = 'TERMINADO' | 'PENDIENTE' | 'CANCELADO' | 'EN_PRODUCCION';
-export type PaymentType   = 'EFECTIVO' | 'TRANSFERENCIA';
+export type PaymentType = 'EFECTIVO' | 'TRANSFERENCIA';
 
 @Component({
   selector: 'app-pagos',
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
+    CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -59,40 +57,40 @@ export type PaymentType   = 'EFECTIVO' | 'TRANSFERENCIA';
 export class PagosComponent implements OnInit, AfterViewInit {
 
   // ─── Estado principal ─────────────────────────────────────────────────────
-  paymentsData:     PaymentRow[] = [];
+  paymentsData: PaymentRow[] = [];
   paymentsListed: PaymentListItemDTO[] = [];
-  
+
   dataSource = new MatTableDataSource<PaymentListItemDTO>([]);
   displayedColumns: string[] = ['idPago', 'cliente', 'estado', 'fecha', 'metodo', 'monto', 'acciones'];
 
   @ViewChild(MatPaginator) paginator?: MatPaginator;
   @ViewChild(MatSort) sort?: MatSort;
 
-  searchTerm    = '';
+  searchTerm = '';
   currentFilter: 'ALL' | PaymentStatus = 'ALL';
 
   // ─── Mapas de UI ──────────────────────────────────────────────────────────
   statusMap: Record<string, { text: string; css: string }> = {
-    'TERMINADO': { text: 'Completado',  css: 'bg-green-100 text-green-700' },
-    'EN_PRODUCCION': { text: 'En Producción',  css: 'bg-blue-100 text-blue-700' },
-    'PENDIENTE':   { text: 'Pendiente',   css: 'bg-orange-100 text-orange-700' },
-    'CANCELADO': { text: 'Cancelado',   css: 'bg-red-100 text-red-700' }
+    'TERMINADO': { text: 'Completado', css: 'bg-green-100 text-green-700' },
+    'EN_PRODUCCION': { text: 'En Producción', css: 'bg-blue-100 text-blue-700' },
+    'PENDIENTE': { text: 'Pendiente', css: 'bg-orange-100 text-orange-700' },
+    'CANCELADO': { text: 'Cancelado', css: 'bg-red-100 text-red-700' }
   };
 
   typeMap: Record<string, { text: string; icon: string }> = {
-    'EFECTIVO':      { text: 'Efectivo',      icon: 'payments' },
+    'EFECTIVO': { text: 'Efectivo', icon: 'payments' },
     'TRANSFERENCIA': { text: 'Transferencia', icon: 'account_balance' },
     // aliases por compatibilidad con datos históricos
-    'CASH':     { text: 'Efectivo',      icon: 'payments' },
+    'CASH': { text: 'Efectivo', icon: 'payments' },
     'TRANSFER': { text: 'Transferencia', icon: 'account_balance' }
   };
 
   // ─── Modals ───────────────────────────────────────────────────────────────
-  showDeleteModal      = false;
-  showSuccessModal     = false;
-  showErrorModal       = false;
-  errorMessage         = '';
-  showViewModal        = false;
+  showDeleteModal = false;
+  showSuccessModal = false;
+  showErrorModal = false;
+  errorMessage = '';
+  showViewModal = false;
   showFormSuccessModal = false;
   selectedPayment: PaymentListItemDTO | null = null;
   isMobile = false;
@@ -111,10 +109,10 @@ export class PagosComponent implements OnInit, AfterViewInit {
       .reduce((acc, p) => acc + (p.monto ?? 0), 0);
   }
 
-  private readonly fb           = inject(FormBuilder);
+  private readonly fb = inject(FormBuilder);
   private readonly paymentService = inject(PaymentService);
-  private readonly cdr           = inject(ChangeDetectorRef);
-  private readonly destroyRef    = inject(DestroyRef);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly router = inject(Router);
 
@@ -126,10 +124,10 @@ export class PagosComponent implements OnInit, AfterViewInit {
 
     // Campos que acepta el backend: monto, metodoPago (EFECTIVO|TRANSFERENCIA), referenciaComprobante
     this.paymentForm = this.fb.group({
-      id:                    [''],
-      idPedido:              [null, Validators.required],
-      amount:                [null, [Validators.required, Validators.min(0.01)]],
-      type:                  ['EFECTIVO', Validators.required],
+      id: [''],
+      idPedido: [null, Validators.required],
+      amount: [null, [Validators.required, Validators.min(0.01)]],
+      type: ['EFECTIVO', Validators.required],
       referenciaComprobante: ['']
     });
   }
@@ -142,7 +140,7 @@ export class PagosComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator || null;
     this.dataSource.sort = this.sort || null;
-    
+
     this.dataSource.filterPredicate = (data, filter) => {
       const dataStr = `${data.idPago} ${data.nombreCliente} ${data.estadoPedido} ${data.fechaPago} ${data.metodoPago}`.toLowerCase();
       const matchSearch = dataStr.includes(this.searchTerm.trim().toLowerCase());
@@ -151,14 +149,14 @@ export class PagosComponent implements OnInit, AfterViewInit {
     };
 
     this.dataSource.sortingDataAccessor = (item, property) => {
-      switch(property) {
+      switch (property) {
         case 'idPago': return item.idPago || '';
         case 'cliente': return item.nombreCliente || '';
         case 'estado': return item.estadoPedido || '';
         case 'fecha': return item.fechaPago ? new Date(item.fechaPago).getTime() : 0;
         case 'metodo': return item.metodoPago || '';
         case 'monto': return item.monto || 0;
-        default: return (item as any)[property] as string | number ?? '';
+        default: return (item as any)[property] ?? '';
       }
     };
   }
@@ -186,16 +184,16 @@ export class PagosComponent implements OnInit, AfterViewInit {
         next: (res: any) => {
           const pedidos: any[] = res.pedidos ?? [];
           this.paymentsData = pedidos.map(s => ({
-            idPedido:      s.idPedido,
-            id:            String(s.idPedido),
-            orderId:       s.codigoPedido ?? String(s.idPedido),
-            clientName:    s.nombreCliente ?? 'Desconocido',
-            amount:        Number(s.saldoPendiente) || 0,
-            type:          'EFECTIVO' as PaymentType,
-            status:        'PENDIENTE' as PaymentStatus,
-            createdAt:     s.fechaEntrega ?? new Date().toISOString(),
-            voucherUrl:    null,
-            registeredBy:  { id: '', name: 'N/A' },
+            idPedido: s.idPedido,
+            id: String(s.idPedido),
+            orderId: s.codigoPedido ?? String(s.idPedido),
+            clientName: s.nombreCliente ?? 'Desconocido',
+            amount: Number(s.saldoPendiente) || 0,
+            type: 'EFECTIVO' as PaymentType,
+            status: 'PENDIENTE' as PaymentStatus,
+            createdAt: s.fechaEntrega ?? new Date().toISOString(),
+            voucherUrl: null,
+            registeredBy: { id: '', name: 'N/A' },
             exceptionalAuth: false
           }));
           // Poblar el select de pedidos en el formulario
@@ -220,7 +218,7 @@ export class PagosComponent implements OnInit, AfterViewInit {
 
   applyFilters(): void {
     // Al setear el filter con Math.random() forzamos la reevaluación del filterPredicate
-    this.dataSource.filter = Math.random().toString();
+    this.dataSource.filter = Date.now().toString();
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -230,7 +228,7 @@ export class PagosComponent implements OnInit, AfterViewInit {
 
   openViewModal(payment: PaymentListItemDTO): void {
     this.selectedPayment = payment;
-    this.showViewModal   = true;
+    this.showViewModal = true;
     this.cdr.detectChanges();
   }
 
@@ -258,7 +256,7 @@ export class PagosComponent implements OnInit, AfterViewInit {
     if (!this.selectedPayment) { return; }
     this.paymentService.eliminarAbono(this.selectedPayment.idPedido, this.selectedPayment.idPago).subscribe({
       next: () => {
-         console.warn('Para eliminar un abono específico, usa la vista de detalle del pedido.');
+        console.warn('Para eliminar un abono específico, usa la vista de detalle del pedido.');
         this.closeDeleteModal();
         this.showSuccessModal = true;
         this.loadPayments();
@@ -281,8 +279,8 @@ export class PagosComponent implements OnInit, AfterViewInit {
   }
 
   closeSuccessModal(): void {
-    this.showSuccessModal  = false;
-    this.selectedPayment   = null;
+    this.showSuccessModal = false;
+    this.selectedPayment = null;
     this.cdr.detectChanges();
   }
 
@@ -296,10 +294,10 @@ export class PagosComponent implements OnInit, AfterViewInit {
 
   openAddForm(): void {
     this.paymentForm.reset({
-      id:                    '',
-      idPedido:              null,
-      amount:                null,
-      type:                  'EFECTIVO',
+      id: '',
+      idPedido: null,
+      amount: null,
+      type: 'EFECTIVO',
       referenciaComprobante: ''
     });
     this.viewMode = 'add';
@@ -309,10 +307,10 @@ export class PagosComponent implements OnInit, AfterViewInit {
   openEditForm(payment: PaymentListItemDTO): void {
     this.selectedPayment = payment;
     this.paymentForm.patchValue({
-      id:                    payment.idPago,
-      idPedido:              payment.idPedido,
-      amount:                payment.monto,
-      type:                  this.mapPaymentType(payment.metodoPago),
+      id: payment.idPago,
+      idPedido: payment.idPedido,
+      amount: payment.monto,
+      type: this.mapPaymentType(payment.metodoPago),
       referenciaComprobante: ''
     });
     this.viewMode = 'edit';
@@ -320,7 +318,7 @@ export class PagosComponent implements OnInit, AfterViewInit {
   }
 
   closeForm(): void {
-    this.viewMode        = 'list';
+    this.viewMode = 'list';
     this.selectedPayment = null;
     setTimeout(() => {
       this.dataSource.paginator = this.paginator || null;
@@ -349,19 +347,19 @@ export class PagosComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const { id,idPedido, amount, type, referenciaComprobante } = this.paymentForm.value;
+    const { id, idPedido, amount, type, referenciaComprobante } = this.paymentForm.value;
     // El backend acepta: { monto, metodoPago: EFECTIVO|TRANSFERENCIA, referenciaComprobante? }
     const payload = {
-      monto:                Number(amount),
-      metodoPago:           type as 'EFECTIVO' | 'TRANSFERENCIA',
+      monto: Number(amount),
+      metodoPago: type as 'EFECTIVO' | 'TRANSFERENCIA',
       referenciaComprobante: referenciaComprobante || undefined
     };
-    let request$ ={} as Observable<any>;
+    let request$ = {} as Observable<any>;
     if (this.viewMode === 'edit' && id) {
-       request$ = this.paymentService.editarAbono(Number(idPedido), Number(id), payload);
+      request$ = this.paymentService.editarAbono(Number(idPedido), Number(id), payload);
     }
     if (this.viewMode === 'add' && idPedido) {
-        request$ = this.paymentService.registrarAbono(Number(idPedido), payload);
+      request$ = this.paymentService.registrarAbono(Number(idPedido), payload);
     }
 
 

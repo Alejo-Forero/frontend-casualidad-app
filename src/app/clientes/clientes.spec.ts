@@ -392,40 +392,47 @@ describe('ClientesComponent', () => {
   });
 
   // ── saveClient — errores HTTP ─────────────────────────────────────────────
-
   it('saveClient should set duplicate-phone error for status 400', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     (mockClientService.create as jest.Mock).mockReturnValue(throwError(() => ({ status: 400 })));
     component.openAddForm();
     component.clientForm.patchValue({ name: 'N' });
     component.phonesFormArray.at(0).setValue('300');
     component.saveClient();
     expect(component.errorMessage).toContain('teléfono');
+    consoleSpy.mockRestore();
   });
 
   it('saveClient should set duplicate-phone error for status 409', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     (mockClientService.create as jest.Mock).mockReturnValue(throwError(() => ({ status: 409 })));
     component.openAddForm();
     component.clientForm.patchValue({ name: 'N' });
     component.phonesFormArray.at(0).setValue('300');
     component.saveClient();
     expect(component.errorMessage).toContain('teléfono');
+    consoleSpy.mockRestore();
   });
 
   it('saveClient should set duplicate-phone error for status 500', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     (mockClientService.create as jest.Mock).mockReturnValue(throwError(() => ({ status: 500 })));
     component.openAddForm();
     component.clientForm.patchValue({ name: 'N' });
     component.phonesFormArray.at(0).setValue('300');
     component.saveClient();
     expect(component.errorMessage).toContain('teléfono');
+    consoleSpy.mockRestore();
   });
 
   it('saveClient should set generic error for other status codes', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     (mockClientService.create as jest.Mock).mockReturnValue(throwError(() => ({ status: 503 })));
     component.openAddForm();
     component.clientForm.patchValue({ name: 'N' });
     component.phonesFormArray.at(0).setValue('300');
     component.saveClient();
     expect(component.errorMessage).toContain('error al guardar');
+    consoleSpy.mockRestore();
   });
 });

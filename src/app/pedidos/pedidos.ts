@@ -207,7 +207,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     this.clientService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.clientsList = data.map((c: any) => ({ 
-          id: c.idCliente || c.id || Math.floor(Math.random() * 1000000), 
+          id: c.idCliente || c.id || (crypto.getRandomValues(new Uint32Array(1))[0] % 1000000), 
           nombre: c.nombre || c.name || 'Sin Nombre' 
         }));
         this.cdr.detectChanges();
@@ -220,7 +220,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
     this.inventoryService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
         this.productsList = data.map((p: any) => ({ 
-          id: p.idProducto || p.id || Math.floor(Math.random() * 1000000), 
+          id: p.idProducto || p.id || (crypto.getRandomValues(new Uint32Array(1))[0] % 1000000), 
           nombre: p.nombre || p.name || 'Sin Nombre' 
         }));
         this.cdr.detectChanges();
@@ -483,62 +483,63 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   }
 
   saveOrder(): void {
-    if (this.orderForm.valid) {
-      const orderData = this.orderForm.value;
-      const id = orderData.id;
-
-      // Inject global specifications into the first item if no item observations exist
-      if (orderData.items && orderData.items.length > 0) {
-        const globalSpec = [];
-        if (orderData.eventType) globalSpec.push(`Evento: ${orderData.eventType}`);
-        if (orderData.eventFor) globalSpec.push(`Para: ${orderData.eventFor}`);
-        if (orderData.specifications) globalSpec.push(`Specs: ${orderData.specifications}`);
-        const concatSpec = globalSpec.join(' | ');
-
-        if (concatSpec) {
-          orderData.items[0].observaciones = orderData.items[0].observaciones
-            ? orderData.items[0].observaciones + ' \n' + concatSpec
-            : concatSpec;
-        }
-      }
-
-      const request$ = id
-        ? this.orderService.update(id, orderData)
-        : this.orderService.create(orderData);
-
-      request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-        next: (res) => {
-          this.loadOrders();
-          const dialogRef = this.dialog.open(SuccessDialogComponent, {
-            panelClass: 'casualidad-dialog',
-            data: {
-              title: id ? '\u00a1Pedido Actualizado!' : '\u00a1Pedido Creado!',
-              message: id ? 'Los detalles del pedido han sido modificados.' : 'El pedido ha sido registrado correctamente.',
-              icon: 'check_circle',
-              accentColor: 'success',
-              primaryActionLabel: 'Ir a Pedidos',
-              secondaryActionLabel: id ? 'Seguir editando' : 'Crear otro pedido'
-            }
-          });
-
-          dialogRef.afterClosed().subscribe(result => {
-            if (!result || result.action === 'primary' || result.action === 'close') {
-              this.viewMode = 'list';
-              setTimeout(() => {
-                this.dataSource.paginator = this.paginator;
-                this.dataSource.sort = this.sort;
-                this.cdr.detectChanges();
-              }, 0);
-            } else if (result.action === 'secondary' && !id) {
-              this.openAddForm();
-            }
-            this.cdr.detectChanges();
-          });
-        },
-        error: (err) => console.error('Error saving order', err)
-      });
-    } else {
+    if (!this.orderForm.valid) {
       this.orderForm.markAllAsTouched();
+      return;
     }
+
+    const orderData = this.orderForm.value;
+    const id = orderData.id;
+
+    this.processOrderSpecifications(orderData);
+
+    const request$ = id
+      ? this.orderService.update(id, orderData)
+      : this.orderService.create(orderData);
+
+    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => this.handleSaveSuccess(id),
+      error: (err) => console.error('Error saving order', err)
+    });
+  }
+
+  private processOrderSpecifications(orderData: any): void {
+    if (!orderData.items || orderData.items.length === 0) return;
+
+    const globalSpec = [];
+    if (orderData.eventType) globalSpec.push(`Evento: ${orderData.eventType}`);
+    if (orderData.eventFor) globalSpec.push(`Para: ${orderData.eventFor}`);
+    if (orderData.specifications) globalSpec.push(`Specs: ${orderData.specifications}`);
+    const concatSpec = globalSpec.join(' | ');
+
+    if (concatSpec) {
+      orderData.items[0].observaciones = orderData.items[0].observaciones
+        ? orderData.items[0].observaciones + ' \n' + concatSpec
+        : concatSpec;
+    }
+  }
+
+  private handleSaveSuccess(id: any): void {
+    this.loadOrders();
+    const dialogRef = this.dialog.open(SuccessDialogComponent, {
+      panelClass: 'casualidad-dialog',
+      data: {
+        title: id ? '¡Pedido Actualizado!' : '¡Pedido Creado!',
+        message: id ? 'Los detalles del pedido han sido modificados.' : 'El pedido ha sido registrado correctamente.',
+        icon: 'check_circle',
+        accentColor: 'success',
+        primaryActionLabel: 'Ir a Pedidos',
+        secondaryActionLabel: id ? 'Seguir editando' : 'Crear otro pedido'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result || result.action === 'primary' || result.action === 'close') {
+        this.closeForm();
+      } else if (result.action === 'secondary' && !id) {
+        this.openAddForm();
+      }
+      this.cdr.detectChanges();
+    });
   }
 }

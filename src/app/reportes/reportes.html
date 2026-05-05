@@ -11,13 +11,13 @@
             </div>
             <div class="flex gap-4 p-1.5 bg-surface-container rounded-xl">
                 <div class="flex flex-col px-4 py-1">
-                    <span class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Inicio</span>
-                    <input [(ngModel)]="incomeReport.dateFrom" (change)="onDateChange()" class="bg-transparent border-none p-0 text-sm font-bold text-primary focus:ring-0 cursor-pointer" type="date" />
+                    <label for="dateFromInput" class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Inicio</label>
+                    <input id="dateFromInput" [(ngModel)]="incomeReport.dateFrom" (change)="onDateChange()" class="bg-transparent border-none p-0 text-sm font-bold text-primary focus:ring-0 cursor-pointer" type="date" />
                 </div>
                 <div class="w-px bg-neutral-300 my-2"></div>
                 <div class="flex flex-col px-4 py-1">
-                    <span class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Fin</span>
-                    <input [(ngModel)]="incomeReport.dateTo" (change)="onDateChange()" class="bg-transparent border-none p-0 text-sm font-bold text-primary focus:ring-0 cursor-pointer" type="date" />
+                    <label for="dateToInput" class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Fin</label>
+                    <input id="dateToInput" [(ngModel)]="incomeReport.dateTo" (change)="onDateChange()" class="bg-transparent border-none p-0 text-sm font-bold text-primary focus:ring-0 cursor-pointer" type="date" />
                 </div>
             </div>
         </div>
@@ -72,7 +72,7 @@
         <section class="lg:col-span-2 space-y-6">
             <div class="flex items-center justify-between">
                 <h2 class="text-3xl font-bold tracking-tight">Saldos por Cobrar</h2>
-                <button (click)="exportExcel()" class="px-4 py-2 bg-surface-container text-on-surface hover:bg-surface-container-high rounded-lg text-sm font-bold flex items-center gap-2 transition-colors">
+                <button (click)="exportExcel()" aria-label="Exportar saldos a Excel" class="px-4 py-2 bg-surface-container text-on-surface hover:bg-surface-container-high rounded-lg text-sm font-bold flex items-center gap-2 transition-colors">
                     <span class="material-symbols-outlined text-sm">download</span> Exportar .xlsx
                 </button>
             </div>

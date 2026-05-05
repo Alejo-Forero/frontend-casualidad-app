@@ -40,14 +40,14 @@
         <div class="md:col-span-8 space-y-4">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-2">
-              <label class="block text-sm font-bold text-on-surface">Nombre <span class="text-error">*</span></label>
-              <input formControlName="nombre"
+              <label for="nombreInput" class="block text-sm font-bold text-on-surface">Nombre <span class="text-error">*</span></label>
+              <input id="nombreInput" formControlName="nombre"
                 class="w-full bg-surface-container border-none rounded-xl py-4 px-5 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all"
                 placeholder="Ej. Juan" type="text" />
             </div>
             <div class="space-y-2">
-              <label class="block text-sm font-bold text-on-surface">Apellidos <span class="text-error">*</span></label>
-              <input formControlName="apellidos"
+              <label for="apellidosInput" class="block text-sm font-bold text-on-surface">Apellidos <span class="text-error">*</span></label>
+              <input id="apellidosInput" formControlName="apellidos"
                 class="w-full bg-surface-container border-none rounded-xl py-4 px-5 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all"
                 placeholder="Ej. Pérez" type="text" />
             </div>
@@ -70,12 +70,12 @@
           <p class="text-sm text-neutral-400 mt-1">Cómo podemos localizarte.</p>
         </div>
         <div class="md:col-span-8">
-          <label class="block text-sm font-bold text-on-surface mb-2">Teléfono Móvil <span
+          <label for="telefonoInput" class="block text-sm font-bold text-on-surface mb-2">Teléfono Móvil <span
               class="text-error">*</span></label>
           <div class="relative group">
             <span
               class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400">phone</span>
-            <input formControlName="telefono"
+            <input id="telefonoInput" formControlName="telefono"
               class="w-full bg-surface-container border-none rounded-xl py-4 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all"
               placeholder="3001234567" type="text" maxlength="10" />
           </div>

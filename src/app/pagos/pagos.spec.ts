@@ -129,12 +129,14 @@ describe('PagosComponent', () => {
   });
 
   it('should handle delete confirmation', () => {
+    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     component.openDeleteModal(mockPayment);
     expect(component.showDeleteModal).toBe(true);
     component.confirmDelete();
     expect(component.showSuccessModal).toBe(true);
     component.closeSuccessModal();
     expect(component.showSuccessModal).toBe(false);
+    consoleSpy.mockRestore();
   });
 
  /*  it('should handle pagination edge cases', () => {
@@ -186,5 +188,33 @@ describe('PagosComponent', () => {
       expect(editarAbonoSpy).toHaveBeenCalledTimes(1);
       // Validamos que se llamó con Number(idPedido), Number(id) y el payload correcto
       expect(editarAbonoSpy).toHaveBeenCalledWith(50, 10, payloadEsperado);
+    });
+
+    it('should handle amount validation logic', () => {
+      component.paymentsData = [{ idPedido: 50, amount: 1000 } as any];
+      component.paymentForm.patchValue({ idPedido: 50, amount: 500 });
+      expect(component.getMaxAmount()).toBe(1000);
+      expect(component.hasAmountError()).toBe(false);
+
+      component.paymentForm.patchValue({ amount: 1500 });
+      expect(component.hasAmountError()).toBe(true);
+      
+      component.paymentForm.patchValue({ amount: '' });
+      expect(component.hasAmountError()).toBe(false);
+    });
+
+    it('should open edit form correctly', () => {
+      const mockPay = { idPago: 1, idPedido: 50, monto: 200, metodoPago: 'CASH' } as any;
+      component.openEditForm(mockPay);
+      expect(component.viewMode).toBe('edit');
+      expect(component.paymentForm.get('amount')?.value).toBe(200);
+    });
+
+    it('should close form and reset state', async () => {
+      component.viewMode = 'add';
+      component.closeForm();
+      await new Promise(r => setTimeout(r, 10));
+      expect(component.viewMode).toBe('list');
+      expect(component.selectedPayment).toBeNull();
     });
 });

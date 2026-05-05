@@ -74,7 +74,7 @@
                 <!-- ID Pedido Column -->
                 <ng-container matColumnDef="codigo">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100">
+                        class="casualidad-table-header">
                         ID Pedido </th>
                     <td mat-cell *matCellDef="let order" class="px-8 py-4 text-xs font-bold text-on-surface"> {{
                         order.codigoUnico || order.idPedido }} </td>
@@ -83,7 +83,7 @@
                 <!-- Cliente Column -->
                 <ng-container matColumnDef="cliente">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100">
+                        class="casualidad-table-header">
                         Cliente </th>
                     <td mat-cell *matCellDef="let order" class="px-8 py-4">
                         <div class="flex items-center gap-3">
@@ -100,7 +100,7 @@
                 <!-- Estado Column -->
                 <ng-container matColumnDef="estado">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100">
+                        class="casualidad-table-header">
                         Estado </th>
                     <td mat-cell *matCellDef="let order" class="px-8 py-4">
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold"
@@ -114,7 +114,7 @@
                 <!-- Fecha de entrega Column -->
                 <ng-container matColumnDef="fecha">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100">
+                        class="casualidad-table-header">
                         Fecha de entrega </th>
                     <td mat-cell *matCellDef="let order" class="px-8 py-4 text-sm font-medium text-on-surface-variant">
                         {{ order.fechaEntrega | date:'dd MMM yyyy' }} </td>
@@ -123,7 +123,7 @@
                 <!-- Saldo Column -->
                 <ng-container matColumnDef="saldo">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100">
+                        class="casualidad-table-header">
                         Saldo </th>
                     <td mat-cell *matCellDef="let order" class="px-8 py-4">
                         <span class="text-sm font-bold text-on-surface">{{ order.saldoPendiente | currency:'USD'
@@ -134,7 +134,7 @@
                 <!-- Acciones Column -->
                 <ng-container matColumnDef="acciones">
                     <th mat-header-cell *matHeaderCellDef
-                        class="px-8 py-4 text-xs font-bold uppercase tracking-wider text-on-surface-variant/70 border-b border-zinc-100 text-right">
+                        class="casualidad-table-header text-right">
                         Acciones </th>
                     <td mat-cell *matCellDef="let order" class="px-8 py-5 text-right">
                         <div class="flex items-center justify-end gap-1">
@@ -259,7 +259,7 @@
     <!-- Header Section -->
     <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-            <nav class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4">
+            <nav aria-label="Migas de pan de edición" class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4">
                 <button type="button" class="opacity-50 hover:opacity-100 transition-opacity"
                     (click)="closeForm()">PEDIDOS</button>
                 <span class="opacity-50">/</span>
@@ -291,11 +291,11 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
-                            <label
+                            <label [attr.for]="viewMode === 'add' ? 'clientSelect' : 'clientDisplay'"
                                 class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Cliente</label>
                             @if (viewMode === 'add') {
                             <mat-form-field appearance="outline" class="w-full">
-                                <mat-select formControlName="clientId" placeholder="Selecciona un cliente...">
+                                <mat-select id="clientSelect" formControlName="clientId" placeholder="Selecciona un cliente...">
                                     @for (client of clientsList; track (client.id || $index)) {
                                     <mat-option [value]="client.id">{{ client.nombre }}</mat-option>
                                     }
@@ -312,7 +312,7 @@
                             <p class="text-error text-xs font-bold mt-1">El cliente es requerido</p>
                             }
                             } @else {
-                            <input [value]="selectedClientName" disabled
+                            <input id="clientDisplay" [value]="selectedClientName" disabled
                                 class="w-full bg-surface-container border-none rounded-xl py-3.5 px-4 text-on-surface opacity-70 cursor-not-allowed">
                             }
                             @if (clientsList.length === 0) {
@@ -320,18 +320,18 @@
                             }
                         </div>
                         <div class="space-y-2">
-                            <label
+                            <label for="deliveryDateInput"
                                 class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Fecha
                                 de Entrega</label>
-                            <input type="date" formControlName="deliveryDate"
+                            <input id="deliveryDateInput" type="date" formControlName="deliveryDate"
                                 class="w-full bg-surface-container border-none rounded-xl py-3.5 px-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all">
                         </div>
                         @if (viewMode === 'edit') {
                         <div class="space-y-2 md:col-span-2">
-                            <label
+                            <label for="statusInput"
                                 class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Estado
                                 del Pedido</label>
-                            <input
+                            <input id="statusInput"
                                 [value]="(statusMap[orderForm.get('status')?.value])?.text || orderForm.get('status')?.value || 'Desconocido'"
                                 disabled
                                 class="w-full bg-surface-container border-none rounded-xl py-3.5 px-4 text-on-surface opacity-70 cursor-not-allowed">
@@ -352,11 +352,11 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
-                            <label
+                            <label for="eventTypeSelect"
                                 class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Tipo
                                 de evento o celebración</label>
                             <mat-form-field appearance="outline" class="w-full">
-                                <mat-select formControlName="eventType" placeholder="Selecciona un tipo...">
+                                <mat-select id="eventTypeSelect" formControlName="eventType" placeholder="Selecciona un tipo...">
                                     <mat-option value="Cumpleaños">Cumpleaños</mat-option>
                                     <mat-option value="Boda">Boda</mat-option>
                                     <mat-option value="Bautizo">Bautizo</mat-option>
@@ -366,10 +366,9 @@
                             </mat-form-field>
                         </div>
                         <div class="space-y-2">
-                            <label
-                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">¿Para
-                                quién es?</label>
-                            <input formControlName="eventFor" placeholder="Ej. Hija (Valentina)"
+                            <label for="eventForInput"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">¿Para quién es?</label>
+                            <input id="eventForInput" formControlName="eventFor" placeholder="Ej. Hija (Valentina)"
                                 class="w-full bg-surface-container border-none rounded-xl py-3.5 px-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all">
                         </div>
                     </div>
@@ -470,10 +469,10 @@
                         <h2 class="text-xl font-bold tracking-tight text-on-surface">Detalles y Personalización</h2>
                     </div>
                     <div class="space-y-2">
-                        <label
+                        <label for="specificationsInput"
                             class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Especificaciones
                             del pedido</label>
-                        <textarea formControlName="specifications" rows="4"
+                        <textarea id="specificationsInput" formControlName="specifications" rows="4"
                             class="w-full bg-surface-container border-none rounded-xl p-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all resize-none"
                             placeholder="Paleta de colores pasteles..."></textarea>
                     </div>
@@ -501,7 +500,7 @@
     <!-- Header -->
     <header class="mb-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
         <div>
-            <nav class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4 uppercase">
+            <nav aria-label="Navegación de detalle" class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4 uppercase">
                 <button type="button" class="opacity-50 hover:opacity-100 transition-opacity"
                     (click)="closeForm()">PEDIDOS</button>
                 <span class="opacity-50">/</span>
@@ -719,7 +718,7 @@
 @if (viewMode === 'formalize') {
 <div class="p-8 md:p-12 max-w-7xl mx-auto w-full animate-[dropdownFadeIn_0.2s_ease-out]">
     <header class="mb-10">
-        <nav class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4 uppercase">
+        <nav aria-label="Navegación de formalización" class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4 uppercase">
             <button type="button" class="opacity-50 hover:opacity-100 transition-opacity"
                 (click)="closeForm()">PEDIDOS</button>
             <span class="opacity-50">/</span>
@@ -950,7 +949,7 @@
 <!-- Production Activation Confirmation Modal -->
 @if (showProductionModal && selectedOrder) {
 <div class="fixed inset-0 z-[110] flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeProductionModal()"></div>
+    <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeProductionModal()" (keydown.enter)="closeProductionModal()"></div>
     <div
         class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
         <div class="h-2 w-full bg-gradient-to-r from-primary to-primary-container"></div>

@@ -16,9 +16,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['./reportes.css']
 })
 export class ReportesComponent implements OnInit, AfterViewInit {
-  private paymentService = inject(PaymentService);
-  private cdr = inject(ChangeDetectorRef);
-  private destroyRef = inject(DestroyRef);
+  private readonly paymentService = inject(PaymentService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
   incomeReport: IncomeReportDTO = {
     dateFrom: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0],
@@ -83,7 +83,7 @@ export class ReportesComponent implements OnInit, AfterViewInit {
           const pedidos = res.pedidos || [];
           const saldos: PendingBalanceDTO[] = pedidos.map((p: any) => {
              const deliveryDate = new Date(p.fechaEntrega);
-             const diffTime = deliveryDate.getTime() - new Date().getTime();
+             const diffTime = deliveryDate.getTime() - Date.now();
              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
              return {
                orderId: String(p.idPedido),
@@ -105,12 +105,12 @@ export class ReportesComponent implements OnInit, AfterViewInit {
   exportExcel() {
     this.paymentService.exportarSaldosPendientes().subscribe({
       next: (blob: Blob) => {
-        const url = window.URL.createObjectURL(blob);
+        const url = globalThis.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
         a.download = `Saldos_Pendientes_${new Date().toISOString().split('T')[0]}.xlsx`;
         a.click();
-        window.URL.revokeObjectURL(url);
+        globalThis.URL.revokeObjectURL(url);
       },
       error: (err: any) => console.error('Error exportando:', err)
     });

@@ -125,7 +125,7 @@
 <!-- Modal de éxito -->
 @if (showSuccessModal) {
 <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-  <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeSuccessAndGoBack()"></div>
+  <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeSuccessAndGoBack()" (keydown.enter)="closeSuccessAndGoBack()"></div>
   <div
     class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-2xl p-10 text-center animate-[modalFadeIn_0.2s_ease-out]">
     <div class="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-600">
