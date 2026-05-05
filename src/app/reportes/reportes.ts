@@ -67,9 +67,9 @@ export class ReportesComponent implements OnInit, AfterViewInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res: any) => {
-          this.incomeReport.totalIncome = res.totalGeneral || 0;
-          this.incomeReport.cashTotal = res.totalEfectivo || 0;
-          this.incomeReport.transferTotal = res.totalTransferencia || 0;
+          this.incomeReport.totalIncome = res?.totalGeneral || 0;
+          this.incomeReport.cashTotal = res?.totalEfectivo || 0;
+          this.incomeReport.transferTotal = res?.totalTransferencia || 0;
           this.cdr.detectChanges();
         },
         error: (err: any) => console.error('Error fetching ingresos:', err)

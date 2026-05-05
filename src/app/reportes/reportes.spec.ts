@@ -15,6 +15,7 @@ describe('ReportesComponent', () => {
     mockPaymentService = {
       getReporteIngresos: jest.fn(() => of({ totalGeneral: 1000, totalEfectivo: 250, totalTransferencia: 750 })),
       getSaldosPendientes: jest.fn(() => of({ pedidos: [] })),
+      getUnifiedSaldos: jest.fn(() => of([])),
       exportarSaldosPendientes: jest.fn(() => of(new Blob(['test'], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }))),
     };
 
@@ -66,17 +67,15 @@ describe('ReportesComponent', () => {
   });
 
   it('should fetch saldos and map correctly', () => {
-    const mockRes = {
-      pedidos: [{
-        idPedido: 1,
-        codigoPedido: 'COD1',
-        nombreCliente: 'Juan',
-        fechaEntrega: new Date(new Date().getTime() + 86400000 * 2).toISOString(), // 2 days from now
-        montoTotal: 500,
-        saldoPendiente: 100
-      }]
-    };
-    (mockPaymentService.getSaldosPendientes as jest.Mock).mockReturnValue(of(mockRes));
+    const mockRes = [{
+      id: 1,
+      code: 'COD1',
+      client: 'Juan',
+      date: new Date(new Date().getTime() + 86400000 * 2).toISOString(), // 2 days from now
+      total: 500,
+      pending: 100
+    }];
+    (mockPaymentService.getUnifiedSaldos as jest.Mock).mockReturnValue(of(mockRes));
     
     component.fetchSaldos();
     

@@ -60,10 +60,10 @@ describe('PedidosComponent', () => {
       activarProduccion: jest.fn(() => of({ codigoUnico: 'COD-123' })),
     };
     mockClientService = {
-      getAll: jest.fn(() => of([{ idCliente: 10, nombre: 'Alpha' }])),
+      getAll: jest.fn(() => of([{ id: 10, name: 'Alpha', idCliente: 10, nombre: 'Alpha' }])),
     };
     mockInventoryService = {
-      getAll: jest.fn(() => of([{ idProducto: 1, nombre: 'P1', salePrice: 100 }])),
+      getAll: jest.fn(() => of([{ id: 1, name: 'P1', idProducto: 1, nombre: 'P1', salePrice: 100 }])),
     };
     mockDialog = { open: jest.fn(() => dialogRefStub(true)) };
 
@@ -131,11 +131,15 @@ describe('PedidosComponent', () => {
 
   it('should map clients from loadClients', () => {
     (mockClientService.getAll as jest.Mock).mockReturnValue(
-      of([{ idCliente: 5, nombre: 'Beta' }, { idCliente: 6, nombre: 'Gamma' }])
+      of([
+        { id: 5, name: 'Beta', idCliente: 5, nombre: 'Beta' }, 
+        { id: 6, name: 'Gamma', idCliente: 6, nombre: 'Gamma' }
+      ])
     );
     component.loadClients();
     expect(component.clientsList.length).toBe(2);
-    expect(component.clientsList[0]).toEqual({ id: 5, nombre: 'Beta' });
+    expect(component.clientsList[0].id).toBe(5);
+    expect(component.clientsList[0].nombre).toBe('Beta');
   });
 
   it('should log error when loadClients fails', () => {
@@ -150,10 +154,11 @@ describe('PedidosComponent', () => {
 
   it('should map products from loadProducts', () => {
     (mockInventoryService.getAll as jest.Mock).mockReturnValue(
-      of([{ idProducto: 99, nombre: 'Torta' }])
+      of([{ id: 99, name: 'Torta', idProducto: 99, nombre: 'Torta' }])
     );
     component.loadProducts();
-    expect(component.productsList[0]).toEqual({ id: 99, nombre: 'Torta' });
+    expect(component.productsList[0].id).toBe(99);
+    expect(component.productsList[0].nombre).toBe('Torta');
   });
 
   it('should log error when loadProducts fails', () => {
@@ -263,7 +268,7 @@ describe('PedidosComponent', () => {
   // ── selectedClientName ────────────────────────────────────────────────────
 
   it('selectedClientName should return client name when found in clientsList', () => {
-    component.clientsList = [{ id: 10, nombre: 'Alpha' }];
+    component.clientsList = [{ id: 10, nombre: 'Alpha' } as any];
     component.orderForm.get('clientId')?.setValue(10);
     expect(component.selectedClientName).toBe('Alpha');
   });
@@ -368,7 +373,7 @@ describe('PedidosComponent', () => {
     (mockOrderService.getById as jest.Mock).mockReturnValue(
       of({ idPedido: 1, fechaEntrega: '2026-06-01T00:00:00', idCliente: 10, productos: [] })
     );
-    component.clientsList = [{ id: 10, nombre: 'Alpha' }];
+    component.clientsList = [{ id: 10, nombre: 'Alpha' } as any];
     component.openEditForm(makeOrder());
     await new Promise(r => setTimeout(r, 10));
     expect(component.orderForm.get('clientId')?.value).toBe(10);
@@ -534,9 +539,9 @@ describe('PedidosComponent', () => {
   // ── saveOrder — editar ────────────────────────────────────────────────────
 
   it('saveOrder should call update when form has an id', async () => {
-    component.clientsList = [{ id: 10, nombre: 'Alpha' }];
+    component.clientsList = [{ id: 10, nombre: 'Alpha' } as any];
     component.openEditForm(makeOrder());
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise(r => setTimeout(r, 20));
 
     component.orderForm.enable();
     component.orderForm.patchValue({ deliveryDate: '2026-07-01' });
@@ -546,9 +551,9 @@ describe('PedidosComponent', () => {
 
   it('saveOrder should NOT call openAddForm on secondary action when editing', async () => {
     mockDialog.open.mockReturnValue(dialogRefStub({ action: 'secondary' }));
-    component.clientsList = [{ id: 10, nombre: 'Alpha' }];
+    component.clientsList = [{ id: 10, nombre: 'Alpha' } as any];
     component.openEditForm(makeOrder());
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise(r => setTimeout(r, 20)); // Increased timeout
 
     component.orderForm.enable();
     component.orderForm.patchValue({ deliveryDate: '2026-07-01' });

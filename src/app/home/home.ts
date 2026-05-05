@@ -37,6 +37,7 @@ export class HomeComponent implements AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
 
   dashboardCards: any[] = [];
+  monthlyIncome: number = 0;
 
   constructor() {
     Chart.register(...registerables);
@@ -48,7 +49,7 @@ export class HomeComponent implements AfterViewInit {
     this.dashboardCards = [
       {
         title: 'Ingresos de este Mes',
-        value: this.totalProfit,
+        value: this.monthlyIncome,
         isCurrency: true,
         icon: 'trending_up',
         iconClass: 'text-orange-600',
@@ -87,7 +88,7 @@ export class HomeComponent implements AfterViewInit {
   }
 
   private updateDashboardCards(): void {
-    this.dashboardCards[0].value = this.totalProfit;
+    this.dashboardCards[0].value = this.monthlyIncome;
     this.dashboardCards[1].value = this.dashboardData.pendingOrders;
     this.dashboardCards[2].value = this.dashboardData.ordersWithDebt;
     this.dashboardCards[3].value = this.dashboardData.lowStockCount;
@@ -97,7 +98,7 @@ export class HomeComponent implements AfterViewInit {
     // 1. Fetch Saldos Pendientes & Debt Orders
     this.paymentService.getSaldosPendientes().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
-        this.dashboardData.ordersWithDebt = res.cantidadPedidosPendientes || 0;
+        this.dashboardData.ordersWithDebt = res?.cantidadPedidosPendientes || 0;
         this.updateDashboardCards();
       }
     });
@@ -123,11 +124,11 @@ export class HomeComponent implements AfterViewInit {
     const lastDay = new Date().toISOString().split('T')[0];
     this.paymentService.getReporteIngresos(firstDay, lastDay).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
-        this.totalProfit = res.totalGeneral || 0;
+        this.monthlyIncome = res?.totalGeneral || 0;
         this.updateDashboardCards();
         const monthIndex = 5; // June in our default labels
-        this.dashboardData.profitVsExpense.profit[monthIndex] = res.totalGeneral || 0;
-        this.dashboardData.profitVsExpense.expense[monthIndex] = (res.totalGeneral || 0) * 0.4; // Mock expense as 40%
+        this.dashboardData.profitVsExpense.profit[monthIndex] = res?.totalGeneral || 0;
+        this.dashboardData.profitVsExpense.expense[monthIndex] = (res?.totalGeneral || 0) * 0.4; // Mock expense as 40%
         
         if (this.chartInstance) {
           this.chartInstance.data.datasets[0].data = this.dashboardData.profitVsExpense.profit;

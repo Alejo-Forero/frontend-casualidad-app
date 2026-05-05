@@ -19,6 +19,7 @@ describe('PagosComponent', () => {
   beforeEach(async () => {
     mockPaymentService = {
       getSaldosPendientes: jest.fn(() => of({ data: { content: [mockPayment] } })),
+      getUnifiedSaldos: jest.fn(() => of([])),
       registrarAbono: jest.fn(() => of({ id: 1 })),
       getHistorialPagos: jest.fn(() => of({ data: { content: [] } })),
       getPayments: jest.fn(() => of({

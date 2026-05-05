@@ -195,10 +195,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   loadClients(): void {
     this.clientService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
-        this.clientsList = data.map((c: any) => ({ 
-          id: c.idCliente || c.id || (crypto.getRandomValues(new Uint32Array(1))[0] % 1000000), 
-          nombre: c.nombre || c.name || 'Sin Nombre' 
-        }));
+        this.clientsList = data;
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Error loading clients', err)
@@ -208,10 +205,7 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   loadProducts(): void {
     this.inventoryService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (data) => {
-        this.productsList = data.map((p: any) => ({ 
-          id: p.idProducto || p.id || (crypto.getRandomValues(new Uint32Array(1))[0] % 1000000), 
-          nombre: p.nombre || p.name || 'Sin Nombre' 
-        }));
+        this.productsList = data;
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Error loading products', err)
