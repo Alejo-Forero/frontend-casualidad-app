@@ -19,7 +19,7 @@ export interface ConfirmDialogData {
   standalone: true,
   imports: [CommonModule, MatDialogModule],
   template: `
-    <div class="overflow-hidden rounded-xl w-full max-w-md">
+    <div class="overflow-hidden rounded-xl w-full max-w-md bg-surface-container-lowest">
       <!-- Top accent bar -->
       <div class="h-1.5 w-full"
         [ngClass]="{

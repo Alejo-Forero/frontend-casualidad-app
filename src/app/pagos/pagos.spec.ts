@@ -57,14 +57,11 @@ describe('PagosComponent', () => {
     expect(component.totalMonthlyBalance).toBe(100);
   });
 
-  it('should handle sorting all directions', () => {
-    component.handleSort('amount');
-    expect(component.currentSort.direction).toBe('asc');
-    component.handleSort('amount');
-    expect(component.currentSort.direction).toBe('desc');
-    component.handleSort('clientName');
-    expect(component.currentSort.column).toBe('clientName');
-    expect(component.currentSort.direction).toBe('asc');
+  it('should trigger filter on search change', () => {
+    component.searchTerm = 'Alpha';
+    const oldFilter = component.dataSource.filter;
+    component.onSearchChange();
+    expect(component.dataSource.filter).not.toBe(oldFilter);
   });
 
  /*  it('should handle applyFilters branches', () => {
@@ -155,13 +152,7 @@ describe('PagosComponent', () => {
     component.closeViewModal();
     expect(component.showViewModal).toBe(false);
   });
-  it('debería actualizar currentPage y llamar a fetchPayments', () => {
-      const mockPage = 2;
-      const fetchPaymentsSpy = jest.spyOn(component, 'fetchPayments').mockImplementation(() => {});
-      component.onPageChange(mockPage);
-      expect(component.currentPage).toBe(mockPage);
-      expect(fetchPaymentsSpy).toHaveBeenCalledTimes(1);
-    });
+  // Removed old search test
 
     it('debería llamar a editarAbono cuando viewMode es "edit" y el id existe', () => {
       component.viewMode = 'edit';

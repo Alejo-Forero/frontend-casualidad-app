@@ -6,6 +6,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 import { ClientDTO } from '../core/models/client.dto';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
+import { Subject } from 'rxjs';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -37,16 +40,32 @@ describe('ClientesComponent', () => {
       getAll: jest.fn(() => of([])),
       create: jest.fn(() => of({ id: 1 })),
       update: jest.fn(() => of({})),
-      delete: jest.fn(() => of<void>()),
+      delete: jest.fn(() => of(undefined)),
     };
 
     mockDialog = { open: jest.fn(() => dialogRefStub({ action: 'primary' })) };
+
+    const breakpointSubject = new Subject<BreakpointState>();
+    const mockBreakpointObserver = {
+      observe: jest.fn(() => breakpointSubject.asObservable()),
+    };
+
+    const mockRouter = {
+      navigate: jest.fn(),
+    };
+
+    const mockActivatedRoute = {
+      queryParams: of({}),
+    };
 
     await TestBed.configureTestingModule({
       imports: [ClientesComponent, BrowserAnimationsModule],
       providers: [
         { provide: ClientService, useValue: mockClientService },
         { provide: MatDialog, useValue: mockDialog },
+        { provide: BreakpointObserver, useValue: mockBreakpointObserver },
+        { provide: Router, useValue: mockRouter },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
       ],
     }).overrideProvider(MatDialog, { useValue: mockDialog })
       .compileComponents();
@@ -243,33 +262,67 @@ describe('ClientesComponent', () => {
     expect(mockDialog.open).toHaveBeenCalled();
   });
 
-  // ── openDeleteModal ───────────────────────────────────────────────────────
+  // ── openDeleteModal & confirmDelete ───────────────────────────────────────
 
-  it('openDeleteModal should skip dialog when client has orders', () => {
+  it('openDeleteModal should skip setting state when client has orders', () => {
     const client = makeClient({ ordersSummary: { total: 3 } } as any);
     component.openDeleteModal(client);
-    expect(mockDialog.open).not.toHaveBeenCalled();
+    expect(component.showDeleteModal).toBe(false);
+    expect(component.selectedClient).toBeNull();
   });
 
-  it('openDeleteModal should call delete when confirmed', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(true));
-    component.openDeleteModal(makeClient());
-    expect(mockClientService.delete).toHaveBeenCalledWith('1');
+  it('openDeleteModal should set selectedClient and showDeleteModal', () => {
+    const client = makeClient();
+    component.openDeleteModal(client);
+    expect(component.selectedClient).toEqual(client);
+    expect(component.showDeleteModal).toBe(true);
   });
 
-  it('openDeleteModal should NOT call delete when cancelled', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(false));
-    component.openDeleteModal(makeClient());
+  it('confirmDelete should do nothing if no selectedClient', () => {
+    component.selectedClient = null;
+    component.confirmDelete();
     expect(mockClientService.delete).not.toHaveBeenCalled();
   });
 
-  it('openDeleteModal should log error when delete fails', () => {
+  it('confirmDelete should call delete and update state on success', () => {
+    component.selectedClient = makeClient();
+    component.confirmDelete();
+    expect(mockClientService.delete).toHaveBeenCalledWith('1');
+    expect(component.showDeleteModal).toBe(false);
+    expect(component.showSuccessModal).toBe(true);
+  });
+
+  it('confirmDelete should log error and show error modal when delete fails', () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-    mockDialog.open.mockReturnValue(dialogRefStub(true));
     (mockClientService.delete as jest.Mock).mockReturnValue(throwError(() => new Error('delete failed')));
-    component.openDeleteModal(makeClient());
+    component.selectedClient = makeClient();
+    component.confirmDelete();
     expect(consoleSpy).toHaveBeenCalledWith('Error deleting client', expect.any(Error));
+    expect(component.showDeleteModal).toBe(false);
+    expect(component.showErrorModal).toBe(true);
     consoleSpy.mockRestore();
+  });
+
+  it('closeDeleteModal should reset showDeleteModal', () => {
+    component.showDeleteModal = true;
+    component.closeDeleteModal();
+    expect(component.showDeleteModal).toBe(false);
+  });
+
+  it('closeSuccessModal should reset showSuccessModal and selectedClient', () => {
+    component.showSuccessModal = true;
+    component.selectedClient = makeClient();
+    component.closeSuccessModal();
+    expect(component.showSuccessModal).toBe(false);
+    expect(component.selectedClient).toBeNull();
+  });
+
+  it('closeErrorModal should reset showErrorModal and errorMessage', () => {
+    component.showErrorModal = true;
+    component.errorMessage = 'error';
+    component.closeErrorModal();
+    expect(component.showErrorModal).toBe(false);
+    expect(component.errorMessage).toBeNull();
   });
 
   // ── saveClient — validación ───────────────────────────────────────────────

@@ -23,7 +23,7 @@ export interface SuccessDialogResult {
   standalone: true,
   imports: [CommonModule, MatDialogModule],
   template: `
-    <div class="overflow-hidden rounded-xl w-full max-w-lg">
+    <div class="overflow-hidden rounded-xl w-full max-w-lg bg-surface-container-lowest">
       <!-- Top accent bar -->
       <div class="h-1.5 w-full"
         [ngClass]="{
@@ -76,11 +76,10 @@ export interface SuccessDialogResult {
         <div class="mt-10 flex flex-col gap-3">
           @if (data.primaryActionLabel) {
             <button (click)="onPrimary()"
-              class="group relative flex items-center justify-center gap-2 w-full py-4 px-6 font-bold rounded-lg shadow-sm active:scale-[0.98] transition-all overflow-hidden text-white"
+              class="group relative flex items-center justify-center gap-2 w-full py-4 px-6 font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all overflow-hidden text-white"
               [ngClass]="{
-                'bg-gradient-to-br from-primary to-primary-container': data.accentColor === 'primary' || !data.accentColor,
-                'bg-gradient-to-br from-emerald-500 to-emerald-400': data.accentColor === 'success',
-                'bg-gradient-to-br from-amber-500 to-amber-400': data.accentColor === 'warning'
+                'bg-primary shadow-primary/20 hover:opacity-90': data.accentColor === 'success' || data.accentColor === 'primary' || !data.accentColor,
+                'bg-gradient-to-br from-amber-500 to-amber-400 shadow-amber-500/20': data.accentColor === 'warning'
               }">
               <span class="relative z-10">{{ data.primaryActionLabel }}</span>
               <span class="material-symbols-outlined relative z-10 text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -88,12 +87,12 @@ export interface SuccessDialogResult {
           }
           @if (data.secondaryActionLabel) {
             <button (click)="onSecondary()"
-              class="w-full py-4 px-6 bg-secondary-container/30 text-on-secondary-container font-bold rounded-lg hover:bg-secondary-container/50 active:scale-[0.98] transition-all">
+              class="w-full py-4 px-6 bg-stone-100 text-stone-600 font-bold rounded-xl hover:bg-stone-200 active:scale-[0.98] transition-all">
               {{ data.secondaryActionLabel }}
             </button>
           }
           <button (click)="onClose()"
-            class="mt-2 text-stone-400 hover:text-primary transition-colors text-sm font-medium tracking-wide">
+            class="mt-4 text-stone-400 hover:text-primary transition-colors text-xs font-bold uppercase tracking-widest">
             Cerrar ventana
           </button>
         </div>

@@ -2,6 +2,8 @@ import { Component, inject, OnInit, AfterViewInit, ChangeDetectorRef, DestroyRef
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ClientDTO } from '../core/models/client.dto';
 import { ClientService } from '../core/services/client.service';
@@ -14,7 +16,7 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SuccessDialogComponent } from '../shared/components/success-dialog/success-dialog';
 import { ClientProductsDialogComponent } from './components/client-products-dialog/client-products-dialog';
 @Component({
@@ -31,7 +33,8 @@ import { ClientProductsDialogComponent } from './components/client-products-dial
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSlideToggleModule
   ],
   templateUrl: './clientes.html',
   styleUrls: ['./clientes.css']
@@ -39,15 +42,18 @@ import { ClientProductsDialogComponent } from './components/client-products-dial
 export class ClientesComponent implements OnInit, AfterViewInit {
   clientsData: ClientDTO[] = [];
   dataSource = new MatTableDataSource<ClientDTO>([]);
-  displayedColumns: string[] = ['name', 'pedidos', 'isActive', 'acciones'];
+  displayedColumns: string[] = ['id', 'name', 'pedidos', 'isActive', 'acciones'];
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator) paginator?: MatPaginator;
+  @ViewChild(MatSort) sort?: MatSort;
 
   searchTerm = '';
 
   // Modals state
   selectedClient: ClientDTO | null = null;
+  showDeleteModal = false;
+  showSuccessModal = false;
+  showErrorModal = false;
 
   // Forms state
   viewMode: 'list' | 'add' | 'edit' = 'list';
@@ -59,8 +65,19 @@ export class ClientesComponent implements OnInit, AfterViewInit {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly dialog = inject(MatDialog);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+
+  isFromPedidos = false;
+  isMobile = false;
+  private readonly breakpointObserver = inject(BreakpointObserver);
 
   constructor() {
+    this.breakpointObserver.observe([Breakpoints.Handset, Breakpoints.TabletPortrait]).subscribe(result => {
+      this.isMobile = result.matches;
+      this.cdr.markForCheck();
+    });
+
     this.clientForm = this.fb.group({
       id: [''],
       name: ['', Validators.required],
@@ -86,6 +103,12 @@ export class ClientesComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.loadClients();
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      if (params['from'] === 'pedidos') {
+        this.isFromPedidos = true;
+        this.openAddForm();
+      }
+    });
   }
 
 
@@ -135,40 +158,45 @@ export class ClientesComponent implements OnInit, AfterViewInit {
 
   openDeleteModal(client: ClientDTO): void {
     if (client.ordersSummary.total > 0) { return; }
+    this.selectedClient = client;
+    this.showDeleteModal = true;
+    this.cdr.detectChanges();
+  }
 
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      panelClass: 'casualidad-dialog',
-      data: {
-        title: '\u00bfEliminar cliente?',
-        message: 'Est\u00e1s a punto de eliminar a ',
-        highlightText: client.name,
-        warningText: 'El cliente ser\u00e1 eliminado permanentemente del sistema. Esta acci\u00f3n ',
-        confirmLabel: 'S\u00ed, eliminar cliente',
-        icon: 'person_remove',
-        accentColor: 'error'
+  closeDeleteModal(): void {
+    this.showDeleteModal = false;
+    this.cdr.detectChanges();
+  }
+
+  confirmDelete(): void {
+    if (!this.selectedClient) return;
+    this.clientService.delete(this.selectedClient.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.closeDeleteModal();
+        this.showSuccessModal = true;
+        this.loadClients();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error deleting client', err);
+        this.errorMessage = 'No se pudo eliminar el cliente. Es posible que tenga pedidos asociados o que haya ocurrido un problema en el servidor.';
+        this.closeDeleteModal();
+        this.showErrorModal = true;
+        this.cdr.detectChanges();
       }
     });
+  }
 
-    dialogRef.afterClosed().subscribe(confirmed => {
-      if (confirmed) {
-        this.clientService.delete(client.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-          next: () => {
-            this.loadClients();
-            this.dialog.open(SuccessDialogComponent, {
-              panelClass: 'casualidad-dialog',
-              data: {
-                title: '\u00a1Cliente Eliminado!',
-                message: 'El cliente ha sido eliminado permanentemente del sistema.',
-                icon: 'check_circle',
-                accentColor: 'success',
-                primaryActionLabel: 'Continuar'
-              }
-            });
-          },
-          error: (err) => console.error('Error deleting client', err)
-        });
-      }
-    });
+  closeSuccessModal(): void {
+    this.showSuccessModal = false;
+    this.selectedClient = null;
+    this.cdr.detectChanges();
+  }
+
+  closeErrorModal(): void {
+    this.showErrorModal = false;
+    this.errorMessage = null;
+    this.cdr.detectChanges();
   }
 
   // --- FORM ACTIONS ---
@@ -203,7 +231,11 @@ export class ClientesComponent implements OnInit, AfterViewInit {
 
   closeForm(): void {
     this.viewMode = 'list';
-    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.dataSource.paginator = this.paginator || null;
+      this.dataSource.sort = this.sort || null;
+      this.cdr.detectChanges();
+    }, 0);
   }
 
   saveClient(): void {
@@ -224,15 +256,25 @@ export class ClientesComponent implements OnInit, AfterViewInit {
               title: isEdit ? 'Cliente Actualizado' : 'Cliente A\u00f1adido con \u00c9xito',
               message: isEdit ? 'Los datos han sido modificados correctamente.' : 'El perfil para el nuevo cliente ha sido creado.',
               icon: 'check_circle',
-              accentColor: 'primary',
-              primaryActionLabel: 'Ir al Listado',
+              accentColor: 'success',
+              primaryActionLabel: this.isFromPedidos && !isEdit ? 'Ir a Crear Pedido' : 'Ir al Listado',
               secondaryActionLabel: isEdit ? 'Seguir editando' : 'A\u00f1adir otro'
             }
           });
 
           dialogRef.afterClosed().subscribe(result => {
+            if (this.isFromPedidos && !isEdit) {
+              this.router.navigate(['/pedidos'], { queryParams: { new: 'true' } });
+              return;
+            }
+
             if (!result || result.action === 'primary' || result.action === 'close') {
               this.viewMode = 'list';
+              setTimeout(() => {
+                this.dataSource.paginator = this.paginator || null;
+                this.dataSource.sort = this.sort || null;
+                this.cdr.detectChanges();
+              }, 0);
             } else if (result.action === 'secondary' && !isEdit) {
               this.openAddForm();
             }

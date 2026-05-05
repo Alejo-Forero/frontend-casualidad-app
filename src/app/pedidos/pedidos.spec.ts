@@ -384,64 +384,93 @@ describe('PedidosComponent', () => {
     expect(component.itemsFormArray.at(0).get('productId')?.value).toBeNull();
   });
 
-  // ── openActivarProduccionModal ─────────────────────────────────────────────
+  // ── openActivarProduccionModal & confirmActivarProduccion ────────────────
 
-  it('should call activarProduccion when confirmed', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(true));
-    component.openActivarProduccionModal(makeOrder());
-    expect(mockOrderService.activarProduccion).toHaveBeenCalledWith(1);
+  it('openActivarProduccionModal should set selectedOrder and showProductionModal', () => {
+    const order = makeOrder();
+    component.openActivarProduccionModal(order);
+    expect(component.selectedOrder).toEqual(order);
+    expect(component.showProductionModal).toBe(true);
+    expect(component.errorMessage).toBe('');
   });
 
-  it('should NOT call activarProduccion when cancelled', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(false));
-    component.openActivarProduccionModal(makeOrder());
-    expect(mockOrderService.activarProduccion).not.toHaveBeenCalled();
-  });
-
-  it('should log error when activarProduccion fails', () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-    mockDialog.open.mockReturnValue(dialogRefStub(true));
-    (mockOrderService.activarProduccion as jest.Mock).mockReturnValue(throwError(() => new Error('fail')));
-    component.openActivarProduccionModal(makeOrder());
-    expect(consoleSpy).toHaveBeenCalledWith('Error activando producción', expect.any(Error));
-    consoleSpy.mockRestore();
-  });
-
-  // ── confirmActivarProduccion ───────────────────────────────────────────────
-
-  it('confirmActivarProduccion should skip when selectedOrder has no id', () => {
-    component.selectedOrder = { idPedido: undefined } as any;
-    component.confirmActivarProduccion();
-    expect(mockOrderService.activarProduccion).not.toHaveBeenCalled();
-  });
-
-  it('confirmActivarProduccion should skip when selectedOrder is null', () => {
+  it('confirmActivarProduccion should do nothing if no selectedOrder', () => {
     component.selectedOrder = null;
     component.confirmActivarProduccion();
     expect(mockOrderService.activarProduccion).not.toHaveBeenCalled();
   });
 
-  // ── openDeleteModal ───────────────────────────────────────────────────────
-
-  it('openDeleteModal should call cancelar when confirmed', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(true));
-    component.openDeleteModal(makeOrder());
-    expect(mockOrderService.cancelar).toHaveBeenCalledWith(1);
+  it('confirmActivarProduccion should call activarProduccion and update state when confirmed', () => {
+    component.selectedOrder = makeOrder();
+    component.confirmActivarProduccion();
+    expect(mockOrderService.activarProduccion).toHaveBeenCalledWith(1);
+    expect(component.showProductionModal).toBe(false);
+    expect(component.showSuccessModal).toBe(true);
   });
 
-  it('openDeleteModal should NOT call cancelar when cancelled', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(false));
-    component.openDeleteModal(makeOrder());
+  it('confirmActivarProduccion should log error and show error modal when fails', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+    (mockOrderService.activarProduccion as jest.Mock).mockReturnValue(throwError(() => new Error('fail')));
+    component.selectedOrder = makeOrder();
+    component.confirmActivarProduccion();
+    expect(component.showProductionModal).toBe(false);
+    expect(component.showErrorModal).toBe(true);
+    expect(consoleSpy).toHaveBeenCalledWith('Error activando producción', expect.any(Error));
+    consoleSpy.mockRestore();
+  });
+
+  it('closeProductionModal should reset showProductionModal', () => {
+    component.showProductionModal = true;
+    component.closeProductionModal();
+    expect(component.showProductionModal).toBe(false);
+  });
+
+  // ── openDeleteModal & confirmDelete ───────────────────────────────────────
+
+  it('openDeleteModal should set selectedOrder and showDeleteModal', () => {
+    const order = makeOrder();
+    component.openDeleteModal(order);
+    expect(component.selectedOrder).toEqual(order);
+    expect(component.showDeleteModal).toBe(true);
+  });
+
+  it('confirmDelete should do nothing if selectedOrder is null', () => {
+    component.selectedOrder = null;
+    component.confirmDelete();
     expect(mockOrderService.cancelar).not.toHaveBeenCalled();
   });
 
-  it('openDeleteModal should log error when cancelar fails', () => {
+  it('confirmDelete should call cancelar and update state on success', () => {
+    component.selectedOrder = makeOrder();
+    component.confirmDelete();
+    expect(mockOrderService.cancelar).toHaveBeenCalledWith(1);
+    expect(component.showDeleteModal).toBe(false);
+    expect(component.showSuccessModal).toBe(true);
+  });
+
+  it('confirmDelete should log error and show error modal when cancelar fails', () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-    mockDialog.open.mockReturnValue(dialogRefStub(true));
     (mockOrderService.cancelar as jest.Mock).mockReturnValue(throwError(() => new Error('fail')));
-    component.openDeleteModal(makeOrder());
-    expect(consoleSpy).toHaveBeenCalledWith('Error cancelando pedido', expect.any(Error));
+    component.selectedOrder = makeOrder();
+    component.confirmDelete();
+    expect(consoleSpy).toHaveBeenCalledWith('Error eliminando pedido', expect.any(Error));
+    expect(component.showDeleteModal).toBe(false);
+    expect(component.showErrorModal).toBe(true);
     consoleSpy.mockRestore();
+  });
+
+  it('closeDeleteModal should reset showDeleteModal', () => {
+    component.showDeleteModal = true;
+    component.closeDeleteModal();
+    expect(component.showDeleteModal).toBe(false);
+  });
+
+  it('closeSuccessModal should reset showSuccessModal and selectedOrder', () => {
+    component.showSuccessModal = true;
+    component.selectedOrder = makeOrder();
+    component.closeSuccessModal();
+    expect(component.showSuccessModal).toBe(false);
+    expect(component.selectedOrder).toBeNull();
   });
 
   // ── saveOrder — validación ────────────────────────────────────────────────

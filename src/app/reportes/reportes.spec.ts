@@ -1,14 +1,37 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReportesComponent } from './reportes';
 
+import { PaymentService } from '../core/services/payment.service';
+import { of, throwError } from 'rxjs';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+
 describe('ReportesComponent', () => {
   let component: ReportesComponent;
   let fixture: ComponentFixture<ReportesComponent>;
+  let mockPaymentService: any;
 
   beforeEach(async () => {
+    mockPaymentService = {
+      getReporteIngresos: jest.fn(() => of({ totalGeneral: 1000, totalEfectivo: 250, totalTransferencia: 750 })),
+      getSaldosPendientes: jest.fn(() => of({ pedidos: [] })),
+      exportarSaldosPendientes: jest.fn(() => of(new Blob(['test'], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }))),
+    };
+
     await TestBed.configureTestingModule({
-      imports: [ReportesComponent],
+      imports: [ReportesComponent, NoopAnimationsModule],
+      providers: [
+        { provide: PaymentService, useValue: mockPaymentService },
+      ],
     }).compileComponents();
+
+    // Mock URL functions
+    if (!(window.URL as any).createObjectURL) {
+      Object.defineProperty(window.URL, 'createObjectURL', { writable: true, value: jest.fn(() => 'blob:url') });
+    }
+    if (!(window.URL as any).revokeObjectURL) {
+      Object.defineProperty(window.URL, 'revokeObjectURL', { writable: true, value: jest.fn() });
+    }
 
     fixture = TestBed.createComponent(ReportesComponent);
     component = fixture.componentInstance;
@@ -37,30 +60,45 @@ describe('ReportesComponent', () => {
     expect(component.transferPercentage).toBe(0);
   });
 
-  it('should handle onPageChange properly', () => {
-    component.pendingBalances = [
-      { orderId: '1', orderCode: '001', clientName: 'C1', deliveryDate: '2026', totalAmount: 100, pendingBalance: 50, daysUntilDelivery: 1 },
-      { orderId: '2', orderCode: '002', clientName: 'C2', deliveryDate: '2026', totalAmount: 100, pendingBalance: 50, daysUntilDelivery: 1 },
-      { orderId: '3', orderCode: '003', clientName: 'C3', deliveryDate: '2026', totalAmount: 100, pendingBalance: 50, daysUntilDelivery: 1 },
-      { orderId: '4', orderCode: '004', clientName: 'C4', deliveryDate: '2026', totalAmount: 100, pendingBalance: 50, daysUntilDelivery: 1 },
-      { orderId: '5', orderCode: '005', clientName: 'C5', deliveryDate: '2026', totalAmount: 100, pendingBalance: 50, daysUntilDelivery: 1 },
-      { orderId: '6', orderCode: '006', clientName: 'C6', deliveryDate: '2026', totalAmount: 100, pendingBalance: 50, daysUntilDelivery: 1 },
-    ];
-    component.pageSize = 5;
-    
-    component.onPageChange(1);
-    expect(component.paginatedPendingBalances.length).toBe(5);
-    expect(component.paginatedPendingBalances[0].orderId).toBe('1');
-    
-    component.onPageChange(2);
-    expect(component.paginatedPendingBalances.length).toBe(1);
-    expect(component.paginatedPendingBalances[0].orderId).toBe('6');
+  it('should fetch ingresos on date change', () => {
+    component.onDateChange();
+    expect(mockPaymentService.getReporteIngresos).toHaveBeenCalledWith(component.incomeReport.dateFrom, component.incomeReport.dateTo);
   });
 
-  it('should reset pagination on date change', () => {
-    component.currentPage = 3;
-    component.onDateChange();
-    expect(component.currentPage).toBe(1);
+  it('should fetch saldos and map correctly', () => {
+    const mockRes = {
+      pedidos: [{
+        idPedido: 1,
+        codigoPedido: 'COD1',
+        nombreCliente: 'Juan',
+        fechaEntrega: new Date(new Date().getTime() + 86400000 * 2).toISOString(), // 2 days from now
+        montoTotal: 500,
+        saldoPendiente: 100
+      }]
+    };
+    (mockPaymentService.getSaldosPendientes as jest.Mock).mockReturnValue(of(mockRes));
+    
+    component.fetchSaldos();
+    
+    expect(component.dataSource.data.length).toBe(1);
+    expect(component.dataSource.data[0].clientName).toBe('Juan');
+    expect(component.dataSource.data[0].daysUntilDelivery).toBe(2);
+  });
+
+  it('should export excel', () => {
+    const clickSpy = jest.fn();
+    const createSpy = jest.spyOn(document, 'createElement').mockImplementation(() => ({
+      click: clickSpy,
+      href: '',
+      download: ''
+    } as any));
+
+    component.exportExcel();
+    expect(mockPaymentService.exportarSaldosPendientes).toHaveBeenCalled();
+    expect(window.URL.createObjectURL).toHaveBeenCalled();
+    expect(clickSpy).toHaveBeenCalled();
+    
+    createSpy.mockRestore();
   });
 
   it('should return correct rank color class', () => {

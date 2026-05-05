@@ -58,6 +58,13 @@ describe('AuthService', () => {
     expect(service.getUser()?.id).toBe('1');
   });
 
+  it('should update user', () => {
+    service.updateUser({ id: '2', nombre: 'Test', correo: 'a@a', rol: 'ADMIN' });
+    const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+    expect(user.id).toBe('2');
+    expect(user.nombre).toBe('Test');
+  });
+
   it('should handle invalid user json', () => {
     sessionStorage.setItem('user', '{invalid');
     expect(service.getUser()).toBeNull();

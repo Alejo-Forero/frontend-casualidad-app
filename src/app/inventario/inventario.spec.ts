@@ -421,36 +421,56 @@ describe('InventarioComponent', () => {
     expect(component.viewMode).toBe('list');
   });
 
-  // ── openDeleteModal ───────────────────────────────────────────────────────
+  // ── openDeleteModal & confirmDelete ───────────────────────────────────────
 
-  it('should call delete service when confirmed', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(true));
-    component.openDeleteModal(makeProduct());
-    expect(mockInventoryService.delete).toHaveBeenCalledWith('1');
+  it('openDeleteModal should set selectedProduct and showDeleteModal', () => {
+    const product = makeProduct();
+    component.openDeleteModal(product);
+    expect(component.selectedProduct).toEqual(product);
+    expect(component.showDeleteModal).toBe(true);
+    expect(component.errorMessage).toBeNull();
   });
 
-  it('should NOT call delete service when dialog is cancelled', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(false));
-    component.openDeleteModal(makeProduct());
+  it('confirmDelete should do nothing if no selectedProduct', () => {
+    component.selectedProduct = null;
+    component.confirmDelete();
     expect(mockInventoryService.delete).not.toHaveBeenCalled();
   });
 
-  it('should set errorMessage when delete fails', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(true));
+  it('confirmDelete should call delete service and update state when confirmed', () => {
+    component.selectedProduct = makeProduct();
+    component.confirmDelete();
+    expect(mockInventoryService.delete).toHaveBeenCalledWith('1');
+    expect(component.showDeleteModal).toBe(false);
+    expect(component.showSuccessModal).toBe(true);
+  });
+
+  it('confirmDelete should set errorMessage and show error modal when delete fails', () => {
     (mockInventoryService.delete as jest.Mock).mockReturnValue(
       throwError(() => new Error('Delete failed'))
     );
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-    component.openDeleteModal(makeProduct());
+    component.selectedProduct = makeProduct();
+    component.confirmDelete();
+    expect(component.showDeleteModal).toBe(false);
+    expect(component.showErrorModal).toBe(true);
     expect(component.errorMessage).toBeTruthy();
+    expect(consoleSpy).toHaveBeenCalledWith('Error eliminando producto', expect.any(Error));
     consoleSpy.mockRestore();
   });
 
-  it('should clear errorMessage at the start of openDeleteModal', () => {
-    component.errorMessage = 'old error';
-    mockDialog.open.mockReturnValue(dialogRefStub(false));
-    component.openDeleteModal(makeProduct());
-    expect(component.errorMessage).toBeNull();
+  it('closeDeleteModal should reset showDeleteModal', () => {
+    component.showDeleteModal = true;
+    component.closeDeleteModal();
+    expect(component.showDeleteModal).toBe(false);
+  });
+
+  it('closeSuccessModal should reset showSuccessModal and selectedProduct', () => {
+    component.showSuccessModal = true;
+    component.selectedProduct = makeProduct();
+    component.closeSuccessModal();
+    expect(component.showSuccessModal).toBe(false);
+    expect(component.selectedProduct).toBeNull();
   });
 
   // ── openEntradaModal ──────────────────────────────────────────────────────

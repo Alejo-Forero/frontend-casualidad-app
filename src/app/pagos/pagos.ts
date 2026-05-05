@@ -3,10 +3,20 @@ import { Component, inject, OnInit, ChangeDetectorRef, DestroyRef } from '@angul
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { PaginationComponent } from '../shared/pagination/pagination';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { PaymentService } from '../core/services/payment.service';
 import { PaymentListItemDTO } from '../core/models/payment.dto';
 import { Observable } from 'rxjs';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
+import { MatSortModule, MatSort } from '@angular/material/sort';
+import { AfterViewInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 
 /** Shape normalizada para la tabla — compatible con el HTML existente */
 interface PaymentRow {
@@ -30,28 +40,39 @@ export type PaymentType   = 'EFECTIVO' | 'TRANSFERENCIA';
 @Component({
   selector: 'app-pagos',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, PaginationComponent],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule
+  ],
   templateUrl: './pagos.html',
   styleUrls: ['./pagos.css']
 })
-export class PagosComponent implements OnInit {
+export class PagosComponent implements OnInit, AfterViewInit {
 
   // ─── Estado principal ─────────────────────────────────────────────────────
   paymentsData:     PaymentRow[] = [];
   paymentsListed: PaymentListItemDTO[] = [];
-  filteredPayments: PaymentListItemDTO[] = [];
-  paginatedPayments: PaymentListItemDTO[]  = [];
-  totalElements = 0;
-  totalPages = 0;
+  
+  dataSource = new MatTableDataSource<PaymentListItemDTO>([]);
+  displayedColumns: string[] = ['idPago', 'cliente', 'estado', 'fecha', 'metodo', 'monto', 'acciones'];
+
+  @ViewChild(MatPaginator) paginator?: MatPaginator;
+  @ViewChild(MatSort) sort?: MatSort;
 
   searchTerm    = '';
   currentFilter: 'ALL' | PaymentStatus = 'ALL';
-  currentPage   = 1;
-  pageSize      = 5;
-  currentSort   = { column: '', direction: 'asc' as 'asc' | 'desc' };
 
   // ─── Mapas de UI ──────────────────────────────────────────────────────────
-  statusMap: Record<PaymentStatus, { text: string; css: string }> = {
+  statusMap: Record<string, { text: string; css: string }> = {
     'TERMINADO': { text: 'Completado',  css: 'bg-green-100 text-green-700' },
     'EN_PRODUCCION': { text: 'En Producción',  css: 'bg-blue-100 text-blue-700' },
     'PENDIENTE':   { text: 'Pendiente',   css: 'bg-orange-100 text-orange-700' },
@@ -69,9 +90,12 @@ export class PagosComponent implements OnInit {
   // ─── Modals ───────────────────────────────────────────────────────────────
   showDeleteModal      = false;
   showSuccessModal     = false;
+  showErrorModal       = false;
+  errorMessage         = '';
   showViewModal        = false;
   showFormSuccessModal = false;
   selectedPayment: PaymentListItemDTO | null = null;
+  isMobile = false;
 
   // ─── Formulario ───────────────────────────────────────────────────────────
   viewMode: 'list' | 'add' | 'edit' = 'list';
@@ -91,13 +115,20 @@ export class PagosComponent implements OnInit {
   private readonly paymentService = inject(PaymentService);
   private readonly cdr           = inject(ChangeDetectorRef);
   private readonly destroyRef    = inject(DestroyRef);
+  private readonly breakpointObserver = inject(BreakpointObserver);
+  private readonly router = inject(Router);
 
   constructor() {
+    this.breakpointObserver.observe([Breakpoints.Handset, Breakpoints.TabletPortrait]).subscribe(result => {
+      this.isMobile = result.matches;
+      this.cdr.markForCheck();
+    });
+
     // Campos que acepta el backend: monto, metodoPago (EFECTIVO|TRANSFERENCIA), referenciaComprobante
     this.paymentForm = this.fb.group({
       id:                    [''],
       idPedido:              [null, Validators.required],
-      amount:                [0, [Validators.required, Validators.min(0.01)]],
+      amount:                [null, [Validators.required, Validators.min(0.01)]],
       type:                  ['EFECTIVO', Validators.required],
       referenciaComprobante: ['']
     });
@@ -108,16 +139,39 @@ export class PagosComponent implements OnInit {
     this.fetchPayments();
   }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator || null;
+    this.dataSource.sort = this.sort || null;
+    
+    this.dataSource.filterPredicate = (data, filter) => {
+      const dataStr = `${data.idPago} ${data.nombreCliente} ${data.estadoPedido} ${data.fechaPago} ${data.metodoPago}`.toLowerCase();
+      const matchSearch = dataStr.includes(this.searchTerm.trim().toLowerCase());
+      const matchFilter = this.currentFilter === 'ALL' || data.estadoPedido === this.currentFilter;
+      return matchSearch && matchFilter;
+    };
+
+    this.dataSource.sortingDataAccessor = (item, property) => {
+      switch(property) {
+        case 'idPago': return item.idPago || '';
+        case 'cliente': return item.nombreCliente || '';
+        case 'estado': return item.estadoPedido || '';
+        case 'fecha': return item.fechaPago ? new Date(item.fechaPago).getTime() : 0;
+        case 'metodo': return item.metodoPago || '';
+        case 'monto': return item.monto || 0;
+        default: return (item as any)[property] as string | number ?? '';
+      }
+    };
+  }
 
   fetchPayments(): void {
-    this.paymentService.getPayments((this.currentPage -1), this.pageSize).subscribe({
-      next: (response) => {
+    this.paymentService.getPayments(0, 1000).subscribe({
+      next: (response: any) => {
         this.paymentsListed = response.data;
-        this.totalElements = response.totalElements;
-        this.totalPages = response.totalPages;
+        this.dataSource.data = this.paymentsListed;
+        this.applyFilters();
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error fetching payments from the backend', err);
       }
     });
@@ -157,58 +211,19 @@ export class PagosComponent implements OnInit {
 
   setFilter(filter: 'ALL' | PaymentStatus): void {
     this.currentFilter = filter;
-    this.currentPage   = 1;
     this.applyFilters();
   }
 
   onSearchChange(): void {
-    this.currentPage = 1;
     this.applyFilters();
-  }
-
-  onPageChange(page: number): void {
-    this.currentPage = page;
-    this.fetchPayments();
-
-  }
-
-  handleSort(column: string): void {
-    ListHelper.handleSort(this.currentSort as any, column);
-    this.applyFilters();
-  }
-
-  getSortIcon(column: string): string {
-    return ListHelper.getSortIcon(this.currentSort as any, column);
   }
 
   applyFilters(): void {
-    // Para asegurar que tenemos datos actualizados antes de filtrar
-
-
-    /* if (this.currentFilter !== 'ALL') {
-      result = result.filter(p => p.estadoPedido === this.currentFilter);
+    // Al setear el filter con Math.random() forzamos la reevaluación del filterPredicate
+    this.dataSource.filter = Math.random().toString();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
-
-    if (this.searchTerm.trim() !== '') {
-      const term = this.searchTerm.toLowerCase();
-      result = result.filter(p =>
-        p.idPago.toString().toLowerCase().includes(term) ||
-        (p.nombreCliente?.toLowerCase().includes(term)) ||
-        p.idPago.toString().toLowerCase().includes(term)
-      );
-    }
-
-    ListHelper.sortArray(result, this.currentSort as any);
-    this.filteredPayments = result;
-
-    const start = (this.currentPage - 1) * this.pageSize;
-    const end   = start + this.pageSize;
-    this.paginatedPayments = this.filteredPayments.slice(start, end);
-
-    if (this.paginatedPayments.length === 0 && this.currentPage > 1) {
-      this.currentPage = 1;
-      this.applyFilters();
-    } */
   }
 
   // ─── Modals de vista ─────────────────────────────────────────────────────
@@ -250,6 +265,13 @@ export class PagosComponent implements OnInit {
         this.fetchPayments();
         this.cdr.detectChanges();
 
+      },
+      error: (err) => {
+        console.error('Error eliminando pago', err);
+        this.errorMessage = 'No se pudo eliminar el abono. Verifica si el abono aún existe o si tienes permisos.';
+        this.closeDeleteModal();
+        this.showErrorModal = true;
+        this.cdr.detectChanges();
       }
     });
     // El backend requiere idPedido + idPago. Como aquí solo tenemos el saldo
@@ -264,13 +286,19 @@ export class PagosComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+  closeErrorModal(): void {
+    this.showErrorModal = false;
+    this.errorMessage = '';
+    this.cdr.detectChanges();
+  }
+
   // ─── Formulario de abono ─────────────────────────────────────────────────
 
   openAddForm(): void {
     this.paymentForm.reset({
       id:                    '',
       idPedido:              null,
-      amount:                0,
+      amount:                null,
       type:                  'EFECTIVO',
       referenciaComprobante: ''
     });
@@ -294,7 +322,25 @@ export class PagosComponent implements OnInit {
   closeForm(): void {
     this.viewMode        = 'list';
     this.selectedPayment = null;
-    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.dataSource.paginator = this.paginator || null;
+      this.dataSource.sort = this.sort || null;
+      this.cdr.detectChanges();
+    }, 0);
+  }
+
+  getMaxAmount(): number {
+    const idPedido = this.paymentForm.get('idPedido')?.value;
+    if (!idPedido) return 0;
+    const pedido = this.paymentsData.find(p => p.idPedido === Number(idPedido));
+    return pedido ? pedido.amount : 0;
+  }
+
+  hasAmountError(): boolean {
+    const max = this.getMaxAmount();
+    const current = this.paymentForm.get('amount')?.value;
+    if (current === null || current === undefined || current === '') return false;
+    return Number(current) > max;
   }
 
   savePayment(): void {
@@ -334,6 +380,11 @@ export class PagosComponent implements OnInit {
     this.showFormSuccessModal = false;
     if (goToList) {
       this.viewMode = 'list';
+      setTimeout(() => {
+        this.dataSource.paginator = this.paginator || null;
+        this.dataSource.sort = this.sort || null;
+        this.cdr.detectChanges();
+      }, 0);
     } else if (this.viewMode === 'add') {
       this.openAddForm();
     }
@@ -344,5 +395,9 @@ export class PagosComponent implements OnInit {
     if (type === 'CASH') { return 'EFECTIVO'; }
     if (type === 'TRANSFER') { return 'TRANSFERENCIA'; }
     return type;
+  }
+
+  verReportes() {
+    this.router.navigate(['/reportes']);
   }
 }

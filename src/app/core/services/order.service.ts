@@ -49,7 +49,7 @@ export class OrderService {
           total:          p.total,
           saldoPendiente: p.saldoPendiente,
           // Aliases para compatibilidad con templates existentes
-          id:             String(p.idPedido),
+          id:             p.idPedido ? String(p.idPedido) : `tmp-${Math.floor(Math.random() * 1000000)}`,
           code:           p.codigoUnico,
           status:         p.estadoPedido,
           clientName:     p.nombreCliente ?? '',
@@ -135,7 +135,7 @@ export class OrderService {
    */
   cancelar(id: string | number, reintegrarMateriales = false): Observable<any> {
     const params = new HttpParams().set('reintegrarMateriales', String(reintegrarMateriales));
-    return this.http.patch<any>(`${this.apiUrl}/${id}/cancelar`, {}, { params });
+    return this.http.delete<any>(`${this.apiUrl}/${id}/cancelar`, { params });
   }
 
   /**

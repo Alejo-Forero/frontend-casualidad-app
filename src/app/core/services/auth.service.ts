@@ -53,6 +53,10 @@ export class AuthService {
     return null;
   }
 
+  updateUser(user: UserDTO): void {
+    sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
+  }
+
   clearSession(): void {
     sessionStorage.removeItem(this.ACCESS_TOKEN_KEY);
     sessionStorage.removeItem(this.REFRESH_TOKEN_KEY);

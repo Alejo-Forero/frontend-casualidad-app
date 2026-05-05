@@ -9,6 +9,9 @@ import { PagosComponent } from './pagos/pagos';
 import { ReportesComponent } from './reportes/reportes';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
+import { CambiarContrasenaComponent } from './cambiar-contrasena/cambiar-contrasena';
+import { RestablecerCorreoComponent } from './restablecer-correo/restablecer-correo';
+import { PerfilComponent } from './perfil/perfil';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
@@ -23,7 +26,10 @@ export const routes: Routes = [
       { path: 'inventario', component: InventarioComponent },
       { path: 'pedidos', component: PedidosComponent },
       { path: 'pagos', component: PagosComponent },
-      { path: 'reportes', component: ReportesComponent }
+      { path: 'reportes', component: ReportesComponent },
+      { path: 'perfil', component: PerfilComponent },
+      { path: 'cambiar-contrasena', component: CambiarContrasenaComponent },
+      { path: 'restablecer-correo', component: RestablecerCorreoComponent }
     ]
   },
   { path: '**', redirectTo: 'login' }
