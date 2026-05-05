@@ -368,51 +368,7 @@
 </div>
 }
 
-<!-- Form Success Modal -->
-@if (showFormSuccessModal) {
-<div class="fixed inset-0 z-[70] flex items-center justify-center p-4">
-    <button type="button" aria-label="Cerrar modal"
-        class="absolute inset-0 w-full h-full border-none appearance-none block bg-on-background/40 backdrop-blur-sm cursor-default"
-        (click)="closeFormSuccessModal(true)"></button>
-    <div
-        class="relative bg-surface-container-lowest w-full max-w-lg rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
-        <div class="h-2 w-full bg-gradient-to-r from-primary to-primary-container"></div>
-        <div class="p-10 text-center">
-            <div class="relative mb-8 flex justify-center">
-                <div class="absolute inset-0 bg-primary/10 rounded-full scale-150 blur-xl"></div>
-                <div
-                    class="relative w-24 h-24 bg-gradient-to-br from-primary to-primary-container rounded-full flex items-center justify-center shadow-lg">
-                    <span class="material-symbols-outlined text-white text-5xl"
-                        style="font-variation-settings: 'wght' 600;">check_circle</span>
-                </div>
-            </div>
-            <h2 class="text-3xl font-extrabold text-on-surface tracking-tight mb-4 font-headline">
-                {{ viewMode === 'add' ? '¡Pago Registrado con Éxito!' : '¡Pago Actualizado!' }}
-            </h2>
-            <p class="text-on-surface-variant text-lg leading-relaxed font-body px-4">
-                {{ viewMode === 'add' ? 'El movimiento ha sido registrado correctamente.' : 'Los detalles del pago han
-                sido modificados.' }}
-            </p>
-            <div class="mt-10 flex flex-col gap-3">
-                <button (click)="closeFormSuccessModal(true)"
-                    class="group relative flex items-center justify-center gap-2 w-full py-4 px-6 bg-gradient-to-br from-primary to-primary-container text-on-primary font-bold rounded-lg shadow-sm active:scale-[0.98] transition-all overflow-hidden">
-                    <span class="relative z-10">Ir a Pagos</span>
-                    <span
-                        class="material-symbols-outlined relative z-10 text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </button>
-                <button (click)="closeFormSuccessModal(false)"
-                    class="w-full py-4 px-6 bg-secondary-container/30 text-on-secondary-container font-bold rounded-lg hover:bg-secondary-container/50 active:scale-[0.98] transition-all">
-                    {{ viewMode === 'add' ? 'Registrar otro pago' : 'Seguir editando' }}
-                </button>
-            </div>
-            <button (click)="closeFormSuccessModal(true)"
-                class="mt-6 text-stone-400 hover:text-primary transition-colors text-sm font-medium tracking-wide">
-                Cerrar ventana
-            </button>
-        </div>
-    </div>
-</div>
-}
+
 
 <!-- View Payment Modal -->
 @if (showViewModal && selectedPayment) {
