@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { PaymentService } from '../core/services/payment.service';
 import { PaymentListItemDTO } from '../core/models/payment.dto';
-import { Observable } from 'rxjs';
+import { Observable, EMPTY } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -15,6 +15,9 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { SuccessDialogComponent, SuccessDialogResult } from '../shared/components/success-dialog/success-dialog';
+import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog';
 import { STATUS_MAP } from '../shared/constants/ui-constants';
 import { ListHelper } from '../shared/utils/list-helper';
 
@@ -51,7 +54,8 @@ export type PaymentType = 'EFECTIVO' | 'TRANSFERENCIA';
     MatIconModule,
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    MatDialogModule
   ],
   templateUrl: './pagos.html',
   styleUrls: ['./pagos.css']
@@ -83,12 +87,8 @@ export class PagosComponent implements OnInit, AfterViewInit {
   };
 
   // ─── Modals ───────────────────────────────────────────────────────────────
-  showDeleteModal = false;
-  showSuccessModal = false;
-  showErrorModal = false;
   errorMessage = '';
   showViewModal = false;
-  showFormSuccessModal = false;
   selectedPayment: PaymentListItemDTO | null = null;
   isMobile = false;
 
@@ -112,6 +112,7 @@ export class PagosComponent implements OnInit, AfterViewInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
 
   constructor() {
     this.breakpointObserver.observe([Breakpoints.Handset, Breakpoints.TabletPortrait]).subscribe(result => {
@@ -162,16 +163,16 @@ export class PagosComponent implements OnInit, AfterViewInit {
     this.paymentService.getPayments(0, 1000)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-      next: (response: any) => {
-        this.paymentsListed = response.data;
-        this.dataSource.data = this.paymentsListed;
-        this.applyFilters();
-        this.cdr.detectChanges();
-      },
-      error: (err: any) => {
-        console.error('Error fetching payments from the backend', err);
-      }
-    });
+        next: (response: any) => {
+          this.paymentsListed = response.data;
+          this.dataSource.data = this.paymentsListed;
+          this.applyFilters();
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => {
+          console.error('Error fetching payments from the backend', err);
+        }
+      });
   }
 
   // ─── Carga ────────────────────────────────────────────────────────────────
@@ -232,58 +233,68 @@ export class PagosComponent implements OnInit, AfterViewInit {
 
   closeViewModal(): void {
     this.showViewModal = false;
-    if (!this.showDeleteModal) { this.selectedPayment = null; }
+    this.selectedPayment = null;
     this.cdr.detectChanges();
   }
 
   // ─── Eliminar ────────────────────────────────────────────────────────────
 
   openDeleteModal(payment: PaymentListItemDTO): void {
-    this.selectedPayment = payment;
-    this.showDeleteModal = true;
-    this.cdr.detectChanges();
-  }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      panelClass: 'casualidad-dialog',
+      data: {
+        title: '\u00bfEliminar pago?',
+        message: '\u00bfEst\u00e1s seguro de que deseas eliminar este registro de pago de ',
+        highlightText: `$${payment.monto}`,
+        warningText: 'Esta acci\u00f3n eliminar\u00e1 el abono permanentemente y ',
+        confirmLabel: 'S\u00ed, eliminar pago',
+        icon: 'delete_forever',
+        accentColor: 'error'
+      }
+    });
 
-  closeDeleteModal(): void {
-    this.showDeleteModal = false;
-    if (!this.showViewModal) { this.selectedPayment = null; }
-    this.cdr.detectChanges();
-  }
-
-  confirmDelete(): void {
-    if (!this.selectedPayment) { return; }
-    this.paymentService.eliminarAbono(this.selectedPayment.idPedido, this.selectedPayment.idPago)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-      next: () => {
-        console.warn('Para eliminar un abono específico, usa la vista de detalle del pedido.');
-        this.closeDeleteModal();
-        this.showSuccessModal = true;
-        this.loadPayments();
-        this.fetchPayments();
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error eliminando pago', err);
-        this.errorMessage = 'No se pudo eliminar el abono. Verifica si el abono aún existe o si tienes permisos.';
-        this.closeDeleteModal();
-        this.showErrorModal = true;
-        this.cdr.detectChanges();
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.confirmDelete(payment);
       }
     });
   }
 
-  closeSuccessModal(): void {
-    this.showSuccessModal = false;
-    this.selectedPayment = null;
-    this.cdr.detectChanges();
+  confirmDelete(payment: PaymentListItemDTO): void {
+    this.paymentService.eliminarAbono(payment.idPedido, payment.idPago)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.loadPayments();
+          this.fetchPayments();
+          this.dialog.open(SuccessDialogComponent, {
+            panelClass: 'casualidad-dialog',
+            data: {
+              title: '\u00a1Pago Eliminado!',
+              message: 'El registro de pago ha sido eliminado exitosamente.',
+              icon: 'check_circle',
+              accentColor: 'success',
+              primaryActionLabel: 'Continuar'
+            }
+          });
+        },
+        error: (err) => {
+          console.error('Error eliminando pago', err);
+          this.dialog.open(SuccessDialogComponent, {
+            panelClass: 'casualidad-dialog',
+            data: {
+              title: '\u00a1Algo sali\u00f3 mal!',
+              message: 'No se pudo eliminar el abono. Verifica si el abono a\u00fan existe.',
+              icon: 'error',
+              accentColor: 'warning',
+              primaryActionLabel: 'Entendido'
+            }
+          });
+        }
+      });
   }
 
-  closeErrorModal(): void {
-    this.showErrorModal = false;
-    this.errorMessage = '';
-    this.cdr.detectChanges();
-  }
+
 
   // ─── Formulario de abono ─────────────────────────────────────────────────
 
@@ -345,35 +356,43 @@ export class PagosComponent implements OnInit, AfterViewInit {
       metodoPago: type as 'EFECTIVO' | 'TRANSFERENCIA',
       referenciaComprobante: referenciaComprobante || undefined
     };
-    let request$ = {} as Observable<any>;
+    let request$: Observable<any> = EMPTY;
     if (this.viewMode === 'edit' && id) {
       request$ = this.paymentService.editarAbono(Number(idPedido), Number(id), payload);
-    }
-    if (this.viewMode === 'add' && idPedido) {
+    } else if (this.viewMode === 'add' && idPedido) {
       request$ = this.paymentService.registrarAbono(Number(idPedido), payload);
     }
 
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.showFormSuccessModal = true;
-        this.cdr.detectChanges();
         this.loadPayments();
         this.fetchPayments();
+        const isEdit = this.viewMode === 'edit';
+        const dialogRef = this.dialog.open(SuccessDialogComponent, {
+          panelClass: 'casualidad-dialog',
+          data: {
+            title: isEdit ? '\u00a1Abono Actualizado!' : '\u00a1Abono Registrado!',
+            message: isEdit ? 'Los detalles del pago han sido modificados.' : 'El movimiento ha sido registrado correctamente.',
+            icon: 'check_circle',
+            accentColor: 'success',
+            primaryActionLabel: 'Ir a Pagos',
+            secondaryActionLabel: isEdit ? 'Seguir editando' : 'Registrar otro pago'
+          }
+        });
+
+        dialogRef.afterClosed().subscribe((result: SuccessDialogResult) => {
+          if (!result || result.action === 'primary' || result.action === 'close') {
+            this.viewMode = 'list';
+            ListHelper.setupTable(this.dataSource, this.paginator, this.sort, this.cdr);
+          } else if (result.action === 'secondary' && !isEdit) {
+            this.openAddForm();
+          }
+          this.cdr.detectChanges();
+        });
       },
       error: (err: unknown) => console.error('Error guardando abono', err)
     });
-  }
-
-  closeFormSuccessModal(goToList: boolean): void {
-    this.showFormSuccessModal = false;
-    if (goToList) {
-      this.viewMode = 'list';
-      ListHelper.setupTable(this.dataSource, this.paginator, this.sort, this.cdr);
-    } else if (this.viewMode === 'add') {
-      this.openAddForm();
-    }
-    this.cdr.detectChanges();
   }
 
   private mapPaymentType(type: string): string {

@@ -77,10 +77,6 @@ export class PedidosComponent implements OnInit, AfterViewInit {
   totalPendienteFormalizar = 0;
   ordenesCriticas = 0;
 
-  showDeleteModal = false;
-  showSuccessModal = false;
-  showErrorModal = false;
-  showProductionModal = false;
   errorMessage = '';
 
   private readonly fb = inject(FormBuilder);
@@ -218,79 +214,115 @@ export class PedidosComponent implements OnInit, AfterViewInit {
 
   // --- ACTIVAR PRODUCCIÓN ---
   openActivarProduccionModal(order: OrderSummaryDTO): void {
-    this.selectedOrder = order;
-    this.showProductionModal = true;
-    this.cdr.detectChanges();
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      panelClass: 'casualidad-dialog',
+      data: {
+        title: '\u00bfActivar Producci\u00f3n?',
+        message: '\u00bfDeseas pasar el pedido ',
+        highlightText: `#${order.codigoUnico || order.idPedido}`,
+        message2: ' a producci\u00f3n?',
+        warningText: 'Se generar\u00e1 un c\u00f3digo de seguimiento \u00fanico y ',
+        confirmLabel: 'S\u00ed, activar producci\u00f3n',
+        icon: 'factory',
+        accentColor: 'primary'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.confirmActivarProduccion(order);
+      }
+    });
   }
 
-  closeProductionModal(): void {
-    this.showProductionModal = false;
-    this.cdr.detectChanges();
-  }
-
-  confirmActivarProduccion(): void {
-    if (!this.selectedOrder) { return; }
-    const id = this.selectedOrder.idPedido ?? this.selectedOrder.id;
+  confirmActivarProduccion(order: OrderSummaryDTO): void {
+    const id = order.idPedido ?? order.id;
     this.orderService.activarProduccion(Number(id)).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (res) => {
-        this.closeProductionModal();
-        this.showSuccessModal = true;
+      next: () => {
         this.loadOrders();
-        this.cdr.detectChanges();
+        this.dialog.open(SuccessDialogComponent, {
+          panelClass: 'casualidad-dialog',
+          data: {
+            title: '\u00a1Producci\u00f3n Activada!',
+            message: 'El pedido ha pasado a estado de producci\u00f3n correctamente.',
+            icon: 'verified',
+            accentColor: 'success',
+            primaryActionLabel: 'Continuar'
+          }
+        });
       },
       error: (err) => {
         console.error('Error activando producci\u00f3n', err);
-        this.errorMessage = 'No se pudo activar la producci\u00f3n. Verifica que el pedido est\u00e9 en estado PENDIENTE.';
-        this.closeProductionModal();
-        this.showErrorModal = true;
-        this.cdr.detectChanges();
+        this.dialog.open(SuccessDialogComponent, {
+          panelClass: 'casualidad-dialog',
+          data: {
+            title: '\u00a1Algo sali\u00f3 mal!',
+            message: 'No se pudo activar la producci\u00f3n. Verifica que el pedido est\u00e9 en estado PENDIENTE.',
+            icon: 'error',
+            accentColor: 'warning',
+            primaryActionLabel: 'Entendido'
+          }
+        });
       }
     });
   }
 
   // --- DELETE ---
   openDeleteModal(order: OrderSummaryDTO): void {
-    this.selectedOrder = order;
-    this.showDeleteModal = true;
-    this.cdr.detectChanges();
-  }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      panelClass: 'casualidad-dialog',
+      data: {
+        title: '\u00bfEliminar pedido?',
+        message: '\u00bfEst\u00e1s seguro de que deseas eliminar el pedido ',
+        highlightText: `#${order.codigoUnico || order.idPedido}`,
+        message2: '?',
+        warningText: 'Esta acci\u00f3n no se puede deshacer y ',
+        confirmLabel: 'S\u00ed, eliminar pedido',
+        icon: 'delete_forever',
+        accentColor: 'error'
+      }
+    });
 
-  closeDeleteModal(): void {
-    this.showDeleteModal = false;
-    this.cdr.detectChanges();
-  }
-
-  confirmDelete(): void {
-    if (!this.selectedOrder) return;
-    const id = this.selectedOrder.idPedido ?? this.selectedOrder.id;
-    this.orderService.cancelar(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.closeDeleteModal();
-        this.showSuccessModal = true;
-        this.loadOrders();
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error eliminando pedido', err);
-        this.errorMessage = 'No se pudo cancelar el pedido. Es posible que el pedido ya esté terminado, cancelado o en un estado donde no permite cancelación.';
-        this.closeDeleteModal();
-        this.showErrorModal = true;
-        this.cdr.detectChanges();
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.confirmDelete(order);
       }
     });
   }
 
-  closeSuccessModal(): void {
-    this.showSuccessModal = false;
-    this.selectedOrder = null;
-    this.cdr.detectChanges();
+  confirmDelete(order: OrderSummaryDTO): void {
+    const id = order.idPedido ?? order.id;
+    this.orderService.cancelar(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.loadOrders();
+        this.dialog.open(SuccessDialogComponent, {
+          panelClass: 'casualidad-dialog',
+          data: {
+            title: '\u00a1Pedido Eliminado!',
+            message: 'El pedido ha sido eliminado correctamente del sistema.',
+            icon: 'check_circle',
+            accentColor: 'success',
+            primaryActionLabel: 'Continuar'
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error eliminando pedido', err);
+        this.dialog.open(SuccessDialogComponent, {
+          panelClass: 'casualidad-dialog',
+          data: {
+            title: '\u00a1Algo sali\u00f3 mal!',
+            message: 'No se pudo cancelar el pedido. Es posible que ya est\u00e9 en un estado que no permite cancelaci\u00f3n.',
+            icon: 'error',
+            accentColor: 'warning',
+            primaryActionLabel: 'Entendido'
+          }
+        });
+      }
+    });
   }
 
-  closeErrorModal(): void {
-    this.showErrorModal = false;
-    this.errorMessage = '';
-    this.cdr.detectChanges();
-  }
+
 
   // --- FORM ACTIONS ---
   openAddForm(): void {

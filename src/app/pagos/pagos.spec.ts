@@ -2,6 +2,7 @@ import { PaymentService } from '../core/services/payment.service';
 import { of, throwError } from 'rxjs';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PagosComponent } from './pagos';
+import { MatDialog } from '@angular/material/dialog';
 import { jest } from '@jest/globals';
 
 const mockPayment = {
@@ -15,6 +16,10 @@ describe('PagosComponent', () => {
   let component: PagosComponent;
   let fixture: ComponentFixture<PagosComponent>;
   let mockPaymentService: any;
+  let mockDialog: { open: jest.Mock };
+  const dialogRefStub = (result: any) => ({
+    afterClosed: () => of(result),
+  });
 
   beforeEach(async () => {
     mockPaymentService = {
@@ -33,10 +38,16 @@ describe('PagosComponent', () => {
       editarAbono: jest.fn(() => of({}))
     };
 
+    mockDialog = { open: jest.fn(() => dialogRefStub({ action: 'primary' })) };
+
     await TestBed.configureTestingModule({
-      providers: [{ provide: PaymentService, useValue: mockPaymentService }],
+      providers: [
+        { provide: PaymentService, useValue: mockPaymentService },
+        { provide: MatDialog, useValue: mockDialog }
+      ],
       imports: [PagosComponent],
-    }).compileComponents();
+    }).overrideProvider(MatDialog, { useValue: mockDialog })
+      .compileComponents();
 
     fixture = TestBed.createComponent(PagosComponent);
     component = fixture.componentInstance;
@@ -60,9 +71,8 @@ describe('PagosComponent', () => {
 
   it('should trigger filter on search change', () => {
     component.searchTerm = 'Alpha';
-    const oldFilter = component.dataSource.filter;
     component.onSearchChange();
-    expect(component.dataSource.filter).not.toBe(oldFilter);
+    expect(component.dataSource.filter).toMatch(/^\d+$/);
   });
 
  /*  it('should handle applyFilters branches', () => {
@@ -85,43 +95,35 @@ describe('PagosComponent', () => {
     expect(component.paymentsListed[0].nombreCliente).toBe('Alpha');
   }); */
 
-  it('should handle savePayment branches', () => {
-    // 1. Invalid form
-    component.openAddForm();
-    component.paymentForm.get('amount')?.setValue(null);
-    component.savePayment();
-    expect(mockPaymentService.registrarAbono).not.toHaveBeenCalled();
+  describe('savePayment', () => {
+    beforeEach(() => {
+      component.openAddForm();
+    });
 
-    // 2. Success with reference
-    component.paymentForm.patchValue({ idPedido: 1, amount: 50, type: 'TRANSFERENCIA', referenciaComprobante: 'REF123' });
-    component.savePayment();
-    expect(mockPaymentService.registrarAbono).toHaveBeenCalled();
-    expect(component.showFormSuccessModal).toBe(true);
+    it('should not submit if form is invalid', () => {
+      component.paymentForm.get('idPedido')?.setValue(null);
+      component.savePayment();
+      expect(mockPaymentService.registrarAbono).not.toHaveBeenCalled();
+    });
 
-    // 3. Error case
-    const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    mockPaymentService.registrarAbono.mockReturnValueOnce(throwError(() => new Error('Err')));
-    component.savePayment();
-    expect(spy).toHaveBeenCalled();
-    spy.mockRestore();
+    it('should call registrarAbono and open success dialog on success', () => {
+      component.paymentForm.patchValue({ idPedido: 1, amount: 50, type: 'TRANSFERENCIA' });
+      component.savePayment();
+      expect(mockPaymentService.registrarAbono).toHaveBeenCalled();
+      expect(mockDialog.open).toHaveBeenCalled();
+    });
+
+    it('should log error when registrarAbono fails', () => {
+      const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      mockPaymentService.registrarAbono.mockReturnValue(throwError(() => new Error('Err')));
+      component.paymentForm.patchValue({ idPedido: 1, amount: 50, type: 'TRANSFERENCIA' });
+      component.savePayment();
+      expect(spy).toHaveBeenCalledWith(expect.stringContaining('Error guardando abono'), expect.anything());
+      spy.mockRestore();
+    });
   });
 
-  it('should handle closeFormSuccessModal branches', () => {
-    component.showFormSuccessModal = true;
-    component.viewMode = 'add';
 
-    // 1. goToList = true
-    component.closeFormSuccessModal(true);
-    expect(component.showFormSuccessModal).toBe(false);
-    expect(component.viewMode).toBe('list');
-
-    // 2. goToList = false, viewMode = add
-    component.showFormSuccessModal = true;
-    component.viewMode = 'add';
-    component.closeFormSuccessModal(false);
-    expect(component.viewMode).toBe('add');
-    // It should have reset form (triggered openAddForm)
-  });
 
   it('should handle mapPaymentType branches', () => {
     expect((component as any).mapPaymentType('CASH')).toBe('EFECTIVO');
@@ -130,14 +132,12 @@ describe('PagosComponent', () => {
   });
 
   it('should handle delete confirmation', () => {
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     component.openDeleteModal(mockPayment);
-    expect(component.showDeleteModal).toBe(true);
-    component.confirmDelete();
-    expect(component.showSuccessModal).toBe(true);
-    component.closeSuccessModal();
-    expect(component.showSuccessModal).toBe(false);
-    consoleSpy.mockRestore();
+    expect(mockDialog.open).toHaveBeenCalled();
+    component.confirmDelete(mockPayment);
+    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ accentColor: 'success' })
+    }));
   });
 
  /*  it('should handle pagination edge cases', () => {

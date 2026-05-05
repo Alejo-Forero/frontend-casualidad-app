@@ -391,91 +391,60 @@ describe('PedidosComponent', () => {
 
   // ── openActivarProduccionModal & confirmActivarProduccion ────────────────
 
-  it('openActivarProduccionModal should set selectedOrder and showProductionModal', () => {
+  it('openActivarProduccionModal should open confirm dialog', () => {
     const order = makeOrder();
     component.openActivarProduccionModal(order);
-    expect(component.selectedOrder).toEqual(order);
-    expect(component.showProductionModal).toBe(true);
-    expect(component.errorMessage).toBe('');
+    expect(mockDialog.open).toHaveBeenCalled();
   });
 
-  it('confirmActivarProduccion should do nothing if no selectedOrder', () => {
-    component.selectedOrder = null;
-    component.confirmActivarProduccion();
-    expect(mockOrderService.activarProduccion).not.toHaveBeenCalled();
-  });
-
-  it('confirmActivarProduccion should call activarProduccion and update state when confirmed', () => {
-    component.selectedOrder = makeOrder();
-    component.confirmActivarProduccion();
+  it('confirmActivarProduccion should call activarProduccion and open success dialog when confirmed', () => {
+    const order = makeOrder();
+    component.confirmActivarProduccion(order);
     expect(mockOrderService.activarProduccion).toHaveBeenCalledWith(1);
-    expect(component.showProductionModal).toBe(false);
-    expect(component.showSuccessModal).toBe(true);
+    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ accentColor: 'success' })
+    }));
   });
 
-  it('confirmActivarProduccion should log error and show error modal when fails', () => {
+  it('confirmActivarProduccion should open error dialog when fails', () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
     (mockOrderService.activarProduccion as jest.Mock).mockReturnValue(throwError(() => new Error('fail')));
-    component.selectedOrder = makeOrder();
-    component.confirmActivarProduccion();
-    expect(component.showProductionModal).toBe(false);
-    expect(component.showErrorModal).toBe(true);
-    expect(consoleSpy).toHaveBeenCalledWith('Error activando producción', expect.any(Error));
+    const order = makeOrder();
+    component.confirmActivarProduccion(order);
+    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ accentColor: 'warning' })
+    }));
     consoleSpy.mockRestore();
   });
 
-  it('closeProductionModal should reset showProductionModal', () => {
-    component.showProductionModal = true;
-    component.closeProductionModal();
-    expect(component.showProductionModal).toBe(false);
-  });
+
 
   // ── openDeleteModal & confirmDelete ───────────────────────────────────────
 
-  it('openDeleteModal should set selectedOrder and showDeleteModal', () => {
+  it('openDeleteModal should open confirm dialog', () => {
     const order = makeOrder();
     component.openDeleteModal(order);
-    expect(component.selectedOrder).toEqual(order);
-    expect(component.showDeleteModal).toBe(true);
+    expect(mockDialog.open).toHaveBeenCalled();
   });
 
-  it('confirmDelete should do nothing if selectedOrder is null', () => {
-    component.selectedOrder = null;
-    component.confirmDelete();
-    expect(mockOrderService.cancelar).not.toHaveBeenCalled();
-  });
-
-  it('confirmDelete should call cancelar and update state on success', () => {
-    component.selectedOrder = makeOrder();
-    component.confirmDelete();
+  it('confirmDelete should call cancelar and open success dialog on success', () => {
+    const order = makeOrder();
+    component.confirmDelete(order);
     expect(mockOrderService.cancelar).toHaveBeenCalledWith(1);
-    expect(component.showDeleteModal).toBe(false);
-    expect(component.showSuccessModal).toBe(true);
+    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ accentColor: 'success' })
+    }));
   });
 
-  it('confirmDelete should log error and show error modal when cancelar fails', () => {
+  it('confirmDelete should open error dialog when cancelar fails', () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
     (mockOrderService.cancelar as jest.Mock).mockReturnValue(throwError(() => new Error('fail')));
-    component.selectedOrder = makeOrder();
-    component.confirmDelete();
-    expect(consoleSpy).toHaveBeenCalledWith('Error eliminando pedido', expect.any(Error));
-    expect(component.showDeleteModal).toBe(false);
-    expect(component.showErrorModal).toBe(true);
+    const order = makeOrder();
+    component.confirmDelete(order);
+    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ accentColor: 'warning' })
+    }));
     consoleSpy.mockRestore();
-  });
-
-  it('closeDeleteModal should reset showDeleteModal', () => {
-    component.showDeleteModal = true;
-    component.closeDeleteModal();
-    expect(component.showDeleteModal).toBe(false);
-  });
-
-  it('closeSuccessModal should reset showSuccessModal and selectedOrder', () => {
-    component.showSuccessModal = true;
-    component.selectedOrder = makeOrder();
-    component.closeSuccessModal();
-    expect(component.showSuccessModal).toBe(false);
-    expect(component.selectedOrder).toBeNull();
   });
 
   // ── saveOrder — validación ────────────────────────────────────────────────

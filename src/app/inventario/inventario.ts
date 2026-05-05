@@ -17,6 +17,7 @@ import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SuccessDialogComponent } from '../shared/components/success-dialog/success-dialog';
+import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog';
 import { EntradaDialogComponent } from './components/entrada-dialog/entrada-dialog';
 import { AjusteDialogComponent } from './components/ajuste-dialog/ajuste-dialog';
 import { ListHelper } from '../shared/utils/list-helper';
@@ -56,9 +57,6 @@ export class InventarioComponent implements OnInit, AfterViewInit {
   // Modals state
   errorMessage: string | null = null;
   selectedProduct: ProductDTO | null = null;
-  showDeleteModal = false;
-  showSuccessModal = false;
-  showErrorModal = false;
 
   // Motivos de movimiento — enum MotivoMovimiento del backend
   readonly motivosEntrada = [
@@ -264,46 +262,59 @@ export class InventarioComponent implements OnInit, AfterViewInit {
   // --- DELETE ---
   openDeleteModal(product: ProductDTO): void {
     this.errorMessage = null;
-    this.selectedProduct = product;
-    this.showDeleteModal = true;
-    this.cdr.detectChanges();
-  }
+    
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      panelClass: 'casualidad-dialog',
+      data: {
+        title: '\u00bfEliminar art\u00edculo?',
+        message: 'Est\u00e1s a punto de eliminar ',
+        highlightText: product.name,
+        warningText: 'Esta acci\u00f3n no se puede deshacer y ',
+        confirmLabel: 'S\u00ed, eliminar art\u00edculo',
+        icon: 'delete_forever',
+        accentColor: 'error'
+      }
+    });
 
-  closeDeleteModal(): void {
-    this.showDeleteModal = false;
-    this.cdr.detectChanges();
-  }
-
-  confirmDelete(): void {
-    if (!this.selectedProduct) return;
-    this.inventoryService.delete(this.selectedProduct.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.closeDeleteModal();
-        this.showSuccessModal = true;
-        this.loadInventory();
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error eliminando producto', err);
-        this.errorMessage = 'No se pudo eliminar el producto. Puede que est\u00e9 en uso o referenciado.';
-        this.closeDeleteModal();
-        this.showErrorModal = true;
-        this.cdr.detectChanges();
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.confirmDelete(product);
       }
     });
   }
 
-  closeSuccessModal(): void {
-    this.showSuccessModal = false;
-    this.selectedProduct = null;
-    this.cdr.detectChanges();
+  confirmDelete(product: ProductDTO): void {
+    this.inventoryService.delete(product.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.loadInventory();
+        this.dialog.open(SuccessDialogComponent, {
+          panelClass: 'casualidad-dialog',
+          data: {
+            title: '\u00a1Art\u00edculo Eliminado!',
+            message: 'El art\u00edculo ha sido eliminado permanentemente del inventario.',
+            icon: 'check_circle',
+            accentColor: 'success',
+            primaryActionLabel: 'Continuar'
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error eliminando producto', err);
+        this.dialog.open(SuccessDialogComponent, {
+          panelClass: 'casualidad-dialog',
+          data: {
+            title: '\u00a1Algo sali\u00f3 mal!',
+            message: 'No se pudo eliminar el art\u00edculo. Puede que est\u00e9 en uso o referenciado.',
+            icon: 'error',
+            accentColor: 'warning',
+            primaryActionLabel: 'Entendido'
+          }
+        });
+      }
+    });
   }
 
-  closeErrorModal(): void {
-    this.showErrorModal = false;
-    this.errorMessage = null;
-    this.cdr.detectChanges();
-  }
+
 
   // --- FORM ACTIONS ---
   openAddForm(): void {

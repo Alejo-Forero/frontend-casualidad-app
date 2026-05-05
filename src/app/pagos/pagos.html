@@ -102,8 +102,7 @@
             <table mat-table [dataSource]="dataSource" matSort class="w-full text-left">
                 <!-- ID Pago Column -->
                 <ng-container matColumnDef="idPago">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="casualidad-table-header">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="casualidad-table-header">
                         ID PAGO </th>
                     <td mat-cell *matCellDef="let payment" class="px-8 py-5 text-sm font-bold text-primary"> #{{
                         payment.idPago.toString().substring(0,8) | uppercase }} </td>
@@ -111,8 +110,7 @@
 
                 <!-- Cliente Column -->
                 <ng-container matColumnDef="cliente">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="casualidad-table-header">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="casualidad-table-header">
                         Cliente </th>
                     <td mat-cell *matCellDef="let payment" class="px-8 py-5 text-sm font-medium"> {{
                         payment.nombreCliente || 'Desconocido' }} </td>
@@ -120,8 +118,7 @@
 
                 <!-- Estado Column -->
                 <ng-container matColumnDef="estado">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="casualidad-table-header">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="casualidad-table-header">
                         Estado </th>
                     <td mat-cell *matCellDef="let payment" class="px-8 py-5">
                         <span class="px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-full"
@@ -133,8 +130,7 @@
 
                 <!-- Fecha Column -->
                 <ng-container matColumnDef="fecha">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="casualidad-table-header">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="casualidad-table-header">
                         Fecha </th>
                     <td mat-cell *matCellDef="let payment" class="px-8 py-5 text-sm text-on-surface-variant font-body">
                         {{ payment.fechaPago | date:'mediumDate' }} </td>
@@ -142,8 +138,7 @@
 
                 <!-- Método Column -->
                 <ng-container matColumnDef="metodo">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="casualidad-table-header">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="casualidad-table-header">
                         Método </th>
                     <td mat-cell *matCellDef="let payment" class="px-8 py-5">
                         <div class="flex items-center gap-2 text-sm text-on-surface-variant">
@@ -156,8 +151,7 @@
 
                 <!-- Monto Column -->
                 <ng-container matColumnDef="monto">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header
-                        class="casualidad-table-header text-right">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="casualidad-table-header text-right">
                         Monto </th>
                     <td mat-cell *matCellDef="let payment" class="px-8 py-5 font-black text-sm text-right"> {{
                         payment.monto | currency:'USD' }} </td>
@@ -165,8 +159,7 @@
 
                 <!-- Acciones Column -->
                 <ng-container matColumnDef="acciones">
-                    <th mat-header-cell *matHeaderCellDef
-                        class="casualidad-table-header text-right">
+                    <th mat-header-cell *matHeaderCellDef class="casualidad-table-header text-right">
                         Acciones </th>
                     <td mat-cell *matCellDef="let payment" class="px-8 py-5 text-right">
                         <div class="flex items-center justify-end gap-2">
@@ -423,8 +416,11 @@
 
 <!-- View Payment Modal -->
 @if (showViewModal && selectedPayment) {
-<div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-background/20 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Detalle del pago">
-    <button type="button" aria-label="Cerrar detalle" class="absolute inset-0 bg-on-background/20 backdrop-blur-sm cursor-default border-none" (click)="closeViewModal()"></button>
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-on-background/20 backdrop-blur-sm"
+    role="dialog" aria-modal="true" aria-label="Detalle del pago">
+    <button type="button" aria-label="Cerrar detalle"
+        class="absolute inset-0 bg-on-background/20 backdrop-blur-sm cursor-default border-none"
+        (click)="closeViewModal()"></button>
     <div
         class="relative w-full max-w-2xl bg-surface-container-lowest rounded-2xl shadow-[0px_24px_48px_rgba(45,47,47,0.12)] overflow-hidden flex flex-col animate-[dropdownFadeIn_0.2s_ease-out]">
         <!-- Modal Header -->
@@ -504,105 +500,6 @@
                     Descargar Comprobante
                 </button>
             </div> -->
-    </div>
-</div>
-}
-
-<!-- Delete Payment Confirmation Modal -->
-@if (showDeleteModal && selectedPayment) {
-<div class="fixed inset-0 z-[110] flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-inverse-surface/60 backdrop-blur-sm" (click)="closeDeleteModal()"
-        (keydown.enter)="closeDeleteModal()"></div>
-    <div
-        class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
-        <div class="h-2 w-full bg-gradient-to-r from-error to-error-container"></div>
-        <div class="p-8 text-center">
-            <div class="relative mb-6 flex justify-center">
-                <div class="absolute inset-0 bg-error/10 rounded-full scale-150 blur-xl"></div>
-                <div
-                    class="relative w-20 h-20 bg-gradient-to-br from-error to-error-container rounded-full flex items-center justify-center shadow-lg">
-                    <span class="material-symbols-outlined text-white text-4xl">delete_forever</span>
-                </div>
-            </div>
-            <h2 class="text-2xl font-extrabold text-on-surface tracking-tight mb-3 font-headline">¿Eliminar pago?</h2>
-            <p class="text-on-surface-variant text-base leading-relaxed font-body">
-                ¿Estás seguro de que deseas eliminar este registro de pago de <span class="font-bold text-primary">{{
-                    selectedPayment.monto | currency:'USD' }}</span>?
-            </p>
-            <div class="mt-8 flex flex-col gap-3">
-                <button (click)="confirmDelete()"
-                    class="group relative flex items-center justify-center gap-2 w-full py-3.5 px-6 bg-gradient-to-br from-error to-error-container text-white font-bold rounded-lg shadow-sm active:scale-[0.98] transition-all overflow-hidden">
-                    <span class="relative z-10">Sí, eliminar pago</span>
-                    <span
-                        class="material-symbols-outlined relative z-10 text-xl group-hover:translate-x-1 transition-transform">delete</span>
-                </button>
-                <button (click)="closeDeleteModal()"
-                    class="w-full py-3.5 px-6 bg-surface-container text-on-surface font-bold rounded-lg hover:bg-surface-container-high active:scale-[0.98] transition-all">
-                    Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-}
-
-<!-- Success Delete Modal -->
-@if (showSuccessModal) {
-<div class="fixed inset-0 z-[120] flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" (click)="closeSuccessModal()"
-        (keydown.enter)="closeSuccessModal()"></div>
-    <div
-        class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
-        <div class="h-2 w-full bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
-        <div class="p-8 text-center">
-            <div class="relative mb-6 flex justify-center">
-                <div class="absolute inset-0 bg-emerald-500/10 rounded-full scale-150 blur-xl"></div>
-                <div
-                    class="relative w-20 h-20 bg-gradient-to-br from-emerald-500 to-emerald-400 rounded-full flex items-center justify-center shadow-lg">
-                    <span class="material-symbols-outlined text-white text-4xl"
-                        style="font-variation-settings: 'wght' 600;">check_circle</span>
-                </div>
-            </div>
-            <h2 class="text-2xl font-extrabold text-on-surface tracking-tight mb-3 font-headline">¡Pago Eliminado!</h2>
-            <p class="text-on-surface-variant text-base leading-relaxed font-body">El registro de pago ha sido eliminado
-                exitosamente.</p>
-            <div class="mt-8">
-                <button (click)="closeSuccessModal()"
-                    class="w-full py-3.5 px-6 bg-primary text-white font-bold rounded-lg hover:opacity-90 transition-all">
-                    Continuar
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-}
-
-<!-- Error Modal -->
-@if (showErrorModal) {
-<div class="fixed inset-0 z-[120] flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-on-background/40 backdrop-blur-sm" (click)="closeErrorModal()"
-        (keydown.enter)="closeErrorModal()"></div>
-    <div
-        class="relative bg-surface-container-lowest w-full max-w-md rounded-xl shadow-[0px_12px_32px_rgba(45,47,47,0.06)] overflow-hidden animate-[dropdownFadeIn_0.2s_ease-out]">
-        <div class="h-2 w-full bg-gradient-to-r from-error to-error-container"></div>
-        <div class="p-8 text-center">
-            <div class="relative mb-6 flex justify-center">
-                <div class="absolute inset-0 bg-error/10 rounded-full scale-150 blur-xl"></div>
-                <div
-                    class="relative w-20 h-20 bg-gradient-to-br from-error to-error-container rounded-full flex items-center justify-center shadow-lg">
-                    <span class="material-symbols-outlined text-white text-4xl"
-                        style="font-variation-settings: 'wght' 600;">error</span>
-                </div>
-            </div>
-            <h2 class="text-2xl font-extrabold text-on-surface tracking-tight mb-3 font-headline">¡Algo salió mal!</h2>
-            <p class="text-on-surface-variant text-base leading-relaxed font-body">{{ errorMessage }}</p>
-            <div class="mt-8">
-                <button (click)="closeErrorModal()"
-                    class="w-full py-3.5 px-6 bg-error text-white font-bold rounded-lg hover:opacity-90 transition-all">
-                    Entendido
-                </button>
-            </div>
-        </div>
     </div>
 </div>
 }

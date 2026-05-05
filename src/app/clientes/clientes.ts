@@ -18,6 +18,7 @@ import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { SuccessDialogComponent } from '../shared/components/success-dialog/success-dialog';
+import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog';
 import { ClientProductsDialogComponent } from './components/client-products-dialog/client-products-dialog';
 import { ListHelper } from '../shared/utils/list-helper';
 @Component({
@@ -52,9 +53,6 @@ export class ClientesComponent implements OnInit, AfterViewInit {
 
   // Modals state
   selectedClient: ClientDTO | null = null;
-  showDeleteModal = false;
-  showSuccessModal = false;
-  showErrorModal = false;
 
   // Forms state
   viewMode: 'list' | 'add' | 'edit' = 'list';
@@ -156,46 +154,59 @@ export class ClientesComponent implements OnInit, AfterViewInit {
 
   openDeleteModal(client: ClientDTO): void {
     if (client.ordersSummary.total > 0) { return; }
-    this.selectedClient = client;
-    this.showDeleteModal = true;
-    this.cdr.detectChanges();
-  }
+    
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      panelClass: 'casualidad-dialog',
+      data: {
+        title: '\u00bfEliminar cliente?',
+        message: 'Est\u00e1s a punto de eliminar a ',
+        highlightText: client.name,
+        warningText: 'El cliente ser\u00e1 eliminado permanentemente del sistema y ',
+        confirmLabel: 'S\u00ed, eliminar cliente',
+        icon: 'person_remove',
+        accentColor: 'error'
+      }
+    });
 
-  closeDeleteModal(): void {
-    this.showDeleteModal = false;
-    this.cdr.detectChanges();
-  }
-
-  confirmDelete(): void {
-    if (!this.selectedClient) return;
-    this.clientService.delete(this.selectedClient.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.closeDeleteModal();
-        this.showSuccessModal = true;
-        this.loadClients();
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error deleting client', err);
-        this.errorMessage = 'No se pudo eliminar el cliente. Es posible que tenga pedidos asociados o que haya ocurrido un problema en el servidor.';
-        this.closeDeleteModal();
-        this.showErrorModal = true;
-        this.cdr.detectChanges();
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.confirmDelete(client);
       }
     });
   }
 
-  closeSuccessModal(): void {
-    this.showSuccessModal = false;
-    this.selectedClient = null;
-    this.cdr.detectChanges();
+  confirmDelete(client: ClientDTO): void {
+    this.clientService.delete(client.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.loadClients();
+        this.dialog.open(SuccessDialogComponent, {
+          panelClass: 'casualidad-dialog',
+          data: {
+            title: '\u00a1Cliente Eliminado!',
+            message: 'El cliente ha sido eliminado permanentemente del sistema.',
+            icon: 'check_circle',
+            accentColor: 'success',
+            primaryActionLabel: 'Continuar'
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error deleting client', err);
+        this.dialog.open(SuccessDialogComponent, {
+          panelClass: 'casualidad-dialog',
+          data: {
+            title: '\u00a1Algo sali\u00f3 mal!',
+            message: 'No se pudo eliminar el cliente. Es posible que tenga pedidos asociados o un problema de red.',
+            icon: 'error',
+            accentColor: 'warning',
+            primaryActionLabel: 'Entendido'
+          }
+        });
+      }
+    });
   }
 
-  closeErrorModal(): void {
-    this.showErrorModal = false;
-    this.errorMessage = null;
-    this.cdr.detectChanges();
-  }
+
 
   // --- FORM ACTIONS ---
   openAddForm(): void {

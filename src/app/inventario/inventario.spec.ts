@@ -423,54 +423,32 @@ describe('InventarioComponent', () => {
 
   // ── openDeleteModal & confirmDelete ───────────────────────────────────────
 
-  it('openDeleteModal should set selectedProduct and showDeleteModal', () => {
+  it('openDeleteModal should open confirm dialog', () => {
     const product = makeProduct();
     component.openDeleteModal(product);
-    expect(component.selectedProduct).toEqual(product);
-    expect(component.showDeleteModal).toBe(true);
-    expect(component.errorMessage).toBeNull();
+    expect(mockDialog.open).toHaveBeenCalled();
   });
 
-  it('confirmDelete should do nothing if no selectedProduct', () => {
-    component.selectedProduct = null;
-    component.confirmDelete();
-    expect(mockInventoryService.delete).not.toHaveBeenCalled();
-  });
-
-  it('confirmDelete should call delete service and update state when confirmed', () => {
-    component.selectedProduct = makeProduct();
-    component.confirmDelete();
+  it('confirmDelete should call delete service and open success dialog when confirmed', () => {
+    const product = makeProduct();
+    component.confirmDelete(product);
     expect(mockInventoryService.delete).toHaveBeenCalledWith('1');
-    expect(component.showDeleteModal).toBe(false);
-    expect(component.showSuccessModal).toBe(true);
+    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ accentColor: 'success' })
+    }));
   });
 
-  it('confirmDelete should set errorMessage and show error modal when delete fails', () => {
+  it('confirmDelete should open error dialog when delete fails', () => {
     (mockInventoryService.delete as jest.Mock).mockReturnValue(
       throwError(() => new Error('Delete failed'))
     );
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-    component.selectedProduct = makeProduct();
-    component.confirmDelete();
-    expect(component.showDeleteModal).toBe(false);
-    expect(component.showErrorModal).toBe(true);
-    expect(component.errorMessage).toBeTruthy();
-    expect(consoleSpy).toHaveBeenCalledWith('Error eliminando producto', expect.any(Error));
+    const product = makeProduct();
+    component.confirmDelete(product);
+    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ accentColor: 'warning' })
+    }));
     consoleSpy.mockRestore();
-  });
-
-  it('closeDeleteModal should reset showDeleteModal', () => {
-    component.showDeleteModal = true;
-    component.closeDeleteModal();
-    expect(component.showDeleteModal).toBe(false);
-  });
-
-  it('closeSuccessModal should reset showSuccessModal and selectedProduct', () => {
-    component.showSuccessModal = true;
-    component.selectedProduct = makeProduct();
-    component.closeSuccessModal();
-    expect(component.showSuccessModal).toBe(false);
-    expect(component.selectedProduct).toBeNull();
   });
 
   // ── openEntradaModal ──────────────────────────────────────────────────────

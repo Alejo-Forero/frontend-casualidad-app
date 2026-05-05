@@ -264,65 +264,36 @@ describe('ClientesComponent', () => {
 
   // ── openDeleteModal & confirmDelete ───────────────────────────────────────
 
-  it('openDeleteModal should skip setting state when client has orders', () => {
+  it('openDeleteModal should skip when client has orders', () => {
     const client = makeClient({ ordersSummary: { total: 3 } } as any);
     component.openDeleteModal(client);
-    expect(component.showDeleteModal).toBe(false);
-    expect(component.selectedClient).toBeNull();
+    expect(mockDialog.open).not.toHaveBeenCalled();
   });
 
-  it('openDeleteModal should set selectedClient and showDeleteModal', () => {
+  it('openDeleteModal should open confirm dialog', () => {
     const client = makeClient();
     component.openDeleteModal(client);
-    expect(component.selectedClient).toEqual(client);
-    expect(component.showDeleteModal).toBe(true);
+    expect(mockDialog.open).toHaveBeenCalled();
   });
 
-  it('confirmDelete should do nothing if no selectedClient', () => {
-    component.selectedClient = null;
-    component.confirmDelete();
-    expect(mockClientService.delete).not.toHaveBeenCalled();
-  });
-
-  it('confirmDelete should call delete and update state on success', () => {
-    component.selectedClient = makeClient();
-    component.confirmDelete();
+  it('confirmDelete should call delete and open success dialog on success', () => {
+    const client = makeClient();
+    component.confirmDelete(client);
     expect(mockClientService.delete).toHaveBeenCalledWith('1');
-    expect(component.showDeleteModal).toBe(false);
-    expect(component.showSuccessModal).toBe(true);
+    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ accentColor: 'success' })
+    }));
   });
 
-  it('confirmDelete should log error and show error modal when delete fails', () => {
+  it('confirmDelete should open error dialog when delete fails', () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
     (mockClientService.delete as jest.Mock).mockReturnValue(throwError(() => new Error('delete failed')));
-    component.selectedClient = makeClient();
-    component.confirmDelete();
-    expect(consoleSpy).toHaveBeenCalledWith('Error deleting client', expect.any(Error));
-    expect(component.showDeleteModal).toBe(false);
-    expect(component.showErrorModal).toBe(true);
+    const client = makeClient();
+    component.confirmDelete(client);
+    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      data: expect.objectContaining({ accentColor: 'warning' })
+    }));
     consoleSpy.mockRestore();
-  });
-
-  it('closeDeleteModal should reset showDeleteModal', () => {
-    component.showDeleteModal = true;
-    component.closeDeleteModal();
-    expect(component.showDeleteModal).toBe(false);
-  });
-
-  it('closeSuccessModal should reset showSuccessModal and selectedClient', () => {
-    component.showSuccessModal = true;
-    component.selectedClient = makeClient();
-    component.closeSuccessModal();
-    expect(component.showSuccessModal).toBe(false);
-    expect(component.selectedClient).toBeNull();
-  });
-
-  it('closeErrorModal should reset showErrorModal and errorMessage', () => {
-    component.showErrorModal = true;
-    component.errorMessage = 'error';
-    component.closeErrorModal();
-    expect(component.showErrorModal).toBe(false);
-    expect(component.errorMessage).toBeNull();
   });
 
   // ── saveClient — validación ───────────────────────────────────────────────
