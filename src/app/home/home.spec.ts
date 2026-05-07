@@ -79,4 +79,32 @@ describe('HomeComponent', () => {
     component.ngAfterViewInit();
     expect(component.chartInstance).toBeUndefined();
   });
+
+  it('should handle null/undefined service responses gracefully', () => {
+    mockPaymentService.getSaldosPendientes.mockReturnValue(of(null));
+    mockPaymentService.getReporteIngresos.mockReturnValue(of(undefined));
+    
+    // Trigger loadData again
+    (component as any).loadData();
+    
+    expect(component.dashboardData.ordersWithDebt).toBe(0);
+    expect(component.monthlyIncome).toBe(0);
+  });
+
+  it('should update chart if instance exists when data is loaded', () => {
+    // 1. Create a mock chart instance
+    const updateSpy = jest.fn();
+    component.chartInstance = {
+      data: { datasets: [{ data: [] }, { data: [] }] },
+      update: updateSpy
+    } as any;
+
+    mockPaymentService.getReporteIngresos.mockReturnValue(of({ totalGeneral: 5000 }));
+    
+    // 2. Trigger data load
+    (component as any).loadData();
+    
+    expect(updateSpy).toHaveBeenCalled();
+    expect(component.chartInstance?.data.datasets[0].data[5]).toBe(5000);
+  });
 });

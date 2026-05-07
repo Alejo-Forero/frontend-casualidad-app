@@ -27,7 +27,7 @@ export interface OrderSummaryDTO {
 
   // Aliases legacy
   id:             string;
-  code:           string | null;
+  code:           string | undefined;
   clientName:     string;
   status:         OrderStatus;
   paymentStatus:  PaymentStatus;
@@ -42,7 +42,7 @@ export interface OrderItemDTO {
   quantity:      number;
   unitPrice:     number;
   subtotal:      number;
-  customization?: string | null;
+  customization?: string | undefined;
   observaciones?: string | null;
   idDetalle?:     number | null;
 }

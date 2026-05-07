@@ -3,24 +3,22 @@ export interface ClientDTO {
   nombre: string;
   direccion: string;
   telefonos: string[];
+  correo?: string;
   // Backwards compatibility for UI mocks
   id: string;
   name: string;
   phones: string[];
   address: string | null;
   isActive: boolean;
-  ordersSummary: {
-    total: number;
-    pending: number;
-    inProduction: number;
-  };
-  createdAt: string;
+  email?: string;
+  createdAt?: string;
 }
 
 export interface ClientRequestDTO {
   nombre: string;
   telefonos: string[];
   direccion: string;
+  correo?: string;
 }
 
 export interface ClientResponseDTO {

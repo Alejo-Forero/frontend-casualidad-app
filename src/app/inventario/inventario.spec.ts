@@ -6,6 +6,8 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 import { ProductDTO, ProductType } from '../core/models/inventory.dto';
+import { UIService } from '../core/services/ui.service';
+import { ActivatedRoute } from '@angular/router';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -37,8 +39,13 @@ describe('InventarioComponent', () => {
   let fixture: ComponentFixture<InventarioComponent>;
   let mockInventoryService: jest.Mocked<Partial<InventoryService>>;
   let mockDialog: { open: jest.Mock };
+  let mockUIService: { showSuccess: jest.Mock, showConfirm: jest.Mock, showError: jest.Mock };
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+    jest.spyOn(console, 'log').mockImplementation(() => { });
+    jest.spyOn(console, 'error').mockImplementation(() => { });
+
     mockInventoryService = {
       getAll: jest.fn(() => of([])),
       delete: jest.fn(() => of({})),
@@ -47,17 +54,26 @@ describe('InventarioComponent', () => {
       registrarEntrada: jest.fn(() => of({})),
       ajustarInventario: jest.fn(() => of({})),
       addComposicion: jest.fn(() => of({})),
+      getUnidadesMedida: jest.fn(() => of([]))
     };
 
     mockDialog = { open: jest.fn(() => dialogRefStub(true)) };
+    mockUIService = {
+      showSuccess: jest.fn(() => of({ action: 'primary' })),
+      showConfirm: jest.fn(() => of(true)),
+      showError: jest.fn(() => of(true))
+    };
 
     await TestBed.configureTestingModule({
       imports: [InventarioComponent, BrowserAnimationsModule],
       providers: [
         { provide: InventoryService, useValue: mockInventoryService },
         { provide: MatDialog, useValue: mockDialog },
+        { provide: UIService, useValue: mockUIService },
+        { provide: ActivatedRoute, useValue: { queryParams: of({}) } }
       ],
     }).overrideProvider(MatDialog, { useValue: mockDialog })
+    .overrideProvider(UIService, { useValue: mockUIService })
     .compileComponents();
 
     fixture = TestBed.createComponent(InventarioComponent);
@@ -212,13 +228,16 @@ describe('InventarioComponent', () => {
   // ── addComponent / removeComponent ───────────────────────────────────────
 
   it('should add a component with default values', () => {
+    component.selectedInsumoId = 2;
     component.addComponent();
     expect(component.componentsFormArray.length).toBe(1);
     expect(component.componentsFormArray.at(0).get('cantidadUsada')?.value).toBe(1);
   });
 
-  it('should remove a component by index', () => {
+  it('remove a component by index', () => {
+    component.selectedInsumoId = 2;
     component.addComponent();
+    component.selectedInsumoId = 3;
     component.addComponent();
     component.removeComponent(0);
     expect(component.componentsFormArray.length).toBe(1);
@@ -309,6 +328,7 @@ describe('InventarioComponent', () => {
       unit: 'u',
       minStock: 1,
     });
+    component.selectedInsumoId = 2;
     component.addComponent();
     component.componentsFormArray.at(0).patchValue({ idInsumo: 2, cantidadUsada: 1 });
 
@@ -328,6 +348,7 @@ describe('InventarioComponent', () => {
       unit: 'u',
       minStock: 1,
     });
+    component.selectedInsumoId = 2;
     component.addComponent();
     component.componentsFormArray.at(0).patchValue({ idInsumo: 2, cantidadUsada: 1 });
 
@@ -357,6 +378,7 @@ describe('InventarioComponent', () => {
     );
     component.openAddForm();
     component.inventoryForm.patchValue({ name: 'E', type: 'ELABORADO', unit: 'u', minStock: 1 });
+    component.selectedInsumoId = 1;
     component.addComponent();
     component.componentsFormArray.at(0).patchValue({ idInsumo: 1, cantidadUsada: 1 });
     component.saveProduct();
@@ -394,8 +416,8 @@ describe('InventarioComponent', () => {
   // ── saveProduct — success dialog actions ─────────────────────────────────
 
   it('should call openAddForm again when secondary action is chosen after create', () => {
-    mockDialog.open
-      .mockReturnValueOnce(dialogRefStub({ action: 'secondary' })); // SuccessDialog
+    mockUIService.showSuccess
+      .mockReturnValueOnce(of({ action: 'secondary' })); 
     const openAddSpy = jest.spyOn(component, 'openAddForm');
 
     component.openAddForm();
@@ -426,15 +448,15 @@ describe('InventarioComponent', () => {
   it('openDeleteModal should open confirm dialog', () => {
     const product = makeProduct();
     component.openDeleteModal(product);
-    expect(mockDialog.open).toHaveBeenCalled();
+    expect(mockUIService.showConfirm).toHaveBeenCalled();
   });
 
   it('confirmDelete should call delete service and open success dialog when confirmed', () => {
     const product = makeProduct();
     component.confirmDelete(product);
     expect(mockInventoryService.delete).toHaveBeenCalledWith('1');
-    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
-      data: expect.objectContaining({ accentColor: 'success' })
+    expect(mockUIService.showSuccess).toHaveBeenCalledWith(expect.objectContaining({
+      title: '¡Artículo Eliminado!'
     }));
   });
 
@@ -445,9 +467,7 @@ describe('InventarioComponent', () => {
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
     const product = makeProduct();
     component.confirmDelete(product);
-    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
-      data: expect.objectContaining({ accentColor: 'warning' })
-    }));
+    expect(mockUIService.showError).toHaveBeenCalled();
     consoleSpy.mockRestore();
   });
 

@@ -17,6 +17,7 @@ describe('ReportesComponent', () => {
       getSaldosPendientes: jest.fn(() => of({ pedidos: [] })),
       getUnifiedSaldos: jest.fn(() => of([])),
       exportarSaldosPendientes: jest.fn(() => of(new Blob(['test'], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }))),
+      getTopSellingProducts: jest.fn(() => of([])),
     };
 
     await TestBed.configureTestingModule({

@@ -21,25 +21,48 @@ describe('ClientService', () => {
     httpMock.verify();
   });
 
-  it('should fetch all clients', () => {
-    service.getAll().subscribe();
-    // Match URL without worrying about params or match with params
-    const req = httpMock.expectOne(req => req.url === apiUrl);
+  it('should fetch all clients with search term', () => {
+    service.getAll('  Juan  ').subscribe();
+    const req = httpMock.expectOne(req => req.url === apiUrl && req.params.get('filtro') === 'Juan');
     req.flush({ data: { content: [] } });
   });
 
-  it('should create client', () => {
-    service.create({ name: 'A' }).subscribe();
-    httpMock.expectOne(apiUrl).flush({ data: {} });
+  it('should map data correctly from content or data fields', () => {
+    let result: any[] = [];
+    service.getAll().subscribe(res => result = res);
+
+    const req = httpMock.expectOne(req => req.url === apiUrl && req.params.get('page') === '0');
+    req.flush({
+      data: {
+        data: [
+          { idCliente: 1, nombre: 'A', direccion: null, telefonos: null, correo: null }
+        ]
+      }
+    });
+
+    expect(result[0].direccion).toBe('');
+    expect(result[0].telefonos).toEqual([]);
+    expect(result[0].correo).toBe('');
   });
 
-  it('should update client', () => {
-    service.update(1, { name: 'A' }).subscribe();
-    httpMock.expectOne(`${apiUrl}/1`).flush({ data: {} });
+  it('should handle empty data structure', () => {
+    let result: any[] = [];
+    service.getAll().subscribe(res => result = res);
+    const req = httpMock.expectOne(req => req.url === apiUrl && req.params.get('page') === '0');
+    req.flush({ data: null });
+    expect(result).toEqual([]);
   });
 
-  it('should delete client', () => {
-    service.delete(1).subscribe();
-    httpMock.expectOne(`${apiUrl}/1`).flush({ data: {} });
+  it('should use alternative field names in create and update', () => {
+    service.create({ nombre: 'X', telefonos: ['123'], direccion: 'D', correo: 'c@c' }).subscribe();
+    const req1 = httpMock.expectOne(apiUrl);
+    expect(req1.request.body.nombre).toBe('X');
+    expect(req1.request.body.telefonos).toEqual(['123']);
+    req1.flush({ data: {} });
+
+    service.update(1, { nombre: 'Y' }).subscribe();
+    const req2 = httpMock.expectOne(`${apiUrl}/1`);
+    expect(req2.request.body.nombre).toBe('Y');
+    req2.flush({ data: {} });
   });
 });

@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, ChangeDetectorRef, DestroyRef, inject, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IncomeReportDTO, PendingBalanceDTO, TopProductDTO } from '../core/models/report.dto';
@@ -16,6 +17,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrls: ['./reportes.css']
 })
 export class ReportesComponent implements OnInit, AfterViewInit {
+  private readonly router = inject(Router);
   private readonly paymentService = inject(PaymentService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
@@ -40,6 +42,7 @@ export class ReportesComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.fetchIngresos();
     this.fetchSaldos();
+    this.fetchTopProducts();
   }
 
   ngAfterViewInit() {
@@ -59,11 +62,11 @@ export class ReportesComponent implements OnInit, AfterViewInit {
 
   onDateChange() {
     this.fetchIngresos();
+    this.fetchTopProducts();
   }
 
   fetchIngresos() {
     this.paymentService.getReporteIngresos(this.incomeReport.dateFrom, this.incomeReport.dateTo)
-      .pipe(takeUntilDestroyed(this.destroyRef))
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res: any) => {
@@ -117,6 +120,33 @@ export class ReportesComponent implements OnInit, AfterViewInit {
     });
   }
 
+  fetchTopProducts() {
+    const start = this.incomeReport.dateFrom + 'T00:00:00';
+    const end = this.incomeReport.dateTo + 'T23:59:59';
+
+    this.paymentService.getTopSellingProducts(start, end)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res: any) => {
+          const data = Array.isArray(res) ? res : (res?.data || res?.productos || []);
+          this.topProducts = data.map((p: any, index: number) => ({
+            rank: index + 1,
+            productId: String(index + 1),
+            productName: p.nombreProducto,
+            categoryName: p.categoria || null,
+            unitsSold: p.cantidadVendida,
+            totalRevenue: p.ingresosTotales || p.ingresosGenerados || 0
+          }));
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => {
+          console.error('Error fetching top products:', err);
+          this.topProducts = [];
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
   // Ranking colors
   getRankColorClass(rank: number): string {
     switch (rank) {
@@ -134,5 +164,9 @@ export class ReportesComponent implements OnInit, AfterViewInit {
       case 3: return 'bg-tertiary-fixed-dim';
       default: return 'bg-neutral-300';
     }
+  }
+
+  goToProduct(productName: string) {
+    this.router.navigate(['/inventario'], { queryParams: { search: productName } });
   }
 }

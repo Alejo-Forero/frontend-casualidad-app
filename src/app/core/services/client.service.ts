@@ -36,13 +36,14 @@ export class ClientService {
           nombre: item.nombre,
           direccion: item.direccion || '',
           telefonos: item.telefonos || [],
+          correo: item.correo || '',
           // Aliases para compatibilidad con la UI
           id: String(item.idCliente),
           name: item.nombre,
           phones: item.telefonos || [],
           address: item.direccion || '',
-          isActive: true,
-          ordersSummary: { total: 0, pending: 0, inProduction: 0 }
+          email: item.correo || '',
+          isActive: true
         }));
       })
     );
@@ -56,7 +57,8 @@ export class ClientService {
     const payload = {
       nombre: data.name || data.nombre,
       telefonos: data.phones || data.telefonos || [],
-      direccion: data.address || data.direccion || ''
+      direccion: data.address || data.direccion || '',
+      correo: data.email || data.correo || ''
     };
     return this.http.post<any>(this.apiUrl, payload).pipe(
       map(res => res.data)
@@ -71,7 +73,8 @@ export class ClientService {
     const payload = {
       nombre: data.name || data.nombre,
       telefonos: data.phones || data.telefonos || [],
-      direccion: data.address || data.direccion || ''
+      direccion: data.address || data.direccion || '',
+      correo: data.email || data.correo || ''
     };
     return this.http.put<any>(`${this.apiUrl}/${id}`, payload).pipe(
       map(res => res.data)

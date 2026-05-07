@@ -117,4 +117,50 @@ describe('PaymentService', () => {
       }
     });
   });
+
+  it('should getPayments with default params', () => {
+    service.getPayments().subscribe();
+    const req = httpMock.expectOne(r => r.url.includes('/pagos'));
+    expect(req.request.params.get('page')).toBe('0');
+    expect(req.request.params.get('size')).toBe('10');
+    req.flush({});
+  });
+
+  it('should getTopSellingProducts with custom sorting', () => {
+    service.getTopSellingProducts('2026-01-01', '2026-01-31', 'INGRESOS').subscribe();
+    const req = httpMock.expectOne(r => r.url.includes('mas-vendidos'));
+    expect(req.request.params.get('ordenarPor')).toBe('INGRESOS');
+    req.flush([]);
+  });
+
+  it('should getUnifiedSaldos and map data correctly including fallback for code', () => {
+    let result: any[] = [];
+    service.getUnifiedSaldos().subscribe(res => result = res);
+
+    const req = httpMock.expectOne(r => r.url.includes('saldos-pendientes'));
+    req.flush({
+      pedidos: [
+        { idPedido: 1, codigoPedido: 'COD1', nombreCliente: 'C1', fechaEntrega: '2026', montoTotal: 100, saldoPendiente: 50 },
+        { idPedido: 2, codigoPedido: null, nombreCliente: 'C2', fechaEntrega: '2026', montoTotal: 200, saldoPendiente: 0 }
+      ]
+    });
+
+    expect(result.length).toBe(2);
+    expect(result[0].code).toBe('COD1');
+    expect(result[1].code).toBe('2'); // fallback to id
+  });
+
+  it('should getUnifiedSaldos with empty response', () => {
+    let result: any[] = [];
+    service.getUnifiedSaldos().subscribe(res => result = res);
+    const req = httpMock.expectOne(r => r.url.includes('saldos-pendientes'));
+    req.flush({}); // res.pedidos is undefined
+    expect(result).toEqual([]);
+  });
+
+  it('should use pedidoId if idPedido is missing in create', () => {
+    service.create({ pedidoId: 99, monto: 100, metodoPago: 'EFECTIVO' }).subscribe();
+    const req = httpMock.expectOne(r => r.url.includes('/pedidos/99/abonos'));
+    req.flush({});
+  });
 });

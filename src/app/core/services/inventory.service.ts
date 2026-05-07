@@ -33,25 +33,34 @@ export class InventoryService {
   }
 
   private mapInventoryItem(item: any) {
+    const safeId = item.idProducto || item.id || 0;
+    const safeName = item.nombre || item.name || 'Sin nombre';
+    const safeType = item.tipo || item.type || 'INSUMO';
+    
     return {
-      idProducto: item.idProducto,
-      nombre: item.nombre,
-      tipo: item.tipo,
-      unidadMedida: item.unidadMedida,
-      cantidadDisponible: item.cantidadDisponible,
-      stockBajo: item.stockBajo,
-      id: String(item.idProducto),
-      name: item.nombre,
-      type: item.tipo,
-      stock: Number(item.cantidadDisponible) || 0,
-      isLowStock: item.stockBajo ?? false,
-      unit: { name: item.unidadMedida || 'Unidad' },
-      purchasePrice: item.precioCompra || null,
-      salePrice: item.precioVenta || null,
-      productionCost: item.precioCompra || null,
-      wastePercent: item.porcentajeSobrante || null,
-      minStock: Number(item.stockMinimo) || 0,
-      composition: null
+      idProducto: Number(safeId),
+      nombre: safeName,
+      tipo: safeType,
+      unidadMedida: item.unidadMedida || (item.unit?.name) || 'Unidad',
+      idUnidadMedida: item.idUnidadMedida || null,
+      cantidadDisponible: item.cantidadDisponible ?? item.stock ?? 0,
+      stockBajo: item.stockBajo ?? item.isLowStock ?? false,
+      id: String(safeId),
+      name: safeName,
+      type: safeType,
+      stock: Number(item.cantidadDisponible ?? item.stock ?? 0),
+      isLowStock: item.stockBajo ?? item.isLowStock ?? false,
+      unit: { name: item.unidadMedida || (item.unit?.name) || 'Unidad' },
+      purchasePrice: (item.precioCompra !== undefined && item.precioCompra !== null) ? item.precioCompra : 
+                     (item.purchasePrice !== undefined && item.purchasePrice !== null) ? item.purchasePrice : 0,
+      salePrice: (item.precioVenta !== undefined && item.precioVenta !== null) ? item.precioVenta : 
+                 (item.salePrice !== undefined && item.salePrice !== null) ? item.salePrice : 0,
+      productionCost: (item.precioCompra !== undefined && item.precioCompra !== null) ? item.precioCompra : 
+                      (item.productionCost !== undefined && item.productionCost !== null) ? item.productionCost : 0,
+      wastePercent: (item.porcentajeSobrante !== undefined && item.porcentajeSobrante !== null) ? item.porcentajeSobrante : 
+                    (item.wastePercent !== undefined && item.wastePercent !== null) ? item.wastePercent : 0,
+      minStock: Number(item.stockMinimo ?? item.minStock ?? 0),
+      composition: item.composition || null
     };
   }
 
@@ -172,6 +181,12 @@ export class InventoryService {
   addComposicion(idProducto: number, insumos: { idInsumo: number; cantidadUsada: number }[]): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/${idProducto}/composicion`, insumos).pipe(
       map(res => res)
+    );
+  }
+
+  getUnidadesMedida(): Observable<any[]> {
+    return this.http.get<any>(`${environment.apiUrl}/unidades-medida`).pipe(
+      map(res => res.data || [])
     );
   }
 }

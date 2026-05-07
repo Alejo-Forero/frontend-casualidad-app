@@ -37,10 +37,12 @@ export interface ProductDTO {
   tipo?: ProductType;
   idUnidadMedida?: number;
   cantidad?: number;
+  cantidadDisponible?: number;
   stockMinimo?: number;
   precioCompra?: number;
   precioVenta?: number;
   porcentajeSobrante?: number;
+  unidadMedida?: string;
 
   // Legacy fields for UI compatibility
   id: string;

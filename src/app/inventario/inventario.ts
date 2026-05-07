@@ -1,11 +1,13 @@
-import { Component, inject, OnInit, AfterViewInit, ChangeDetectorRef, DestroyRef, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, AfterViewInit, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 import { ProductDTO, ProductType } from '../core/models/inventory.dto';
 import { InventoryService } from '../core/services/inventory.service';
+import { ScreenSizeService } from '../core/services/screen-size.service';
+import { UIService } from '../core/services/ui.service';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -16,12 +18,13 @@ import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { SuccessDialogComponent } from '../shared/components/success-dialog/success-dialog';
 import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/confirm-dialog';
 import { EntradaDialogComponent } from './components/entrada-dialog/entrada-dialog';
 import { AjusteDialogComponent } from './components/ajuste-dialog/ajuste-dialog';
-import { ListHelper } from '../shared/utils/list-helper';
 import { BaseTableComponent } from '../shared/components/base-table.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-inventario',
@@ -38,13 +41,16 @@ import { BaseTableComponent } from '../shared/components/base-table.component';
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatDialogModule
+    MatDialogModule,
+    MatDividerModule,
+    MatAutocompleteModule
   ],
   templateUrl: './inventario.html',
   styleUrls: ['./inventario.css']
 })
 export class InventarioComponent extends BaseTableComponent<ProductDTO> implements OnInit, AfterViewInit {
   productsData: ProductDTO[] = [];
+  filteredProducts: ProductDTO[] = [];
   dataSource = new MatTableDataSource<ProductDTO>([]);
   displayedColumns: string[] = ['id', 'name', 'type', 'stock', 'estado', 'acciones'];
 
@@ -55,6 +61,11 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
   // Modals state
   errorMessage: string | null = null;
   selectedProduct: ProductDTO | null = null;
+  pendingAddStockProductId: string | null = null;
+  unidadesMedida: any[] = [];
+  isAddingNewUnit = false;
+
+  private readonly route = inject(ActivatedRoute);
 
   // Motivos de movimiento — enum MotivoMovimiento del backend
   readonly motivosEntrada = [
@@ -74,16 +85,14 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly dialog = inject(MatDialog);
+  private readonly uiService = inject(UIService);
+  private costSub: any = null;
+  selectedInsumoId: any = null;
 
-  isMobile = false;
-  private readonly breakpointObserver = inject(BreakpointObserver);
+  readonly screenSize = inject(ScreenSizeService);
 
   constructor() {
     super();
-    this.breakpointObserver.observe([Breakpoints.Handset, Breakpoints.TabletPortrait]).subscribe(result => {
-      this.isMobile = result.matches;
-      this.cdr.markForCheck();
-    });
 
     this.inventoryForm = this.fb.group({
       id: [''],
@@ -91,7 +100,9 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
       stock: [{ value: 0, disabled: true }, [Validators.required, Validators.min(0)]],
       type: ['', Validators.required],
       unit: ['', Validators.required],
+      newUnitName: [''],
       minStock: [0, [Validators.required, Validators.min(0)]],
+      purchasePrice: [0, Validators.min(0)],
       productionCost: [0, Validators.min(0)],
       salePrice: [0, Validators.min(0)],
       wastePercent: [0, [Validators.min(0), Validators.max(100)]],
@@ -101,6 +112,16 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
     this.inventoryForm.get('type')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(type => {
       this.handleTypeChange(type);
     });
+
+    this.inventoryForm.get('unit')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(value => {
+      this.isAddingNewUnit = value === 'NEW_UNIT';
+      if (this.isAddingNewUnit) {
+        this.inventoryForm.get('newUnitName')?.setValidators([Validators.required]);
+      } else {
+        this.inventoryForm.get('newUnitName')?.clearValidators();
+      }
+      this.inventoryForm.get('newUnitName')?.updateValueAndValidity();
+    });
   }
 
   get componentsFormArray(): FormArray {
@@ -108,38 +129,194 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
   }
 
   handleTypeChange(type: ProductType | ''): void {
-    this.componentsFormArray.clear();
-
     const salePriceCtrl = this.inventoryForm.get('salePrice');
     const wasteCtrl = this.inventoryForm.get('wastePercent');
+    const productionCostCtrl = this.inventoryForm.get('productionCost');
+    const purchasePriceCtrl = this.inventoryForm.get('purchasePrice');
 
     if (type === 'INSUMO') {
       salePriceCtrl?.disable();
       wasteCtrl?.enable();
+      purchasePriceCtrl?.enable();
+      productionCostCtrl?.disable();
+    } else if (type === 'ELABORADO' || type === 'TRANSFORMADO') {
+      salePriceCtrl?.enable();
+      wasteCtrl?.disable();
+      purchasePriceCtrl?.disable();
+      productionCostCtrl?.disable();
+      this.setupCostCalculation();
     } else {
       salePriceCtrl?.enable();
-      if (type === 'ELABORADO' || type === 'TRANSFORMADO') {
-        wasteCtrl?.disable();
-      } else {
-        wasteCtrl?.enable();
-      }
+      wasteCtrl?.enable();
+      purchasePriceCtrl?.enable();
+      productionCostCtrl?.disable();
     }
   }
 
+  private setupCostCalculation(): void {
+    if (this.costSub) {
+      this.costSub.unsubscribe();
+    }
+    
+    this.costSub = this.componentsFormArray.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.calculateTotalCost();
+      });
+    
+    // Calcular inmediatamente para inicializar
+    this.calculateTotalCost();
+  }
+
+  getInsumoUnit(id: any): string {
+    if (!id) return '-';
+    const insumo = this.productsData.find(p => String(p.idProducto || p.id) === String(id));
+    return insumo?.unidadMedida || insumo?.unit?.name || '-';
+  }
+
+  getInsumoPrice(id: any): number {
+    if (!id) return 0;
+    const insumo = this.productsData.find(p => String(p.idProducto || p.id) === String(id));
+    if (!insumo) return 0;
+    
+    // Devolver el primer valor numérico encontrado (priorizando precioCompra)
+    if (typeof insumo.precioCompra === 'number') return insumo.precioCompra;
+    if (typeof insumo.purchasePrice === 'number') return insumo.purchasePrice;
+    if (typeof insumo.productionCost === 'number') return insumo.productionCost;
+    
+    return 0;
+  }
+
+  private calculateTotalCost(): void {
+    const type = this.inventoryForm.get('type')?.value;
+    if (type !== 'ELABORADO' && type !== 'TRANSFORMADO') return;
+
+    let total = 0;
+    this.componentsFormArray.controls.forEach(ctrl => {
+      const id = ctrl.get('idInsumo')?.value;
+      const qty = ctrl.get('cantidadUsada')?.value || 0;
+      if (id) {
+        // Buscar por idProducto, id o idInsumo (compatibilidad total)
+        const insumo = this.productsData.find(p => 
+          String(p.idProducto) === String(id) || 
+          String(p.id) === String(id)
+        );
+        
+        const cost = insumo?.precioCompra || insumo?.purchasePrice || insumo?.productionCost || 0;
+        total += (cost * qty);
+      }
+    });
+
+    this.inventoryForm.get('productionCost')?.setValue(total, { emitEvent: false });
+    this.cdr.detectChanges();
+  }
+
   addComponent(): void {
-    // idInsumo y cantidadUsada son los campos de InsumoComposicionDto en el backend
-    this.componentsFormArray.push(this.fb.group({
-      idInsumo: [null, [Validators.required, Validators.min(1)]],
-      cantidadUsada: [1, [Validators.required, Validators.min(0.001)]]
-    }));
+    if (!this.selectedInsumoId) return;
+
+    // Verificar si ya existe
+    const exists = this.componentsFormArray.controls.some(ctrl => 
+      String(ctrl.get('idInsumo')?.value) === String(this.selectedInsumoId)
+    );
+
+    if (exists) {
+      // Opcional: mostrar un aviso o simplemente no añadir
+      this.selectedInsumoId = null;
+      return;
+    }
+
+    const group = this.fb.group({
+      idInsumo: [this.selectedInsumoId, [Validators.required, Validators.min(1)]],
+      cantidadUsada: [1, [Validators.required, Validators.min(1), Validators.pattern(/^[0-9]+$/)]]
+    }, {
+      validators: [this.uniqueInsumoValidator(), this.stockLimitValidator()]
+    });
+
+    this.componentsFormArray.push(group);
+    this.selectedInsumoId = null; // Limpiar selección
+    this.calculateTotalCost();
+  }
+
+  private uniqueInsumoValidator() {
+    return (group: FormGroup): { [key: string]: any } | null => {
+      const idInsumo = group.get('idInsumo')?.value;
+      if (!idInsumo) return null;
+
+      const controls = this.componentsFormArray.controls;
+      const index = controls.indexOf(group);
+      
+      const isDuplicate = controls.some((ctrl, i) => 
+        i !== index && String(ctrl.get('idInsumo')?.value) === String(idInsumo)
+      );
+
+      return isDuplicate ? { duplicateInsumo: true } : null;
+    };
+  }
+
+  private stockLimitValidator() {
+    return (group: FormGroup): { [key: string]: any } | null => {
+      const idInsumo = group.get('idInsumo')?.value;
+      const quantity = group.get('cantidadUsada')?.value;
+      if (!idInsumo || !quantity) return null;
+
+      const insumo = this.productsData.find(p => String(p.idProducto || p.id) === String(idInsumo));
+      if (insumo && quantity > insumo.stock) {
+        return { exceedStock: { stock: insumo.stock } };
+      }
+      return null;
+    };
   }
 
   removeComponent(index: number): void {
     this.componentsFormArray.removeAt(index);
   }
 
+  getSelectedUnitName(): string {
+    const val = this.inventoryForm.get('unit')?.value;
+    if (!val) return 'Seleccionar unidad';
+    const unit = this.unidadesMedida.find(u => (u.idUnidad || u.nombre) === val);
+    return unit ? unit.nombre : val;
+  }
+
+  getInsumoName(id: any): string {
+    if (!id) return '';
+    const insumo = this.productsData.find(p => String(p.idProducto || p.id) === String(id));
+    return insumo ? insumo.name : '';
+  }
+
+  getFilteredInsumos(val: any): ProductDTO[] {
+    const filterValue = typeof val === 'string' ? val.toLowerCase() : '';
+    return this.productsData
+      .filter(p => p.type === 'INSUMO')
+      .filter(p => 
+        p.name.toLowerCase().includes(filterValue) || 
+        String(p.idProducto || p.id).includes(filterValue)
+      );
+  }
+
   ngOnInit(): void {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+      if (params['addStock']) {
+        this.pendingAddStockProductId = String(params['addStock']);
+        this.checkPendingAddStockProduct();
+      }
+      if (params['search']) {
+        this.searchTerm = params['search'];
+        this._applyTableFilter();
+      }
+    });
     this.loadInventory();
+    this.loadUnidadesMedida();
+  }
+
+  loadUnidadesMedida(): void {
+    this.inventoryService.getUnidadesMedida().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (units) => {
+        this.unidadesMedida = units;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Error loading units of measure', err)
+    });
   }
 
   ngAfterViewInit() {
@@ -152,13 +329,27 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
       }
     };
 
-    this.dataSource.filterPredicate = (data, _filter) => {
-      const search = this.searchTerm.trim().toLowerCase();
-      const matchesSearch = data.name.toLowerCase().includes(search) || data.id.toLowerCase().includes(search);
+    this.dataSource.filterPredicate = (data: ProductDTO, _filter: string) => {
+      console.log('Filtering data:', data);
+      const search = (this.searchTerm || '').toLowerCase().trim();
+      const name = (data.nombre || data.name || '').toLowerCase();
+      const id = (String(data.idProducto || data.id || '')).toLowerCase();
+      const matchesSearch = name.includes(search) || id.includes(search);
       const matchesCategory = this.currentFilter !== 'category' || !this.selectedCategory || data.type === this.selectedCategory;
       const matchesLowStock = this.currentFilter !== 'lowstock' || data.isLowStock;
       return matchesSearch && matchesCategory && matchesLowStock;
     };
+  }
+
+  applyFilters(): void {
+    const search = (this.searchTerm || '').toLowerCase().trim();
+    this.filteredProducts = this.productsData.filter(product => {
+      const name = (product.nombre || product.name || '').toLowerCase();
+      const id = String(product.idProducto || product.id || '').toLowerCase();
+      const matchesSearch = name.includes(search) || id.includes(search);
+      return matchesSearch;
+    });
+    this.dataSource.data = this.filteredProducts;
   }
 
   loadInventory(): void {
@@ -166,10 +357,21 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
       next: (data) => {
         this.productsData = data;
         this.dataSource.data = this.productsData;
+        this.checkPendingAddStockProduct();
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Error loading inventory', err)
     });
+  }
+
+  private checkPendingAddStockProduct(): void {
+    if (this.pendingAddStockProductId && this.productsData.length > 0) {
+      const product = this.productsData.find(p => String(p.idProducto || p.id) === this.pendingAddStockProductId);
+      if (product) {
+        this.openEntradaModal(product);
+        this.pendingAddStockProductId = null;
+      }
+    }
   }
 
   getLowStockCount(): number {
@@ -210,15 +412,10 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
         this.inventoryService.registrarEntrada(result.idProducto, result.cantidad, result.motivo).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: () => {
             this.loadInventory();
-            this.dialog.open(SuccessDialogComponent, {
-              panelClass: 'casualidad-dialog',
-              data: {
-                title: '\u00a1Entrada Registrada!',
-                message: 'El stock ha sido actualizado correctamente en el inventario.',
-                icon: 'inventory_2',
-                accentColor: 'success',
-                primaryActionLabel: 'Continuar'
-              }
+            this.uiService.showSuccess({
+              title: '¡Entrada Registrada!',
+              message: 'El stock ha sido actualizado correctamente en el inventario.',
+              icon: 'inventory_2'
             });
           },
           error: (err) => console.error('Error registrando entrada', err)
@@ -238,15 +435,10 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
         this.inventoryService.ajustarInventario(result.idProducto, result.cantidadNueva, result.motivo).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: () => {
             this.loadInventory();
-            this.dialog.open(SuccessDialogComponent, {
-              panelClass: 'casualidad-dialog',
-              data: {
-                title: '\u00a1Inventario Ajustado!',
-                message: 'El nivel de stock ha sido actualizado correctamente.',
-                icon: 'tune',
-                accentColor: 'success',
-                primaryActionLabel: 'Continuar'
-              }
+            this.uiService.showSuccess({
+              title: '¡Inventario Ajustado!',
+              message: 'El nivel de stock ha sido actualizado correctamente.',
+              icon: 'tune'
             });
           },
           error: (err) => console.error('Error ajustando inventario', err)
@@ -259,20 +451,15 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
   openDeleteModal(product: ProductDTO): void {
     this.errorMessage = null;
     
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      panelClass: 'casualidad-dialog',
-      data: {
-        title: '\u00bfEliminar art\u00edculo?',
-        message: 'Est\u00e1s a punto de eliminar ',
-        highlightText: product.name,
-        warningText: 'Esta acci\u00f3n no se puede deshacer y ',
-        confirmLabel: 'S\u00ed, eliminar art\u00edculo',
-        icon: 'delete_forever',
-        accentColor: 'error'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
+    this.uiService.showConfirm({
+      title: '¿Eliminar artículo?',
+      message: 'Estás a punto de eliminar ',
+      highlightText: product.name,
+      warningText: 'Esta acción no se puede deshacer y ',
+      confirmLabel: 'Sí, eliminar artículo',
+      icon: 'delete_forever',
+      accentColor: 'error'
+    }).subscribe(result => {
       if (result) {
         this.confirmDelete(product);
       }
@@ -283,29 +470,14 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
     this.inventoryService.delete(product.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.loadInventory();
-        this.dialog.open(SuccessDialogComponent, {
-          panelClass: 'casualidad-dialog',
-          data: {
-            title: '\u00a1Art\u00edculo Eliminado!',
-            message: 'El art\u00edculo ha sido eliminado permanentemente del inventario.',
-            icon: 'check_circle',
-            accentColor: 'success',
-            primaryActionLabel: 'Continuar'
-          }
+        this.uiService.showSuccess({
+          title: '¡Artículo Eliminado!',
+          message: 'El artículo ha sido eliminado permanentemente del inventario.'
         });
       },
       error: (err) => {
         console.error('Error eliminando producto', err);
-        this.dialog.open(SuccessDialogComponent, {
-          panelClass: 'casualidad-dialog',
-          data: {
-            title: '\u00a1Algo sali\u00f3 mal!',
-            message: 'No se pudo eliminar el art\u00edculo. Puede que est\u00e9 en uso o referenciado.',
-            icon: 'error',
-            accentColor: 'warning',
-            primaryActionLabel: 'Entendido'
-          }
-        });
+        this.uiService.showError('No se pudo eliminar el artículo. Es posible que tenga movimientos asociados.');
       }
     });
   }
@@ -323,25 +495,35 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
   }
 
   openEditForm(product: ProductDTO): void {
+    console.log('Editing product:', product);
     this.errorMessage = null;
+    
+    // Patch the form with safe field names matching this.inventoryForm
     this.inventoryForm.patchValue({
-      id: product.id,
-      name: product.name,
-      stock: product.stock,
-      type: product.type,
-      unit: product.unit.name,
-      minStock: product.minStock,
-      productionCost: product.productionCost || product.purchasePrice || 0,
-      salePrice: product.salePrice || 0,
-      wastePercent: product.wastePercent || 0
-    }, { emitEvent: false });
+      id: product.id || String(product.idProducto || ''),
+      name: product.nombre || product.name || '',
+      stock: product.stock ?? product.cantidadDisponible ?? 0,
+      type: product.tipo || product.type || '',
+      unit: product.idUnidadMedida || product.unidadMedida || product.unit?.name || '',
+      newUnitName: '',
+      minStock: product.stockMinimo ?? product.minStock ?? 0,
+      purchasePrice: product.precioCompra || product.purchasePrice || 0,
+      productionCost: product.productionCost || product.precioCompra || 0,
+      salePrice: product.salePrice || product.precioVenta || 0,
+      wastePercent: product.wastePercent || product.porcentajeSobrante || 0
+    }, { emitEvent: true });
 
     this.componentsFormArray.clear();
-    if (product.composition && product.composition.length > 0) {
-      product.composition.forEach((comp: any) => {
+    
+    // Check for composition in any possible property name
+    const composition = product.composition || (product as any).composicion;
+    if (composition && Array.isArray(composition) && composition.length > 0) {
+      composition.forEach((comp: any) => {
         this.componentsFormArray.push(this.fb.group({
-          idInsumo: [comp.idInsumo ?? comp.inventoryId ?? null, [Validators.required, Validators.min(1)]],
-          cantidadUsada: [comp.cantidadUsada ?? comp.quantity ?? 1, [Validators.required, Validators.min(0.001)]]
+          idInsumo: [comp.idInsumo || comp.insumo?.idProducto || comp.id || null, [Validators.required]],
+          cantidadUsada: [comp.cantidadUsada || comp.quantity || 1, [Validators.required, Validators.min(0.001)]]
+        }, {
+          validators: [this.uniqueInsumoValidator(), this.stockLimitValidator()]
         }));
       });
     }
@@ -364,7 +546,15 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
       return;
     }
 
-    const productData = this.inventoryForm.value;
+    const rawData = this.inventoryForm.getRawValue();
+    const productData = {
+      ...rawData,
+      precioCompra: rawData.type === 'INSUMO' ? rawData.purchasePrice : rawData.productionCost,
+      precioVenta: rawData.salePrice,
+      porcentajeSobrante: rawData.wastePercent,
+      unit: rawData.unit === 'NEW_UNIT' ? rawData.newUnitName : rawData.unit
+    };
+
     const tieneComposicion =
       (productData.type === 'ELABORADO' || productData.type === 'TRANSFORMADO') &&
       this.componentsFormArray.length > 0;
@@ -372,18 +562,11 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
 
     const openSuccessDialog = () => {
       this.loadInventory();
-      const dialogRef = this.dialog.open(SuccessDialogComponent, {
-        panelClass: 'casualidad-dialog',
-        data: {
-          title: isEdit ? '\u00a1Art\u00edculo Actualizado!' : '\u00a1Art\u00edculo Creado!',
-          message: isEdit ? 'Los datos del art\u00edculo han sido modificados.' : 'El art\u00edculo ha sido registrado en el inventario.',
-          icon: 'check_circle',
-          accentColor: 'success',
-          primaryActionLabel: 'Ir al Inventario',
-          secondaryActionLabel: isEdit ? undefined : 'Agregar otro'
-        }
-      });
-      dialogRef.afterClosed().subscribe(result => {
+      this.uiService.showSuccess({
+        title: isEdit ? '¡Artículo Actualizado!' : '¡Artículo Creado!',
+        message: isEdit ? 'Los datos del artículo han sido modificados.' : 'El artículo ha sido registrado en el inventario.',
+        secondaryActionLabel: isEdit ? undefined : 'Agregar otro'
+      }).subscribe(result => {
         if (!result || result.action === 'primary' || result.action === 'close') {
           this.viewMode = 'list';
         } else if (result.action === 'secondary' && !isEdit) {

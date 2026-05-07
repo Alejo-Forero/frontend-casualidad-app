@@ -1,5 +1,5 @@
 @if (viewMode === 'list') {
-<div class="p-10 space-y-10 max-w-7xl mx-auto animate-[dropdownFadeIn_0.3s_ease-out]">
+<div class="p-4 sm:p-8 lg:p-10 space-y-8 sm:space-y-10 max-w-7xl mx-auto animate-[dropdownFadeIn_0.3s_ease-out]">
     <!-- Page Header -->
     <div class="flex flex-col gap-2">
         <h1 class="text-4xl font-extrabold tracking-tighter text-on-surface">Gestión de Pedidos</h1>
@@ -57,18 +57,18 @@
     <section class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0px_12px_32px_rgba(45,47,47,0.06)]">
         <div class="px-8 py-6 flex justify-between items-center bg-white border-b border-zinc-100">
             <h2 class="text-xl font-bold text-on-surface">Historial de Pedidos</h2>
-            <div class="relative hidden lg:block">
+            <div class="relative">
                 <span
                     class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-sm">search</span>
                 <input [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
-                    class="bg-surface-container border-none rounded-full py-2 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-orange-600/40 focus:bg-surface-container-lowest transition-all"
+                    class="bg-surface-container border-none rounded-full py-2 pl-10 pr-4 text-sm w-52 lg:w-64 focus:ring-2 focus:ring-orange-600/40 focus:bg-surface-container-lowest transition-all"
                     placeholder="Buscar pedidos..." type="text" />
             </div>
         </div>
 
 
         <!-- Desktop Table View -->
-        @if (!isMobile) {
+        @if (!screenSize.isBelowDesktop()) {
         <div class="overflow-x-auto">
             <table mat-table [dataSource]="dataSource" matSort class="w-full text-left">
                 <!-- ID Pedido Column -->
@@ -134,10 +134,10 @@
                 <!-- Acciones Column -->
                 <ng-container matColumnDef="acciones">
                     <th mat-header-cell *matHeaderCellDef
-                        class="casualidad-table-header text-right">
+                        class="casualidad-table-header text-center">
                         Acciones </th>
-                    <td mat-cell *matCellDef="let order" class="px-8 py-5 text-right">
-                        <div class="flex items-center justify-end gap-1">
+                    <td mat-cell *matCellDef="let order" class="px-8 py-5 text-center">
+                        <div class="flex items-center justify-center gap-1">
                             @if (order.estadoPedido === 'PENDIENTE') {
                             <button (click)="openActivarProduccionModal(order)"
                                 class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
@@ -255,7 +255,7 @@
 }
 
 @if (viewMode === 'add' || viewMode === 'edit') {
-<div class="p-8 md:p-12 max-w-6xl mx-auto w-full animate-[dropdownFadeIn_0.2s_ease-out]">
+<div class="p-4 sm:p-8 md:p-12 max-w-6xl mx-auto w-full animate-[dropdownFadeIn_0.2s_ease-out]">
     <!-- Header Section -->
     <header class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>

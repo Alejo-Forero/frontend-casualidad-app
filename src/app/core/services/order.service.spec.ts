@@ -75,4 +75,43 @@ describe('OrderService', () => {
     service.clearOrderDraft();
     expect(service.getOrderDraft()).toBeNull();
   });
+
+  it('should map order summary with various fallbacks and payment status', () => {
+    let result: any[] = [];
+    service.getAll().subscribe(res => result = res);
+
+    const req = httpMock.expectOne(req => req.url === apiUrl && req.params.get('page') === '0');
+    req.flush({
+      data: [
+        { idPedido: 1, codigoUnico: 'COD1', nombreCliente: null, estadoPedido: 'DONE', fechaEntrega: '2026', total: 100, saldoPendiente: 0 },
+        { idPedido: null, codigoUnico: 'COD2', nombreCliente: 'C2', estadoPedido: 'NEW', fechaEntrega: '2026', total: null, saldoPendiente: 50 }
+      ]
+    });
+
+    expect(result[0].clientName).toBe('');
+    expect(result[0].paymentStatus).toBe('PAID');
+    expect(result[0].id).toBe('1');
+
+    expect(result[1].totalAmount).toBe(0);
+    expect(result[1].paymentStatus).toBe('PARTIAL');
+    expect(result[1].id).toContain('tmp-');
+  });
+
+  it('should use default values in create when data is missing', () => {
+    service.create({}).subscribe();
+    const req = httpMock.expectOne(apiUrl);
+    expect(req.request.body.idCliente).toBe(1);
+    expect(req.request.body.idUsuario).toBe(1);
+    expect(req.request.body.fechaEntrega).toBeDefined();
+    req.flush({});
+  });
+
+  it('should handle alternative field names in update', () => {
+    service.update(1, { items: [{ idProducto: 5, cantidad: 10, observaciones: 'Obs' }] }).subscribe();
+    const req = httpMock.expectOne(`${apiUrl}/1`);
+    expect(req.request.body.detalles[0].idProducto).toBe(5);
+    expect(req.request.body.detalles[0].cantidad).toBe(10);
+    expect(req.request.body.detalles[0].observaciones).toBe('Obs');
+    req.flush({});
+  });
 });

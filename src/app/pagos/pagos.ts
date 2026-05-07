@@ -2,7 +2,6 @@ import { Component, inject, OnInit, ChangeDetectorRef, DestroyRef, AfterViewInit
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { PaymentService } from '../core/services/payment.service';
 import { PaymentListItemDTO } from '../core/models/payment.dto';
 import { Observable, EMPTY } from 'rxjs';
@@ -21,6 +20,8 @@ import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/conf
 import { STATUS_MAP } from '../shared/constants/ui-constants';
 import { ListHelper } from '../shared/utils/list-helper';
 import { BaseTableComponent } from '../shared/components/base-table.component';
+import { ScreenSizeService } from '../core/services/screen-size.service';
+import { UIService } from '../core/services/ui.service';
 
 /** Shape normalizada para la tabla — compatible con el HTML existente */
 interface PaymentRow {
@@ -88,7 +89,7 @@ export class PagosComponent extends BaseTableComponent<PaymentListItemDTO> imple
   errorMessage = '';
   showViewModal = false;
   selectedPayment: PaymentListItemDTO | null = null;
-  isMobile = false;
+  readonly screenSize = inject(ScreenSizeService);
 
   // ─── Formulario ───────────────────────────────────────────────────────────
   viewMode: 'list' | 'add' | 'edit' = 'list';
@@ -108,16 +109,12 @@ export class PagosComponent extends BaseTableComponent<PaymentListItemDTO> imple
   private readonly paymentService = inject(PaymentService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly breakpointObserver = inject(BreakpointObserver);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
+  private readonly uiService = inject(UIService);
 
   constructor() {
     super();
-    this.breakpointObserver.observe([Breakpoints.Handset, Breakpoints.TabletPortrait]).subscribe(result => {
-      this.isMobile = result.matches;
-      this.cdr.markForCheck();
-    });
 
     // Campos que acepta el backend: monto, metodoPago (EFECTIVO|TRANSFERENCIA), referenciaComprobante
     this.paymentForm = this.fb.group({
@@ -233,23 +230,16 @@ export class PagosComponent extends BaseTableComponent<PaymentListItemDTO> imple
     this.cdr.detectChanges();
   }
 
-  // ─── Eliminar ────────────────────────────────────────────────────────────
-
   openDeleteModal(payment: PaymentListItemDTO): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      panelClass: 'casualidad-dialog',
-      data: {
-        title: '\u00bfEliminar pago?',
-        message: '\u00bfEst\u00e1s seguro de que deseas eliminar este registro de pago de ',
-        highlightText: `$${payment.monto}`,
-        warningText: 'Esta acci\u00f3n eliminar\u00e1 el abono permanentemente y ',
-        confirmLabel: 'S\u00ed, eliminar pago',
-        icon: 'delete_forever',
-        accentColor: 'error'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
+    this.uiService.showConfirm({
+      title: '¿Eliminar pago?',
+      message: '¿Estás seguro de que deseas eliminar este registro de pago de ',
+      highlightText: `$${payment.monto}`,
+      warningText: 'Esta acción eliminará el abono permanentemente y ',
+      confirmLabel: 'Sí, eliminar pago',
+      icon: 'delete_forever',
+      accentColor: 'error'
+    }).subscribe(result => {
       if (result) {
         this.confirmDelete(payment);
       }
@@ -263,29 +253,14 @@ export class PagosComponent extends BaseTableComponent<PaymentListItemDTO> imple
         next: () => {
           this.loadPayments();
           this.fetchPayments();
-          this.dialog.open(SuccessDialogComponent, {
-            panelClass: 'casualidad-dialog',
-            data: {
-              title: '\u00a1Pago Eliminado!',
-              message: 'El registro de pago ha sido eliminado exitosamente.',
-              icon: 'check_circle',
-              accentColor: 'success',
-              primaryActionLabel: 'Continuar'
-            }
+          this.uiService.showSuccess({
+            title: '¡Pago Eliminado!',
+            message: 'El registro de pago ha sido eliminado exitosamente.'
           });
         },
         error: (err) => {
           console.error('Error eliminando pago', err);
-          this.dialog.open(SuccessDialogComponent, {
-            panelClass: 'casualidad-dialog',
-            data: {
-              title: '\u00a1Algo sali\u00f3 mal!',
-              message: 'No se pudo eliminar el abono. Verifica si el abono a\u00fan existe.',
-              icon: 'error',
-              accentColor: 'warning',
-              primaryActionLabel: 'Entendido'
-            }
-          });
+          this.uiService.showError('No se pudo eliminar el abono. Verifica si el abono aún existe.');
         }
       });
   }
@@ -365,19 +340,12 @@ export class PagosComponent extends BaseTableComponent<PaymentListItemDTO> imple
         this.loadPayments();
         this.fetchPayments();
         const isEdit = this.viewMode === 'edit';
-        const dialogRef = this.dialog.open(SuccessDialogComponent, {
-          panelClass: 'casualidad-dialog',
-          data: {
-            title: isEdit ? '\u00a1Abono Actualizado!' : '\u00a1Abono Registrado!',
-            message: isEdit ? 'Los detalles del pago han sido modificados.' : 'El movimiento ha sido registrado correctamente.',
-            icon: 'check_circle',
-            accentColor: 'success',
-            primaryActionLabel: 'Ir a Pagos',
-            secondaryActionLabel: isEdit ? 'Seguir editando' : 'Registrar otro pago'
-          }
-        });
-
-        dialogRef.afterClosed().subscribe((result: SuccessDialogResult) => {
+        this.uiService.showSuccess({
+          title: isEdit ? '¡Abono Actualizado!' : '¡Abono Registrado!',
+          message: isEdit ? 'Los detalles del pago han sido modificados.' : 'El movimiento ha sido registrado correctamente.',
+          primaryActionLabel: 'Ir a Pagos',
+          secondaryActionLabel: isEdit ? 'Seguir editando' : 'Registrar otro pago'
+        }).subscribe((result: any) => {
           if (!result || result.action === 'primary' || result.action === 'close') {
             this.viewMode = 'list';
           } else if (result.action === 'secondary' && !isEdit) {

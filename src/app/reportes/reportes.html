@@ -1,170 +1,247 @@
-<div class="p-10 max-w-7xl mx-auto space-y-12 animate-[dropdownFadeIn_0.3s_ease-out]">
-    <!-- Section 1: Conciliación de Ingresos -->
-    <section class="space-y-6">
-        <div class="flex justify-between items-end">
-            <div>
-                <h2 class="text-4xl font-bold tracking-tight text-on-surface mb-2">Conciliación de Ingresos</h2>
-                <p class="text-on-surface-variant flex items-center gap-2">
-                    <span class="material-symbols-outlined text-sm">info</span>
-                    Se excluyen abonos de pedidos cancelados del cálculo final.
-                </p>
-            </div>
-            <div class="flex gap-4 p-1.5 bg-surface-container rounded-xl">
-                <div class="flex flex-col px-4 py-1">
-                    <label for="dateFromInput" class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Inicio</label>
-                    <input id="dateFromInput" [(ngModel)]="incomeReport.dateFrom" (change)="onDateChange()" class="bg-transparent border-none p-0 text-sm font-bold text-primary focus:ring-0 cursor-pointer" type="date" />
-                </div>
-                <div class="w-px bg-neutral-300 my-2"></div>
-                <div class="flex flex-col px-4 py-1">
-                    <label for="dateToInput" class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Fin</label>
-                    <input id="dateToInput" [(ngModel)]="incomeReport.dateTo" (change)="onDateChange()" class="bg-transparent border-none p-0 text-sm font-bold text-primary focus:ring-0 cursor-pointer" type="date" />
-                </div>
-            </div>
+<div class="p-4 sm:p-8 lg:p-10 max-w-7xl mx-auto space-y-8 sm:space-y-12 animate-[dropdownFadeIn_0.3s_ease-out]">
+
+  <!-- ══════════════════════════════════════════════════
+       Section 1: Conciliación de Ingresos
+  ══════════════════════════════════════════════════ -->
+  <section class="space-y-6">
+
+    <!-- Header: título + date-picker (se apilan en móvil) -->
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
+      <div>
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-on-surface mb-2">
+          Conciliación de Ingresos
+        </h2>
+        <p class="text-on-surface-variant flex items-center gap-2 text-sm">
+          <span class="material-symbols-outlined text-sm">info</span>
+          Se excluyen abonos de pedidos cancelados del cálculo final.
+        </p>
+      </div>
+
+      <!-- Date Range Picker — full-width on mobile, auto on sm+ -->
+      <div class="flex gap-0 p-1.5 bg-surface-container rounded-xl self-start sm:self-auto w-full sm:w-auto">
+        <div class="flex flex-col px-4 py-1 flex-1 sm:flex-none">
+          <label for="dateFromInput"
+            class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Inicio</label>
+          <input id="dateFromInput" [(ngModel)]="incomeReport.dateFrom" (change)="onDateChange()"
+            class="bg-transparent border-none p-0 text-sm font-bold text-primary focus:ring-0 cursor-pointer w-full"
+            type="date" />
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- Total Hero Card -->
-            <div class="col-span-1 bg-gradient-to-br from-primary to-primary-container p-8 rounded-xl shadow-lg text-on-primary">
-                <div class="flex justify-between items-start mb-6">
-                    <span class="material-symbols-outlined text-3xl">account_balance_wallet</span>
-                    <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-bold">Período Seleccionado</span>
-                </div>
-                <p class="text-sm font-medium opacity-80 mb-1">Total Recaudado</p>
-                <h3 class="text-5xl font-extrabold tracking-tighter mb-4">{{ incomeReport.totalIncome | currency:'USD' }}</h3>
-                <div class="flex items-center gap-2 text-sm opacity-90">
-                    <span class="material-symbols-outlined text-sm">trending_flat</span>
-                    <span>Actualizado en tiempo real</span>
-                </div>
-            </div>
-            <!-- Cash Card -->
-            <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-surface-container/50">
-                <div class="flex items-center justify-between mb-6">
-                    <div class="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center">
-                        <span class="material-symbols-outlined text-primary">payments</span>
-                    </div>
-                </div>
-                <p class="text-neutral-500 text-sm font-medium mb-1">Ingresos en Efectivo</p>
-                <h3 class="text-3xl font-bold tracking-tight text-on-surface">{{ incomeReport.cashTotal | currency:'USD' }}</h3>
-                <div class="mt-4 w-full bg-neutral-100 h-1.5 rounded-full overflow-hidden">
-                    <div class="bg-primary h-full transition-all duration-500" [style.width.%]="cashPercentage"></div>
-                </div>
-                <p class="mt-2 text-[11px] text-neutral-400 font-bold uppercase tracking-wider">{{ cashPercentage | number:'1.0-1' }}% del total</p>
-            </div>
-            <!-- Transfer Card -->
-            <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm border border-surface-container/50">
-                <div class="flex items-center justify-between mb-6">
-                    <div class="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center">
-                        <span class="material-symbols-outlined text-tertiary">account_balance</span>
-                    </div>
-                </div>
-                <p class="text-neutral-500 text-sm font-medium mb-1">Ingresos por Transferencia</p>
-                <h3 class="text-3xl font-bold tracking-tight text-on-surface">{{ incomeReport.transferTotal | currency:'USD' }}</h3>
-                <div class="mt-4 w-full bg-neutral-100 h-1.5 rounded-full overflow-hidden">
-                    <div class="bg-tertiary h-full transition-all duration-500" [style.width.%]="transferPercentage"></div>
-                </div>
-                <p class="mt-2 text-[11px] text-neutral-400 font-bold uppercase tracking-wider">{{ transferPercentage | number:'1.0-1' }}% del total</p>
-            </div>
+        <div class="w-px bg-neutral-300 my-2"></div>
+        <div class="flex flex-col px-4 py-1 flex-1 sm:flex-none">
+          <label for="dateToInput"
+            class="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">Fin</label>
+          <input id="dateToInput" [(ngModel)]="incomeReport.dateTo" (change)="onDateChange()"
+            class="bg-transparent border-none p-0 text-sm font-bold text-primary focus:ring-0 cursor-pointer w-full"
+            type="date" />
         </div>
+      </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+      <!-- Total Hero Card -->
+      <div class="sm:col-span-1 bg-gradient-to-br from-primary to-primary-container p-6 sm:p-8 rounded-xl shadow-lg text-on-primary">
+        <div class="flex justify-between items-start mb-4 sm:mb-6">
+          <span class="material-symbols-outlined text-3xl">account_balance_wallet</span>
+          <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-bold">Período Seleccionado</span>
+        </div>
+        <p class="text-sm font-medium opacity-80 mb-1">Total Recaudado</p>
+        <h3 class="text-4xl sm:text-5xl font-extrabold tracking-tighter mb-4">
+          {{ incomeReport.totalIncome | currency:'USD' }}
+        </h3>
+        <div class="flex items-center gap-2 text-sm opacity-90">
+          <span class="material-symbols-outlined text-sm">trending_flat</span>
+          <span>Actualizado en tiempo real</span>
+        </div>
+      </div>
+      <!-- Cash Card -->
+      <div class="bg-surface-container-lowest p-6 sm:p-8 rounded-xl shadow-sm border border-surface-container/50">
+        <div class="flex items-center justify-between mb-4 sm:mb-6">
+          <div class="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary">payments</span>
+          </div>
+        </div>
+        <p class="text-neutral-500 text-sm font-medium mb-1">Ingresos en Efectivo</p>
+        <h3 class="text-3xl font-bold tracking-tight text-on-surface">
+          {{ incomeReport.cashTotal | currency:'USD' }}
+        </h3>
+        <div class="mt-4 w-full bg-neutral-100 h-1.5 rounded-full overflow-hidden">
+          <div class="bg-primary h-full transition-all duration-500" [style.width.%]="cashPercentage"></div>
+        </div>
+        <p class="mt-2 text-[11px] text-neutral-400 font-bold uppercase tracking-wider">
+          {{ cashPercentage | number:'1.0-1' }}% del total
+        </p>
+      </div>
+      <!-- Transfer Card -->
+      <div class="bg-surface-container-lowest p-6 sm:p-8 rounded-xl shadow-sm border border-surface-container/50">
+        <div class="flex items-center justify-between mb-4 sm:mb-6">
+          <div class="w-12 h-12 bg-surface-container rounded-full flex items-center justify-center">
+            <span class="material-symbols-outlined text-tertiary">account_balance</span>
+          </div>
+        </div>
+        <p class="text-neutral-500 text-sm font-medium mb-1">Ingresos por Transferencia</p>
+        <h3 class="text-3xl font-bold tracking-tight text-on-surface">
+          {{ incomeReport.transferTotal | currency:'USD' }}
+        </h3>
+        <div class="mt-4 w-full bg-neutral-100 h-1.5 rounded-full overflow-hidden">
+          <div class="bg-tertiary h-full transition-all duration-500" [style.width.%]="transferPercentage"></div>
+        </div>
+        <p class="mt-2 text-[11px] text-neutral-400 font-bold uppercase tracking-wider">
+          {{ transferPercentage | number:'1.0-1' }}% del total
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       Section 2: Saldos por Cobrar & Ranking
+  ══════════════════════════════════════════════════ -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
+
+    <!-- Saldos por Cobrar (Left 2/3) -->
+    <section class="lg:col-span-2 space-y-4 sm:space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Saldos por Cobrar</h2>
+        <button (click)="exportExcel()" aria-label="Exportar .xlsx"
+          class="px-4 py-2 bg-surface-container text-on-surface hover:bg-surface-container-high rounded-lg text-sm font-bold flex items-center gap-2 transition-colors self-start sm:self-auto">
+          <span class="material-symbols-outlined text-sm">download</span> Exportar .xlsx
+        </button>
+      </div>
+
+      <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-container/50 overflow-hidden">
+        <!-- Desktop Table -->
+        @if (true) {
+        <div class="hidden sm:block overflow-x-auto">
+          <table mat-table [dataSource]="dataSource" matSort class="w-full text-left">
+            <ng-container matColumnDef="cliente">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header
+                class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-neutral-500 border-b border-outline-variant/15">Cliente</th>
+              <td mat-cell *matCellDef="let balance" class="px-6 py-4">
+                <span class="font-bold text-sm">{{ balance.clientName }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="codigo">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header
+                class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-neutral-500 border-b border-outline-variant/15">Código</th>
+              <td mat-cell *matCellDef="let balance" class="px-6 py-4 text-sm font-medium text-neutral-500">
+                #{{ balance.orderCode }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="fechaEntrega">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header
+                class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-neutral-500 border-b border-outline-variant/15">Fecha Entrega</th>
+              <td mat-cell *matCellDef="let balance" class="px-6 py-4 text-sm">
+                {{ balance.deliveryDate | date:'mediumDate' }}
+                @if (balance.daysUntilDelivery < 0) {
+                <span class="ml-2 text-xs text-error font-bold" title="Atrasado">(Vencido)</span>
+                }
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="montoTotal">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header
+                class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-neutral-500 border-b border-outline-variant/15">Monto Total</th>
+              <td mat-cell *matCellDef="let balance" class="px-6 py-4 text-sm font-bold">
+                {{ balance.totalAmount | currency:'USD' }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="pendiente">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header
+                class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-neutral-500 border-b border-outline-variant/15">Pendiente</th>
+              <td mat-cell *matCellDef="let balance" class="px-6 py-4">
+                <span class="px-2 py-1 bg-red-50 text-red-700 text-xs font-black rounded-md">
+                  {{ balance.pendingBalance | currency:'USD' }}
+                </span>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-surface-container-low"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+              class="hover:bg-neutral-50 transition-colors group"></tr>
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell px-6 py-12 text-center text-neutral-400 font-medium" colspan="5">
+                No hay saldos pendientes de cobro por el momento.
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Mobile Card List -->
+        <div class="sm:hidden divide-y divide-stone-100">
+          @for (balance of dataSource.filteredData
+            | slice:(paginator.pageIndex * paginator.pageSize):(paginator.pageIndex * paginator.pageSize + paginator.pageSize);
+            track balance.orderId) {
+          <div class="p-4 flex flex-col gap-2">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="font-bold text-sm text-on-surface">{{ balance.clientName }}</p>
+                <p class="text-[11px] text-neutral-400">#{{ balance.orderCode }}</p>
+              </div>
+              <span class="px-2 py-1 bg-red-50 text-red-700 text-xs font-black rounded-md shrink-0">
+                {{ balance.pendingBalance | currency:'USD' }}
+              </span>
+            </div>
+            <div class="flex justify-between items-center text-xs text-neutral-500">
+              <span>{{ balance.deliveryDate | date:'dd/MM/yy' }}
+                @if (balance.daysUntilDelivery < 0) {
+                  <span class="text-error font-bold ml-1">(Vencido)</span>
+                }
+              </span>
+              <span class="font-bold text-on-surface">Total: {{ balance.totalAmount | currency:'USD' }}</span>
+            </div>
+          </div>
+          }
+          @if (dataSource.filteredData.length === 0) {
+          <div class="py-10 text-center text-neutral-400 text-sm">
+            No hay saldos pendientes de cobro.
+          </div>
+          }
+        </div>
+        }
+
+        <mat-paginator #paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of balances"></mat-paginator>
+      </div>
     </section>
 
-    <!-- Section 2: Saldos por Cobrar & Ranking Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
-        <!-- Saldos por Cobrar (Left 2/3) -->
-        <section class="lg:col-span-2 space-y-6">
-            <div class="flex items-center justify-between">
-                <h2 class="text-3xl font-bold tracking-tight">Saldos por Cobrar</h2>
-                <button (click)="exportExcel()" aria-label="Exportar .xlsx" class="px-4 py-2 bg-surface-container text-on-surface hover:bg-surface-container-high rounded-lg text-sm font-bold flex items-center gap-2 transition-colors">
-                    <span class="material-symbols-outlined text-sm">download</span> Exportar .xlsx
-                </button>
+    <!-- Ranking de Productos (Right 1/3) -->
+    <section class="space-y-4 sm:space-y-6">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl sm:text-3xl font-bold tracking-tight">Ranking</h2>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button class="px-4 py-2 bg-primary text-on-primary rounded-full text-xs font-bold shadow-sm">
+          Top Productos
+        </button>
+      </div>
+      <div class="space-y-3 sm:space-y-4">
+        @for (product of topProducts; track product.productId) {
+        <div (click)="goToProduct(product.productName)" class="bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-surface-container/50 flex gap-4 items-start hover:translate-y-[-2px] hover:border-primary/30 cursor-pointer transition-all">
+          <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[10px] font-black mt-0.5"
+            [ngClass]="getRankColorClass(product.rank)">
+            {{ product.rank }}
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4 class="font-bold text-sm truncate">{{ product.productName }}</h4>
+            <p class="text-[10px] text-neutral-400 font-bold uppercase mt-0.5">
+              {{ product.categoryName || 'Sin Categoría' }}
+            </p>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-xs text-neutral-500">{{ product.unitsSold }} vendidos</span>
+              <span class="text-sm font-black text-orange-700">{{ product.totalRevenue | currency:'USD' }}</span>
             </div>
-            <div class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-container/50 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table mat-table [dataSource]="dataSource" matSort class="w-full text-left">
-                        <ng-container matColumnDef="cliente">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-neutral-500 border-b border-outline-variant/15">Cliente</th>
-                            <td mat-cell *matCellDef="let balance" class="px-6 py-4">
-                                <span class="font-bold text-sm">{{ balance.clientName }}</span>
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="codigo">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-neutral-500 border-b border-outline-variant/15">Código</th>
-                            <td mat-cell *matCellDef="let balance" class="px-6 py-4 text-sm font-medium text-neutral-500">#{{ balance.orderCode }}</td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="fechaEntrega">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-neutral-500 border-b border-outline-variant/15">Fecha Entrega</th>
-                            <td mat-cell *matCellDef="let balance" class="px-6 py-4 text-sm">
-                                {{ balance.deliveryDate | date:'mediumDate' }}
-                                @if (balance.daysUntilDelivery < 0) {
-                                    <span class="ml-2 text-xs text-error font-bold" title="Atrasado">(Vencido)</span>
-                                }
-                            </td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="montoTotal">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-neutral-500 border-b border-outline-variant/15">Monto Total</th>
-                            <td mat-cell *matCellDef="let balance" class="px-6 py-4 text-sm font-bold">{{ balance.totalAmount | currency:'USD' }}</td>
-                        </ng-container>
-
-                        <ng-container matColumnDef="pendiente">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-neutral-500 border-b border-outline-variant/15">Pendiente</th>
-                            <td mat-cell *matCellDef="let balance" class="px-6 py-4">
-                                <span class="px-2 py-1 bg-red-50 text-red-700 text-xs font-black rounded-md">{{ balance.pendingBalance | currency:'USD' }}</span>
-                            </td>
-                        </ng-container>
-
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="bg-surface-container-low"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-neutral-50 transition-colors group"></tr>
-                        
-                        <tr class="mat-row" *matNoDataRow>
-                            <td class="mat-cell px-6 py-12 text-center text-neutral-400 font-medium" colspan="5">
-                                No hay saldos pendientes de cobro por el momento.
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                
-                <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of balances"></mat-paginator>
+            <div class="mt-2 w-full bg-neutral-100 h-1.5 rounded-full overflow-hidden">
+              <div class="h-full transition-all duration-700" [ngClass]="getRankProgressClass(product.rank)"
+                [style.width.%]="(product.unitsSold / (topProducts[0]?.unitsSold || 1)) * 100"></div>
             </div>
-        </section>
+          </div>
+        </div>
+        }
+        @if (topProducts.length === 0) {
+        <div class="bg-surface-container-lowest p-8 rounded-xl border border-surface-container/50 text-center text-neutral-400">
+          <span class="material-symbols-outlined text-4xl mb-2 opacity-50">leaderboard</span>
+          <p class="text-sm font-medium">No hay datos de ranking para este período.</p>
+        </div>
+        }
+      </div>
+    </section>
 
-        <!-- Ranking de Productos (Right 1/3) -->
-        <section class="space-y-6">
-            <div class="flex items-center justify-between">
-                <h2 class="text-3xl font-bold tracking-tight">Ranking</h2>
-            </div>
-            
-            <div class="flex flex-wrap gap-2">
-                <button class="px-4 py-2 bg-primary text-on-primary rounded-full text-xs font-bold shadow-sm">Top Productos</button>
-            </div>
-            
-            <div class="space-y-4">
-                @for (product of topProducts; track product.productId) {
-                    <div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-surface-container/50 flex gap-4 items-start hover:translate-y-[-2px] transition-transform">
-                        <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[10px] font-black mt-0.5" [ngClass]="getRankColorClass(product.rank)">
-                            {{ product.rank }}
-                        </div>
-                        <div class="flex-1">
-                            <h4 class="font-bold text-sm">{{ product.productName }}</h4>
-                            <p class="text-[10px] text-neutral-400 font-bold uppercase mt-0.5">{{ product.categoryName || 'Sin Categoría' }}</p>
-                            <div class="flex items-center justify-between mt-2">
-                                <span class="text-xs text-neutral-500">{{ product.unitsSold }} vendidos</span>
-                                <span class="text-sm font-black text-orange-700">{{ product.totalRevenue | currency:'USD' }}</span>
-                            </div>
-                            <div class="mt-2 w-full bg-neutral-100 h-1 rounded-full overflow-hidden">
-                                <!-- Porcentaje simulado en base al rank para la barra visual (el backend no da un max) -->
-                                <div class="h-full" [ngClass]="getRankProgressClass(product.rank)" [style.width.%]="100 - (product.rank * 15)"></div>
-                            </div>
-                        </div>
-                    </div>
-                }
-                @if (topProducts.length === 0) {
-                    <div class="bg-surface-container-lowest p-8 rounded-xl border border-surface-container/50 text-center text-neutral-400">
-                        <span class="material-symbols-outlined text-4xl mb-2 opacity-50">leaderboard</span>
-                        <p class="text-sm font-medium">No hay datos de ranking para este período.</p>
-                    </div>
-                }
-            </div>
-        </section>
-    </div>
+  </div>
 </div>

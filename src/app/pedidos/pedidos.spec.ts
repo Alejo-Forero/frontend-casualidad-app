@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { OrderSummaryDTO } from '../core/models/order.dto';
+import { UIService } from '../core/services/ui.service';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -50,6 +51,7 @@ describe('PedidosComponent', () => {
   let mockInventoryService: jest.Mocked<Partial<InventoryService>>;
   let mockDialog: { open: jest.Mock };
   let mockRouter: { navigate: jest.Mock };
+  let mockUIService: { showSuccess: jest.Mock, showConfirm: jest.Mock, showError: jest.Mock };
 
   const setupTestBed = async (queryParams: any = {}) => {
     mockOrderService = {
@@ -70,6 +72,11 @@ describe('PedidosComponent', () => {
       getAll: jest.fn(() => of([{ id: 1, name: 'P1', idProducto: 1, nombre: 'P1', salePrice: 100 }])),
     };
     mockDialog = { open: jest.fn(() => dialogRefStub(true)) };
+    mockUIService = {
+      showSuccess: jest.fn(() => of({ action: 'primary' })),
+      showConfirm: jest.fn(() => of(true)),
+      showError: jest.fn(() => of(true))
+    };
     mockRouter = { navigate: jest.fn() };
 
     await TestBed.configureTestingModule({
@@ -80,9 +87,11 @@ describe('PedidosComponent', () => {
         { provide: InventoryService, useValue: mockInventoryService },
         { provide: ActivatedRoute, useValue: { queryParams: of(queryParams) } },
         { provide: MatDialog, useValue: mockDialog },
+        { provide: UIService, useValue: mockUIService },
         { provide: Router, useValue: mockRouter },
       ],
     }).overrideProvider(MatDialog, { useValue: mockDialog })
+      .overrideProvider(UIService, { useValue: mockUIService })
       .overrideProvider(Router, { useValue: mockRouter })
       .compileComponents();
 
@@ -350,8 +359,8 @@ describe('PedidosComponent', () => {
 
   it('openEditForm should skip and show dialog when order is finished/cancelled', () => {
     component.openEditForm(makeOrder({ estadoPedido: 'TERMINADO' }));
-    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
-      data: expect.objectContaining({ title: 'Acción No Permitida' })
+    expect(mockUIService.showSuccess).toHaveBeenCalledWith(expect.objectContaining({
+      title: 'Acción No Permitida'
     }));
     expect(mockOrderService.getById).not.toHaveBeenCalled();
   });
@@ -442,16 +451,14 @@ describe('PedidosComponent', () => {
   it('openActivarProduccionModal should open confirm dialog', () => {
     const order = makeOrder();
     component.openActivarProduccionModal(order);
-    expect(mockDialog.open).toHaveBeenCalled();
+    expect(mockUIService.showConfirm).toHaveBeenCalled();
   });
 
   it('confirmActivarProduccion should call activarProduccion and open success dialog when confirmed', () => {
     const order = makeOrder();
     component.confirmActivarProduccion(order);
     expect(mockOrderService.activarProduccion).toHaveBeenCalledWith(1);
-    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
-      data: expect.objectContaining({ accentColor: 'success' })
-    }));
+    expect(mockUIService.showSuccess).toHaveBeenCalled();
   });
 
   it('confirmActivarProduccion should open error dialog when fails', () => {
@@ -459,9 +466,7 @@ describe('PedidosComponent', () => {
     (mockOrderService.activarProduccion as jest.Mock).mockReturnValue(throwError(() => new Error('fail')));
     const order = makeOrder();
     component.confirmActivarProduccion(order);
-    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
-      data: expect.objectContaining({ accentColor: 'warning' })
-    }));
+    expect(mockUIService.showError).toHaveBeenCalled();
     consoleSpy.mockRestore();
   });
 
@@ -472,16 +477,14 @@ describe('PedidosComponent', () => {
   it('openDeleteModal should open confirm dialog', () => {
     const order = makeOrder();
     component.openDeleteModal(order);
-    expect(mockDialog.open).toHaveBeenCalled();
+    expect(mockUIService.showConfirm).toHaveBeenCalled();
   });
 
   it('confirmDelete should call cancelar and open success dialog on success', () => {
     const order = makeOrder();
     component.confirmDelete(order);
     expect(mockOrderService.cancelar).toHaveBeenCalledWith(1);
-    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
-      data: expect.objectContaining({ accentColor: 'success' })
-    }));
+    expect(mockUIService.showSuccess).toHaveBeenCalled();
   });
 
   it('confirmDelete should open error dialog when cancelar fails', () => {
@@ -489,9 +492,7 @@ describe('PedidosComponent', () => {
     (mockOrderService.cancelar as jest.Mock).mockReturnValue(throwError(() => new Error('fail')));
     const order = makeOrder();
     component.confirmDelete(order);
-    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
-      data: expect.objectContaining({ accentColor: 'warning' })
-    }));
+    expect(mockUIService.showError).toHaveBeenCalled();
     consoleSpy.mockRestore();
   });
 
@@ -515,7 +516,7 @@ describe('PedidosComponent', () => {
   });
 
   it('saveOrder should go to list after primary action', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub({ action: 'primary' }));
+    mockUIService.showSuccess.mockReturnValue(of({ action: 'primary' }));
     component.openAddForm();
     component.orderForm.patchValue({ clientId: 10, deliveryDate: '2026-06-01' });
     component.itemsFormArray.at(0).patchValue({ productId: 1, quantity: 1 });
@@ -524,7 +525,7 @@ describe('PedidosComponent', () => {
   });
 
   it('saveOrder should go to list when dialog result is null', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(null));
+    mockUIService.showSuccess.mockReturnValue(of(null));
     component.openAddForm();
     component.orderForm.patchValue({ clientId: 10, deliveryDate: '2026-06-01' });
     component.itemsFormArray.at(0).patchValue({ productId: 1, quantity: 1 });
@@ -533,7 +534,7 @@ describe('PedidosComponent', () => {
   });
 
   it('saveOrder should call openAddForm on secondary action when creating', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub({ action: 'secondary' }));
+    mockUIService.showSuccess.mockReturnValue(of({ action: 'secondary' }));
     const openAddSpy = jest.spyOn(component, 'openAddForm');
     component.openAddForm();
     component.orderForm.patchValue({ clientId: 10, deliveryDate: '2026-06-01' });
@@ -567,7 +568,7 @@ describe('PedidosComponent', () => {
   });
 
   it('saveOrder should NOT call openAddForm on secondary action when editing', async () => {
-    mockDialog.open.mockReturnValue(dialogRefStub({ action: 'secondary' }));
+    mockUIService.showSuccess.mockReturnValue(of({ action: 'secondary' }));
     component.clientsList = [{ id: 10, nombre: 'Alpha' } as any];
     component.openEditForm(makeOrder());
     await new Promise(r => setTimeout(r, 20)); // Increased timeout

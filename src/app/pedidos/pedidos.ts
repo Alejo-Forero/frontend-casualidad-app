@@ -2,7 +2,6 @@ import { Component, inject, OnInit, AfterViewInit, ChangeDetectorRef, DestroyRef
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OrderSummaryDTO, OrderDetailDTO, CreateOrderDTO } from '../core/models/order.dto';
 import { OrderService } from '../core/services/order.service';
@@ -23,6 +22,8 @@ import { SuccessDialogComponent } from '../shared/components/success-dialog/succ
 import { STATUS_MAP } from '../shared/constants/ui-constants';
 import { ListHelper } from '../shared/utils/list-helper';
 import { BaseTableComponent } from '../shared/components/base-table.component';
+import { ScreenSizeService } from '../core/services/screen-size.service';
+import { UIService } from '../core/services/ui.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -72,6 +73,7 @@ export class PedidosComponent extends BaseTableComponent<OrderSummaryDTO> implem
   orderForm: FormGroup;
   currentOrderClientName = '';
   selectedOrderDetails: OrderDetailDTO | null = null;
+  pendingViewOrderId: string | null = null;
   formalizeList: OrderSummaryDTO[] = [];
   formalizeFilter: 'TODOS' | 'PENDIENTES' | 'PRODUCCION' = 'TODOS';
   totalPendienteFormalizar = 0;
@@ -87,17 +89,13 @@ export class PedidosComponent extends BaseTableComponent<OrderSummaryDTO> implem
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly dialog = inject(MatDialog);
+  private readonly uiService = inject(UIService);
   private readonly router = inject(Router);
 
-  isMobile = false;
-  private readonly breakpointObserver = inject(BreakpointObserver);
+  readonly screenSize = inject(ScreenSizeService);
 
   constructor() {
     super();
-    this.breakpointObserver.observe([Breakpoints.Handset, Breakpoints.TabletPortrait]).subscribe(result => {
-      this.isMobile = result.matches;
-      this.cdr.markForCheck();
-    });
 
     this.orderForm = this.fb.group({
       id: [''],
@@ -159,6 +157,10 @@ export class PedidosComponent extends BaseTableComponent<OrderSummaryDTO> implem
           this.openAddForm();
         }
       }
+      if (params['view']) {
+        this.pendingViewOrderId = String(params['view']);
+        this.checkPendingViewOrder();
+      }
     });
   }
 
@@ -185,10 +187,21 @@ export class PedidosComponent extends BaseTableComponent<OrderSummaryDTO> implem
       next: (data) => {
         this.ordersData = data;
         this.dataSource.data = this.ordersData;
+        this.checkPendingViewOrder();
         this.cdr.detectChanges();
       },
       error: (err: any) => console.error('Error loading orders', err)
     });
+  }
+
+  private checkPendingViewOrder(): void {
+    if (this.pendingViewOrderId && this.ordersData.length > 0) {
+      const order = this.ordersData.find(o => String(o.idPedido || o.id) === this.pendingViewOrderId);
+      if (order) {
+        this.openDetail(order);
+        this.pendingViewOrderId = null;
+      }
+    }
   }
 
   loadClients(): void {
@@ -217,21 +230,15 @@ export class PedidosComponent extends BaseTableComponent<OrderSummaryDTO> implem
 
   // --- ACTIVAR PRODUCCIÓN ---
   openActivarProduccionModal(order: OrderSummaryDTO): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      panelClass: 'casualidad-dialog',
-      data: {
-        title: '\u00bfActivar Producci\u00f3n?',
-        message: '\u00bfDeseas pasar el pedido ',
-        highlightText: `#${order.codigoUnico || order.idPedido}`,
-        message2: ' a producci\u00f3n?',
-        warningText: 'Se generar\u00e1 un c\u00f3digo de seguimiento \u00fanico y ',
-        confirmLabel: 'S\u00ed, activar producci\u00f3n',
-        icon: 'factory',
-        accentColor: 'primary'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
+    this.uiService.showConfirm({
+      title: '¿Activar Producción?',
+      message: 'Se generará una orden de producción para el pedido ',
+      highlightText: order.code,
+      warningText: 'Esto notificará al taller y no se podrá revertir fácilmente.',
+      confirmLabel: 'Sí, activar producción',
+      icon: 'precision_manufacturing',
+      accentColor: 'primary'
+    }).subscribe(result => {
       if (result) {
         this.confirmActivarProduccion(order);
       }
@@ -239,54 +246,33 @@ export class PedidosComponent extends BaseTableComponent<OrderSummaryDTO> implem
   }
 
   confirmActivarProduccion(order: OrderSummaryDTO): void {
-    const id = order.idPedido ?? order.id;
-    this.orderService.activarProduccion(Number(id)).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
+    this.orderService.activarProduccion(Number(order.id)).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (res: any) => {
         this.loadOrders();
-        this.dialog.open(SuccessDialogComponent, {
-          panelClass: 'casualidad-dialog',
-          data: {
-            title: '\u00a1Producci\u00f3n Activada!',
-            message: 'El pedido ha pasado a estado de producci\u00f3n correctamente.',
-            icon: 'verified',
-            accentColor: 'success',
-            primaryActionLabel: 'Continuar'
-          }
+        this.activarProduccionResult = res;
+        this.uiService.showSuccess({
+          title: '¡Producción Activada!',
+          message: `Se ha generado el código único: ${res.codigoUnico}`
         });
       },
       error: (err: any) => {
-        console.error('Error activando producci\u00f3n', err);
-        this.dialog.open(SuccessDialogComponent, {
-          panelClass: 'casualidad-dialog',
-          data: {
-            title: '\u00a1Algo sali\u00f3 mal!',
-            message: 'No se pudo activar la producci\u00f3n. Verifica que el pedido est\u00e9 en estado PENDIENTE.',
-            icon: 'error',
-            accentColor: 'warning',
-            primaryActionLabel: 'Entendido'
-          }
-        });
+        console.error('Error activando producción', err);
+        this.uiService.showError('No se pudo activar la producción. Revisa el stock de insumos.');
       }
     });
   }
 
   // --- DELETE ---
   openDeleteModal(order: OrderSummaryDTO): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      panelClass: 'casualidad-dialog',
-      data: {
-        title: '\u00bfEliminar pedido?',
-        message: '\u00bfEst\u00e1s seguro de que deseas eliminar el pedido ',
-        highlightText: `#${order.codigoUnico || order.idPedido}`,
-        message2: '?',
-        warningText: 'Esta acci\u00f3n no se puede deshacer y ',
-        confirmLabel: 'S\u00ed, eliminar pedido',
-        icon: 'delete_forever',
-        accentColor: 'error'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
+    this.uiService.showConfirm({
+      title: '¿Eliminar pedido?',
+      message: '¿Estás seguro de que deseas eliminar el pedido ',
+      highlightText: `#${order.codigoUnico || order.idPedido}`,
+      warningText: 'Esta acción no se puede deshacer y ',
+      confirmLabel: 'Sí, eliminar pedido',
+      icon: 'delete_forever',
+      accentColor: 'error'
+    }).subscribe(result => {
       if (result) {
         this.confirmDelete(order);
       }
@@ -298,29 +284,14 @@ export class PedidosComponent extends BaseTableComponent<OrderSummaryDTO> implem
     this.orderService.cancelar(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.loadOrders();
-        this.dialog.open(SuccessDialogComponent, {
-          panelClass: 'casualidad-dialog',
-          data: {
-            title: '\u00a1Pedido Eliminado!',
-            message: 'El pedido ha sido eliminado correctamente del sistema.',
-            icon: 'check_circle',
-            accentColor: 'success',
-            primaryActionLabel: 'Continuar'
-          }
+        this.uiService.showSuccess({
+          title: '¡Pedido Eliminado!',
+          message: 'El pedido ha sido eliminado correctamente del sistema.'
         });
       },
       error: (err: any) => {
         console.error('Error eliminando pedido', err);
-        this.dialog.open(SuccessDialogComponent, {
-          panelClass: 'casualidad-dialog',
-          data: {
-            title: '\u00a1Algo sali\u00f3 mal!',
-            message: 'No se pudo cancelar el pedido. Es posible que ya est\u00e9 en un estado que no permite cancelaci\u00f3n.',
-            icon: 'error',
-            accentColor: 'warning',
-            primaryActionLabel: 'Entendido'
-          }
-        });
+        this.uiService.showError('No se pudo cancelar el pedido. Es posible que ya esté en un estado que no permite cancelación.');
       }
     });
   }
@@ -369,17 +340,14 @@ export class PedidosComponent extends BaseTableComponent<OrderSummaryDTO> implem
     // Validar si el pedido se puede editar
     if (status === 'TERMINADO' || status === 'DONE' || status === 'DELIVERED' || 
         status === 'CANCELADO' || status === 'CANCELLED') {
-      this.dialog.open(SuccessDialogComponent, {
-        panelClass: 'casualidad-dialog',
-        data: {
-          title: 'Acción No Permitida',
-          message: `No es posible editar un pedido que se encuentra en estado `,
-          highlightText: (this.statusMap[status]?.text || status).toUpperCase(),
-          message2: '.',
-          icon: 'lock',
-          accentColor: 'warning',
-          primaryActionLabel: 'Entendido'
-        }
+      this.uiService.showSuccess({
+        title: 'Acción No Permitida',
+        message: `No es posible editar un pedido que se encuentra en estado `,
+        highlightText: (this.statusMap[status]?.text || status).toUpperCase(),
+        message2: '.',
+        icon: 'lock',
+        accentColor: 'warning',
+        primaryActionLabel: 'Entendido'
       });
       return;
     }
@@ -576,19 +544,14 @@ export class PedidosComponent extends BaseTableComponent<OrderSummaryDTO> implem
 
   private handleSaveSuccess(id: string | number | null): void {
     this.loadOrders();
-    const dialogRef = this.dialog.open(SuccessDialogComponent, {
-      panelClass: 'casualidad-dialog',
-      data: {
-        title: id ? '¡Pedido Actualizado!' : '¡Pedido Creado!',
-        message: id ? 'Los detalles del pedido han sido modificados.' : 'El pedido ha sido registrado correctamente.',
-        icon: 'check_circle',
-        accentColor: 'success',
-        primaryActionLabel: 'Ir a Pedidos',
-        secondaryActionLabel: id ? 'Seguir editando' : 'Crear otro pedido'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
+    this.uiService.showSuccess({
+      title: id ? '¡Pedido Actualizado!' : '¡Pedido Creado!',
+      message: id ? 'Los detalles del pedido han sido modificados.' : 'El pedido ha sido registrado correctamente.',
+      icon: 'check_circle',
+      accentColor: 'success',
+      primaryActionLabel: 'Ir a Pedidos',
+      secondaryActionLabel: id ? 'Seguir editando' : 'Crear otro pedido'
+    }).subscribe(result => {
       if (!result || result.action === 'primary' || result.action === 'close') {
         this.closeForm();
       } else if (result.action === 'secondary' && !id) {

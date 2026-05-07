@@ -1,5 +1,5 @@
 @if (viewMode === 'list') {
-<div class="p-10 max-w-7xl mx-auto space-y-10 animate-[dropdownFadeIn_0.3s_ease-out]">
+<div class="p-4 sm:p-8 lg:p-10 max-w-7xl mx-auto space-y-8 sm:space-y-10 animate-[dropdownFadeIn_0.3s_ease-out]">
     <!-- Hero Header Section -->
     <div class="flex justify-between items-end">
         <div class="space-y-1">
@@ -74,18 +74,18 @@
                 <h3 class="text-xl font-bold text-on-surface">Inventario</h3>
             </div>
             <div class="flex items-center gap-2">
-                <div class="relative hidden lg:block">
+                <div class="relative">
                     <span
                         class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 text-sm">search</span>
                     <input [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
-                        class="bg-surface-container border-none rounded-full py-2 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-orange-600/40 focus:bg-surface-container-lowest transition-all"
+                        class="bg-surface-container border-none rounded-full py-2 pl-10 pr-4 text-sm w-52 lg:w-64 focus:ring-2 focus:ring-orange-600/40 focus:bg-surface-container-lowest transition-all"
                         placeholder="Buscar artículo..." type="text" />
                 </div>
             </div>
         </div>
 
         <!-- Desktop Table View -->
-        @if (!isMobile) {
+        @if (!screenSize.isBelowDesktop()) {
         <div class="overflow-x-auto">
             <table mat-table [dataSource]="dataSource" matSort class="w-full text-left">
 
@@ -171,10 +171,10 @@
                 <!-- Acciones Column -->
                 <ng-container matColumnDef="acciones">
                     <th mat-header-cell *matHeaderCellDef
-                        class="px-8 py-4 text-right text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50">
+                        class="px-8 py-4 text-center text-[10px] font-black text-on-surface-variant uppercase tracking-[0.15em] bg-stone-50/50">
                         Acciones </th>
-                    <td mat-cell *matCellDef="let product" class="px-8 py-5 text-right">
-                        <div class="flex items-center justify-end gap-1">
+                    <td mat-cell *matCellDef="let product" class="px-8 py-5 text-center">
+                        <div class="flex items-center justify-center gap-1">
                             <button (click)="openEntradaModal(product)"
                                 class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
                                 title="Registrar Entrada de Stock">
@@ -283,7 +283,7 @@
 }
 
 @if (viewMode === 'add' || viewMode === 'edit') {
-<main class="p-10 max-w-5xl mx-auto w-full animate-[dropdownFadeIn_0.2s_ease-out]">
+<main class="p-4 sm:p-8 lg:p-10 max-w-5xl mx-auto w-full animate-[dropdownFadeIn_0.2s_ease-out]">
     <nav class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4">
         <button type="button" class="opacity-50 hover:opacity-100 transition-opacity"
             (click)="closeForm()">INVENTARIO</button>
@@ -349,12 +349,52 @@
                         </div>
 
                         <div class="space-y-2">
-                            <label for="unidadInput"
+                            <label for="unidadSelect"
                                 class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Unidad
                                 de Medida</label>
-                            <input id="unidadInput" formControlName="unit" placeholder="Ej: Resma, Kg, Unidad"
-                                class="w-full bg-surface-container border-none rounded-xl py-3.5 px-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium">
+                            <mat-form-field appearance="outline" class="w-full casualidad-select">
+                                <mat-select id="unidadSelect" formControlName="unit" placeholder="Seleccionar unidad">
+                                    <mat-select-trigger>
+                                        @if (inventoryForm.get('unit')?.value === 'NEW_UNIT') {
+                                            <span class="flex items-center gap-2 text-primary font-bold">
+                                                <span class="material-symbols-outlined !text-lg">straighten</span>
+                                                Nueva Unidad
+                                            </span>
+                                        } @else {
+                                            {{ getSelectedUnitName() }}
+                                        }
+                                    </mat-select-trigger>
+                                    @for (u of unidadesMedida; track u.idUnidad || u.nombre) {
+                                        <mat-option [value]="u.idUnidad || u.nombre">
+                                            <span>{{ u.nombre }}</span>
+                                        </mat-option>
+                                    }
+                                    <mat-divider class="!my-2"></mat-divider>
+                                    <mat-option value="NEW_UNIT" class="!h-12 !bg-primary/5 hover:!bg-primary/10 transition-colors">
+                                        <div class="flex items-center gap-3 text-primary font-bold">
+                                            <div class="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
+                                                <span class="material-symbols-outlined !text-lg">add_circle</span>
+                                            </div>
+                                            <span class="text-sm">Agregar nueva unidad...</span>
+                                        </div>
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
+
+                        @if (isAddingNewUnit) {
+                        <div class="space-y-2 animate-[dropdownFadeIn_0.3s_ease-out]">
+                            <label for="newUnitInput"
+                                class="block text-sm font-bold text-primary uppercase tracking-wider text-[11px]">Nombre de la Nueva Unidad</label>
+                            <div class="relative group">
+                                <div class="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-focus-within:bg-primary group-focus-within:text-white transition-all">
+                                    <span class="material-symbols-outlined !text-lg">straighten</span>
+                                </div>
+                                <input id="newUnitInput" formControlName="newUnitName" placeholder="Ej: Mililitros, Caja, m2..."
+                                    class="w-full bg-surface-container border-2 border-primary/10 rounded-xl py-4 pl-14 pr-4 text-on-surface focus:ring-4 focus:ring-primary/10 focus:border-primary/30 transition-all font-bold placeholder:text-stone-300">
+                            </div>
+                        </div>
+                        }
                     </div>
                 </section>
 
@@ -390,18 +430,41 @@
                             </div>
                         </div>
 
+                        <!-- Precio de Compra (Solo para INSUMO o REVENTA) -->
+                        @if (inventoryForm.get('type')?.value === 'INSUMO' || inventoryForm.get('type')?.value === 'REVENTA') {
                         <div class="space-y-2">
-                            <label for="costInput"
-                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Costo
-                                de Producción</label>
+                            <label for="purchaseInput"
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Precio de Compra</label>
                             <div class="relative">
                                 <span
                                     class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">$</span>
-                                <input id="costInput" type="number" formControlName="productionCost" step="0.01"
-                                    class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
+                                <input id="purchaseInput" type="number" formControlName="purchasePrice"
+                                    class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right"
+                                    placeholder="0.00">
                             </div>
                         </div>
+                        }
 
+                        <!-- Costo de Producción (Solo para ELABORADO o TRANSFORMADO) -->
+                        @if (inventoryForm.get('type')?.value === 'ELABORADO' || inventoryForm.get('type')?.value === 'TRANSFORMADO') {
+                        <div class="space-y-2" [class.opacity-80]="inventoryForm.get('productionCost')?.disabled">
+                            <label for="costInput"
+                                class="flex items-center justify-between text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">
+                                <span>Costo de Producción</span>
+                                <span class="text-[9px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-black">Calculado automáticamente</span>
+                            </label>
+                            <div class="relative">
+                                <span
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">$</span>
+                                <input id="costInput" type="number" formControlName="productionCost"
+                                    class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right disabled:bg-stone-50/50 cursor-not-allowed"
+                                    placeholder="Calculando...">
+                            </div>
+                        </div>
+                        }
+
+                        <!-- Precio de Venta (No mostrar para INSUMO) -->
+                        @if (inventoryForm.get('type')?.value !== 'INSUMO') {
                         <div class="space-y-2">
                             <label for="priceInput"
                                 class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Precio
@@ -413,7 +476,9 @@
                                     class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
                             </div>
                         </div>
+                        }
 
+                        @if (inventoryForm.get('type')?.value === 'INSUMO') {
                         <div class="space-y-2 md:col-span-2">
                             <label for="wasteInput" class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">% Desperdicio / Sobrante</label>
                             <div class="relative">
@@ -424,58 +489,96 @@
                                 <span
                                     class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">%</span>
                             </div>
+                            @if (inventoryForm.get('wastePercent')?.errors?.['max']) {
+                                <p class="text-[10px] text-error font-bold uppercase mt-1 px-1">El desperdicio no puede exceder el 100%</p>
+                            }
                         </div>
-                    </div>
+                        }
+                        </div>
                 </section>
 
                 <!-- Sección 3: Componentes (Dinámico) -->
-                @if (inventoryForm.get('type')?.value === 'ELABORADO' || inventoryForm.get('type')?.value ===
-                'TRANSFORMADO') {
-                <section class="animate-[dropdownFadeIn_0.3s_ease-out]">
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="flex items-center gap-3">
-                            <span
-                                class="w-8 h-8 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center font-bold text-sm">03</span>
-                            <h2 class="text-xl font-bold tracking-tight text-on-surface">Composición</h2>
+                @if (inventoryForm.get('type')?.value === 'ELABORADO' || inventoryForm.get('type')?.value === 'TRANSFORMADO') {
+                <section class="animate-[dropdownFadeIn_0.3s_ease-out] space-y-6">
+                    <div>
+                        <h2 class="text-xl font-bold tracking-tight text-on-surface mb-1">Componentes del Artículo <span class="text-error">*</span></h2>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">AGREGAR ARTÍCULO DEL INVENTARIO</p>
+                    </div>
+
+                    <!-- Buscador y Botón Añadir -->
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="relative flex-1 group">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400 group-focus-within:text-primary transition-colors">search</span>
+                            <input type="text" 
+                                   [matAutocomplete]="autoMainInsumo"
+                                   [(ngModel)]="selectedInsumoId"
+                                   [ngModelOptions]="{standalone: true}"
+                                   placeholder="Buscar artículo..."
+                                   class="w-full bg-white border border-stone-200 rounded-xl py-4 pl-12 pr-4 text-sm font-medium text-on-surface focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all shadow-sm">
+                            
+                            <mat-autocomplete #autoMainInsumo="matAutocomplete" [displayWith]="getInsumoName.bind(this)">
+                                @for (insumo of getFilteredInsumos(selectedInsumoId); track insumo.idProducto || insumo.id) {
+                                    <mat-option [value]="insumo.idProducto || insumo.id" class="!h-auto !py-3">
+                                        <div class="flex flex-col leading-tight">
+                                            <span class="font-bold text-sm text-on-surface">{{ insumo.name }}</span>
+                                            <span class="text-[10px] text-stone-400 uppercase tracking-tighter">ID: {{ insumo.idProducto || insumo.id }} • Stock: {{ insumo.stock }}</span>
+                                        </div>
+                                    </mat-option>
+                                }
+                            </mat-autocomplete>
                         </div>
                         <button type="button" (click)="addComponent()"
-                            class="px-4 py-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 font-bold transition-all flex items-center gap-2 text-sm shadow-sm">
-                            <span class="material-symbols-outlined text-[18px]">add_circle</span> Añadir Componente
+                            [disabled]="!selectedInsumoId"
+                            class="px-10 py-4 rounded-xl bg-primary text-white font-black hover:bg-primary-dark transition-all shadow-lg shadow-primary/20 disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2">
+                            Añadir
                         </button>
                     </div>
 
                     <div class="space-y-4" formArrayName="components">
                         @if (componentsFormArray.length > 0) {
-                        <div class="bg-surface-container-low rounded-2xl overflow-hidden border border-zinc-100">
+                        <div class="bg-white rounded-2xl overflow-hidden border border-stone-100 shadow-sm">
                             <table class="w-full text-left border-collapse">
-                                <thead class="bg-zinc-50/50">
+                                <thead class="bg-stone-50/50">
                                     <tr>
-                                        <th
-                                            class="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest">
-                                            ID Insumo</th>
-                                        <th
-                                            class="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest text-center">
-                                            Cant. Usada</th>
-                                        <th
-                                            class="px-6 py-4 text-[10px] font-bold text-stone-400 uppercase tracking-widest text-right w-20">
-                                            Acción</th>
+                                        <th class="px-6 py-4 text-[10px] font-black text-stone-500 uppercase tracking-widest">ARTÍCULO</th>
+                                        <th class="px-6 py-4 text-[10px] font-black text-stone-500 uppercase tracking-widest text-center">CANTIDAD</th>
+                                        <th class="px-6 py-4 text-[10px] font-black text-stone-500 uppercase tracking-widest text-center">UNIDAD</th>
+                                        <th class="px-6 py-4 text-[10px] font-black text-stone-500 uppercase tracking-widest text-right">PRECIO UNITARIO ($)</th>
+                                        <th class="px-6 py-4 text-[10px] font-black text-stone-500 uppercase tracking-widest text-center w-20">ACCIONES</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-zinc-50">
+                                <tbody class="divide-y divide-stone-50">
                                     @for (comp of componentsFormArray.controls; track $index; let i = $index) {
-                                    <tr [formGroupName]="i" class="hover:bg-orange-50/20 transition-colors">
-                                        <td class="px-6 py-3">
-                                            <input type="number" formControlName="idInsumo" placeholder="ID"
-                                                class="w-full bg-white border border-zinc-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all">
+                                    <tr [formGroupName]="i" class="hover:bg-stone-50/40 transition-colors">
+                                        <td class="px-6 py-4">
+                                            <div class="flex flex-col gap-1">
+                                                <span class="font-bold text-sm text-on-surface">{{ getInsumoName(comp.get('idInsumo')?.value) }}</span>
+                                                @if (comp.hasError('duplicateInsumo')) {
+                                                    <span class="text-[8px] font-black text-error uppercase tracking-tighter animate-pulse">⚠ Insumo duplicado</span>
+                                                }
+                                            </div>
                                         </td>
-                                        <td class="px-6 py-3">
-                                            <input type="number" formControlName="cantidadUsada" step="0.001"
-                                                placeholder="0.000"
-                                                class="w-32 mx-auto block bg-white border border-zinc-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all text-center font-medium">
+                                        <td class="px-6 py-4">
+                                            <div class="flex flex-col gap-1 items-center">
+                                                <input type="number" formControlName="cantidadUsada"
+                                                    placeholder="0"
+                                                    [class.!border-error]="comp.hasError('exceedStock') || comp.get('cantidadUsada')?.errors"
+                                                    class="w-20 bg-stone-50 border border-stone-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all text-center font-bold">
+                                                
+                                                @if (comp.hasError('exceedStock')) {
+                                                    <span class="text-[8px] font-black text-error uppercase tracking-tighter">Máx: {{ comp.getError('exceedStock').stock }}</span>
+                                                }
+                                            </div>
                                         </td>
-                                        <td class="px-6 py-3 text-right">
+                                        <td class="px-6 py-4 text-center">
+                                            <span class="text-xs font-bold text-stone-400">{{ getInsumoUnit(comp.get('idInsumo')?.value) }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-right">
+                                            <span class="text-sm font-bold text-on-surface">{{ getInsumoPrice(comp.get('idInsumo')?.value) | currency }}</span>
+                                        </td>
+                                        <td class="px-6 py-4 text-center">
                                             <button type="button" (click)="removeComponent(i)"
-                                                class="text-stone-300 hover:text-error transition-colors">
+                                                class="w-8 h-8 rounded-lg flex items-center justify-center text-stone-300 hover:text-error hover:bg-error/10 transition-all">
                                                 <span class="material-symbols-outlined text-lg">delete</span>
                                             </button>
                                         </td>
@@ -484,14 +587,10 @@
                                 </tbody>
                             </table>
                         </div>
-                        } @else {
-                        <div
-                            class="bg-surface-container-low border-2 border-dashed border-zinc-200 rounded-2xl p-10 text-center">
-                            <span class="material-symbols-outlined text-zinc-300 text-5xl mb-3">list_alt</span>
-                            <p class="text-stone-400 font-medium">No se han definido componentes para este artículo.</p>
-                        </div>
                         }
                     </div>
+                    
+                    <p class="text-[10px] italic text-stone-400">* Es obligatorio tener al menos un componente para artículos elaborados o transformados</p>
                 </section>
                 }
 
