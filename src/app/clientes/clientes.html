@@ -1,5 +1,5 @@
 @if (viewMode === 'list') {
-<div class="p-10 space-y-10 animate-[dropdownFadeIn_0.3s_ease-out]">
+<div class="p-4 sm:p-8 lg:p-10 space-y-8 sm:space-y-10 animate-[dropdownFadeIn_0.3s_ease-out]">
     <!-- Hero Title & Context -->
     <div class="flex flex-col md:flex-row justify-between items-end gap-6">
         <div class="max-w-2xl">
@@ -55,9 +55,9 @@
         </div>
 
         <!-- Desktop Table View -->
-        @if (!isMobile) {
+        @if (!screenSize.isBelowDesktop()) {
         <div class="overflow-x-auto">
-            <table mat-table [dataSource]="dataSource" matSort class="w-full text-left">
+            <table mat-table [dataSource]="dataSource" matSort #sort="matSort" class="w-full text-left">
                 <!-- ID Column -->
                 <ng-container matColumnDef="id">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header
@@ -81,52 +81,53 @@
                     </td>
                 </ng-container>
 
-                <!-- Pedidos Column -->
-                <ng-container matColumnDef="pedidos">
-                    <th mat-header-cell *matHeaderCellDef
+                <!-- Correo Column -->
+                <ng-container matColumnDef="correo">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header
                         class="casualidad-table-header">
-                        Pedidos </th>
+                        Correo Electrónico </th>
                     <td mat-cell *matCellDef="let client" class="px-8 py-4">
-                        <button (click)="openProductsModal(client)"
-                            class="px-3 py-1 bg-secondary-container/30 text-on-secondary-container text-xs font-bold rounded-full hover:bg-secondary-container transition-colors flex items-center">
-                            {{ client.ordersSummary.total }} items
-                            <span class="material-symbols-outlined text-[14px] ml-1">open_in_new</span>
-                        </button>
+                        <div class="text-sm text-stone-600">
+                            {{ client.correo || 'No registrado' }}
+                        </div>
                     </td>
                 </ng-container>
 
-                <!-- Estado Column -->
-                <ng-container matColumnDef="isActive">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header
+                <!-- Teléfonos Column -->
+                <ng-container matColumnDef="telefonos">
+                    <th mat-header-cell *matHeaderCellDef
                         class="casualidad-table-header">
-                        Estado </th>
+                        Número de Celular </th>
                     <td mat-cell *matCellDef="let client" class="px-8 py-4">
-                        @if (client.ordersSummary.pending > 0) {
-                        <div class="flex items-center gap-2 text-xs font-semibold text-red-700">
-                            <span class="w-2 h-2 rounded-full bg-red-500"></span>Pendiente
+                        <div class="flex flex-col gap-1">
+                            @for (phone of client.phones; track phone) {
+                                <span class="text-sm font-medium text-stone-700">{{ phone }}</span>
+                            }
                         </div>
-                        } @else {
-                        <div class="flex items-center gap-2 text-xs font-semibold text-emerald-700">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>Al día
-                        </div>
-                        }
                     </td>
                 </ng-container>
+
+
 
                 <!-- Acciones Column -->
                 <ng-container matColumnDef="acciones">
                     <th mat-header-cell *matHeaderCellDef
-                        class="px-8 py-5 text-right text-xs font-bold text-on-surface-variant uppercase tracking-widest bg-stone-50/50">
+                        class="px-8 py-5 text-center text-xs font-bold text-on-surface-variant uppercase tracking-widest bg-stone-50/50">
                         Acciones </th>
-                    <td mat-cell *matCellDef="let client" class="px-8 py-4 text-right">
-                        <div class="flex items-center justify-end gap-1">
+                    <td mat-cell *matCellDef="let client" class="px-8 py-4 text-center">
+                        <div class="flex items-center justify-center gap-1">
+                            <button (click)="viewDetails(client)"
+                                class="p-2 text-zinc-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                title="Ver Detalles">
+                                <span class="material-symbols-outlined text-xl">visibility</span>
+                            </button>
                             <button (click)="openEditForm(client)"
                                 class="p-2 text-zinc-400 hover:text-secondary hover:bg-secondary/10 rounded-lg transition-colors"
                                 title="Editar">
                                 <span class="material-symbols-outlined text-xl">edit</span>
                             </button>
-                            <button (click)="openDeleteModal(client)" [disabled]="client.ordersSummary.total > 0"
-                                [title]="client.ordersSummary.total > 0 ? 'No se puede eliminar (Tiene pedidos)' : 'Eliminar'"
+                            <button (click)="openDeleteModal(client)"
+                                title="Eliminar"
                                 class="p-2 text-zinc-400 hover:text-error hover:bg-error/10 rounded-lg transition-colors">
                                 <span class="material-symbols-outlined text-xl">delete</span>
                             </button>
@@ -146,66 +147,71 @@
                 </tr>
             </table>
         </div>
-        } @else {
-        <!-- Mobile Cards View -->
-        <div class="divide-y divide-zinc-100">
-            @for (client of dataSource.filteredData | slice:(paginator?.pageIndex || 0)*(paginator?.pageSize ||
-            3):((paginator?.pageIndex || 0) + 1)*(paginator?.pageSize || 3); track client.id) {
-            <div class="p-6 bg-white hover:bg-stone-50/50 transition-colors">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <div class="font-bold text-lg text-on-surface">{{ client.name }}</div>
-                        <div class="text-[10px] font-bold text-stone-400 mt-0.5">#{{ client.id }}</div>
-                    </div>
-                    @if (client.ordersSummary.pending > 0) {
-                    <div
-                        class="flex items-center gap-2 text-xs font-semibold text-red-700 bg-red-50 px-2 py-1 rounded-full">
-                        <span class="w-2 h-2 rounded-full bg-red-500"></span>Pendiente
-                    </div>
-                    } @else {
-                    <div
-                        class="flex items-center gap-2 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-full">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>Al día
-                    </div>
-                    }
+        }
+
+        @else {
+        <!-- ── Mobile Card View ──────────────────────────────── -->
+        <div class="p-4 space-y-3">
+          <div class="card-list-grid">
+
+            @for (client of dataSource.filteredData
+              | slice:(paginator.pageIndex * paginator.pageSize):(paginator.pageIndex * paginator.pageSize + paginator.pageSize);
+              track client.id) {
+            <div class="bg-white rounded-xl border border-stone-100 shadow-sm p-4 flex flex-col gap-3">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center gap-3 overflow-hidden">
+                  <div class="w-9 h-9 rounded-full bg-orange-50 flex items-center justify-center text-primary shrink-0">
+                    <span class="material-symbols-outlined text-base">person</span>
+                  </div>
+                  <div class="overflow-hidden">
+                    <p class="font-bold text-sm text-on-surface truncate">{{ client.name }}</p>
+                    <p class="text-[10px] text-neutral-400">#{{ client.id }}</p>
+                  </div>
                 </div>
 
-                <div class="mb-4">
-                    <button (click)="openProductsModal(client)"
-                        class="px-3 py-1.5 bg-secondary-container/30 text-on-secondary-container text-xs font-bold rounded-lg hover:bg-secondary-container transition-colors flex items-center gap-2">
-                        {{ client.ordersSummary.total }} pedidos
-                        <span class="material-symbols-outlined text-[14px]">open_in_new</span>
-                    </button>
+              </div>
+              <div class="text-xs text-on-surface-variant flex flex-col gap-1.5 mt-2">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-sm">mail</span>
+                  <span class="truncate">{{ client.correo || 'Sin correo' }}</span>
                 </div>
-
-                <div class="flex items-center gap-2 pt-4 border-t border-zinc-100">
-                    <button (click)="openEditForm(client)"
-                        class="flex-1 py-2 text-zinc-600 bg-surface-container hover:bg-surface-container-high font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
-                        <span class="material-symbols-outlined text-sm">edit</span> Editar
-                    </button>
-                    <button (click)="openDeleteModal(client)" [disabled]="client.ordersSummary.total > 0"
-                        class="py-2 px-3 transition-colors rounded-lg flex justify-center items-center"
-                        [ngClass]="client.ordersSummary.total > 0 ? 'bg-zinc-100 text-zinc-300' : 'bg-error-container/10 text-error hover:bg-error-container/20'">
-                        <span class="material-symbols-outlined text-sm">delete</span>
-                    </button>
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-sm">phone_iphone</span>
+                  <span>{{ client.phones[0] || 'Sin teléfono' }}</span>
                 </div>
+              </div>
+              <div class="flex gap-2 pt-1 border-t border-stone-50">
+                <button (click)="viewDetails(client)"
+                  class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-stone-50 text-stone-600 text-xs font-bold hover:bg-stone-100 transition-colors">
+                  <span class="material-symbols-outlined text-sm">visibility</span> Ver Detalles
+                </button>
+                <button (click)="openEditForm(client)"
+                  class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-orange-50 text-primary text-xs font-bold hover:bg-orange-100 transition-colors">
+                  <span class="material-symbols-outlined text-sm">edit</span> Editar
+                </button>
+                <button (click)="openDeleteModal(client)"
+                  class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-red-50 text-error text-xs font-bold hover:bg-red-100 transition-colors">
+                  <span class="material-symbols-outlined text-sm">delete</span> Eliminar
+                </button>
+              </div>
             </div>
             }
-            @if (dataSource.filteredData.length === 0) {
-            <div class="p-10 text-center text-on-surface-variant">
-                No se encontraron clientes con ese criterio de búsqueda.
+            @empty {
+            <div class="col-span-2 py-10 text-center text-on-surface-variant text-sm">
+              No se encontraron clientes.
             </div>
             }
+          </div>
         </div>
         }
 
-        <mat-paginator [pageSizeOptions]="[3, 5, 10, 25]" aria-label="Seleccionar página"></mat-paginator>
+        <mat-paginator #paginator [pageSizeOptions]="[3, 5, 10, 25]" aria-label="Seleccionar página"></mat-paginator>
     </div>
 </div>
 }
 
 @if (viewMode === 'add' || viewMode === 'edit') {
-<section class="p-10 max-w-5xl mx-auto w-full animate-[dropdownFadeIn_0.2s_ease-out]">
+<section class="p-4 sm:p-8 lg:p-10 max-w-5xl mx-auto w-full animate-[dropdownFadeIn_0.2s_ease-out]">
     <nav aria-label="Migas de pan de edición" class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4">
         <button type="button" class="opacity-50 hover:opacity-100 transition-opacity"
             (click)="closeForm()">CLIENTES</button>
@@ -224,7 +230,7 @@
     </div>
 
     <div
-        class="bg-surface-container-lowest rounded-2xl p-8 md:p-12 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] border border-orange-100/50">
+        class="bg-surface-container-lowest rounded-2xl p-5 sm:p-8 md:p-12 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] border border-orange-100/50">
         <form [formGroup]="clientForm" (ngSubmit)="saveClient()" class="space-y-12">
             @if (errorMessage) {
             <div
@@ -283,6 +289,19 @@
                     </button>
                 </div>
 
+                <div class="space-y-2 mb-6">
+                    <label for="clientEmailInput"
+                        class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Correo Electrónico</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">mail</span>
+                        <input id="clientEmailInput" formControlName="email" type="email" placeholder="ejemplo@correo.com"
+                            class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium">
+                    </div>
+                    @if (clientForm.get('email')?.invalid && (clientForm.get('email')?.dirty || clientForm.get('email')?.touched)) {
+                        <p class="text-[10px] text-error font-bold mt-1 ml-2">Ingrese un correo válido.</p>
+                    }
+                </div>
+
                 <div class="space-y-4" formArrayName="phones">
                     @for (phoneCtrl of phonesFormArray.controls; track $index; let i = $index) {
                     <div class="flex gap-3 items-start animate-[dropdownFadeIn_0.2s_ease-out]">
@@ -331,14 +350,7 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-4 bg-orange-50/50 p-4 rounded-2xl border border-orange-100">
-                        <div class="flex-1">
-                            <h4 class="font-bold text-orange-900 text-sm">Estado de la cuenta</h4>
-                            <p class="text-xs text-orange-700/70">Permitir que este cliente realice pedidos en el
-                                sistema.</p>
-                        </div>
-                        <mat-slide-toggle formControlName="isActive" color="primary"></mat-slide-toggle>
-                    </div>
+
                 </div>
             </section>
 
@@ -348,9 +360,10 @@
                     Cancelar
                 </button>
                 <button [disabled]="!clientForm.valid" type="submit"
-                    class="px-10 py-3.5 rounded-xl bg-gradient-to-br from-primary to-primary-container text-white font-bold shadow-lg shadow-primary/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[20px]">{{ viewMode === 'add' ? 'add_circle' : 'save'
-                        }}</span>
+                    class="px-10 py-3.5 rounded-xl bg-gradient-to-r from-[#c25e23] to-[#f28b4b] text-white font-bold shadow-lg shadow-orange-900/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed flex items-center gap-2">
+                    @if (viewMode === 'edit') {
+                        <span class="material-symbols-outlined text-[20px]">save</span>
+                    }
                     {{ viewMode === 'add' ? 'Registrar Cliente' : 'Guardar Cambios' }}
                 </button>
             </div>
@@ -358,5 +371,142 @@
     </div>
 
 
+</section>
+}
+
+@if (viewMode === 'details') {
+<section class="p-4 sm:p-8 lg:p-10 max-w-5xl mx-auto w-full animate-[dropdownFadeIn_0.2s_ease-out]">
+    <nav aria-label="Migas de pan de detalles" class="flex gap-2 text-xs font-bold tracking-widest text-orange-700 mb-4">
+        <button type="button" class="opacity-50 hover:opacity-100 transition-opacity uppercase" (click)="closeForm()">CLIENTES</button>
+        <span class="opacity-50">/</span>
+        <span class="uppercase">VER CLIENTE</span>
+    </nav>
+    <div class="mb-10 text-center md:text-left">
+        <h2 class="text-4xl font-extrabold text-on-surface tracking-tight font-headline mb-3">
+            Detalles del Cliente
+        </h2>
+        <p class="text-lg text-neutral-500 max-w-2xl font-body">
+            Consulte la información completa del cliente registrado.
+        </p>
+    </div>
+
+    <div class="bg-surface-container-lowest rounded-2xl p-5 sm:p-8 md:p-12 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] border border-orange-100/50">
+        <div class="space-y-12">
+            
+            <!-- Identidad -->
+            <div class="flex flex-col md:flex-row gap-6 md:gap-12 pb-8 border-b border-stone-100">
+                <div class="md:w-1/3">
+                    <h3 class="text-xl font-bold text-orange-900 mb-2">Identidad</h3>
+                    <p class="text-sm text-stone-400">Información o nombre comercial.</p>
+                </div>
+                <div class="md:w-2/3">
+                    <p class="text-[10px] font-black tracking-widest text-stone-400 uppercase mb-1">Nombre Completo</p>
+                    <p class="text-lg font-bold text-stone-800">{{ selectedClient?.name }}</p>
+                </div>
+            </div>
+
+            <!-- Teléfonos de Contacto -->
+            <div class="flex flex-col md:flex-row gap-6 md:gap-12 pb-8 border-b border-stone-100">
+                <div class="md:w-1/3">
+                    <h3 class="text-xl font-bold text-orange-900 mb-2">Teléfonos de Contacto</h3>
+                    <p class="text-sm text-stone-400">Números de enlace registrados.</p>
+                </div>
+                <div class="md:w-2/3">
+                    <div class="bg-stone-50 rounded-xl border border-stone-200 p-4 space-y-3">
+                        @for (phone of selectedClient?.phones; track phone; let i = $index) {
+                            <div class="flex items-center justify-between pb-3 last:pb-0 border-b border-stone-200 last:border-0">
+                                <div class="flex items-center gap-4">
+                                    <span class="text-[10px] font-black tracking-widest text-orange-500 uppercase">{{ i === 0 ? 'Principal' : 'Adicional' }}</span>
+                                    <span class="font-medium text-stone-700">{{ phone }}</span>
+                                </div>
+                            </div>
+                        }
+                        @empty {
+                            <div class="text-stone-500 text-sm">No hay teléfonos registrados.</div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ubicación -->
+            <div class="flex flex-col md:flex-row gap-6 md:gap-12 pb-8 border-b border-stone-100">
+                <div class="md:w-1/3">
+                    <h3 class="text-xl font-bold text-orange-900 mb-2">Ubicación</h3>
+                    <p class="text-sm text-stone-400">Información de logística y fiscal.</p>
+                </div>
+                <div class="md:w-2/3">
+                    <p class="text-[10px] font-black tracking-widest text-stone-400 uppercase mb-1">Dirección de Entrega/Facturación</p>
+                    <p class="text-base font-medium text-stone-600 leading-relaxed max-w-md">{{ selectedClient?.address || 'Sin dirección registrada.' }}</p>
+                </div>
+            </div>
+
+            <!-- Productos Adquiridos -->
+            <div class="flex flex-col md:flex-row gap-6 md:gap-12 pb-4">
+                <div class="md:w-1/3">
+                    <h3 class="text-xl font-bold text-orange-900 mb-2">Productos Adquiridos</h3>
+                    <p class="text-sm text-stone-400">Últimos artículos comprados por el cliente.</p>
+                </div>
+                <div class="md:w-2/3 overflow-x-auto w-full">
+                    <table class="w-full text-left bg-stone-50 rounded-xl border border-stone-200 overflow-hidden min-w-[500px]">
+                        <thead class="bg-stone-100/50 border-b border-stone-200">
+                            <tr>
+                                <th class="px-4 py-3 text-[10px] font-black tracking-widest text-stone-500 uppercase">Producto</th>
+                                <th class="px-4 py-3 text-[10px] font-black tracking-widest text-stone-500 uppercase">Categoría</th>
+                                <th class="px-4 py-3 text-[10px] font-black tracking-widest text-stone-500 uppercase text-center">Cantidad</th>
+                                <th class="px-4 py-3 text-[10px] font-black tracking-widest text-stone-500 uppercase text-right">Precio Unitario</th>
+                                <th class="px-4 py-3 text-[10px] font-black tracking-widest text-stone-500 uppercase text-right">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-stone-100">
+                            @for (item of acquiredProducts; track item.name) {
+                            <tr class="hover:bg-stone-100/30 transition-colors">
+                                <td class="px-4 py-4 text-sm font-bold text-stone-800">{{ item.name }}</td>
+                                <td class="px-4 py-4 text-xs font-bold">
+                                    @if (item.category === 'INSUMO') {
+                                        <span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">INSUMO</span>
+                                    } @else if (item.category === 'ELABORADO') {
+                                        <span class="bg-purple-50 text-purple-600 px-2 py-0.5 rounded-full">ELABORADO</span>
+                                    } @else {
+                                        <span class="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full">{{ item.category }}</span>
+                                    }
+                                </td>
+                                <td class="px-4 py-4 text-sm text-stone-600 font-medium text-center">{{ item.quantity }} {{ item.unitName }}</td>
+                                <td class="px-4 py-4 text-sm text-stone-600 font-medium text-right">${{ item.unitPrice | number:'1.2-2' }}</td>
+                                <td class="px-4 py-4 text-sm font-bold text-orange-600 text-right">${{ item.total | number:'1.2-2' }}</td>
+                            </tr>
+                            } @empty {
+                            <tr>
+                                <td colspan="5" class="px-4 py-8 text-center text-sm text-stone-500">
+                                    No hay productos adquiridos registrados.
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                        <tfoot class="bg-stone-50/80 border-t border-stone-200">
+                            <tr>
+                                <td colspan="5" class="px-4 py-3 text-xs text-stone-500 flex justify-between items-center">
+                                    <span>Mostrando {{ acquiredProducts.length }} productos adquiridos</span>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="pt-8 mt-4 flex flex-col sm:flex-row items-center justify-end gap-4">
+                <button (click)="closeForm()" type="button"
+                    class="w-full sm:w-auto px-8 py-3.5 rounded-xl text-stone-500 font-bold hover:bg-stone-50 transition-all">
+                    Cerrar
+                </button>
+                <button (click)="openEditForm(selectedClient!)" type="button"
+                    class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-orange-100 text-orange-800 font-bold hover:bg-orange-200 transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                    Editar Cliente
+                </button>
+            </div>
+
+        </div>
+    </div>
 </section>
 }

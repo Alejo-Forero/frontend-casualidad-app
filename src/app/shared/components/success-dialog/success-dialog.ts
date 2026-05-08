@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 export interface SuccessDialogData {
   title: string;
   message: string;
+  highlightText?: string;
+  message2?: string;
   primaryActionLabel?: string;
   secondaryActionLabel?: string;
   icon?: string;
@@ -62,6 +64,12 @@ export interface SuccessDialogResult {
         </h2>
         <p class="text-on-surface-variant text-lg leading-relaxed px-4">
           {{ data.message }}
+          @if (data.highlightText) {
+            <span class="font-bold text-primary">{{ data.highlightText }}</span>
+          }
+          @if (data.message2) {
+            {{ data.message2 }}
+          }
         </p>
 
         <!-- Optional detail block (e.g. tracking code) -->

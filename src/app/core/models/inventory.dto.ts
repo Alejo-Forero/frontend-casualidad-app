@@ -6,10 +6,10 @@ export interface UnitDTO {
 export type ProductType = 'INSUMO' | 'ELABORADO' | 'TRANSFORMADO' | 'REVENTA';
 
 export interface CompositionItem {
-  inventoryId: string;
-  name: string;
-  quantity: number;
-  unitCost: number;
+  idInsumo: number;
+  nombre: string;
+  cantidadUsada: number;
+  precioUnidad: number;
   subtotal: number;
 }
 
@@ -31,28 +31,17 @@ export interface ProductResponseDTO {
 }
 
 export interface ProductDTO {
-  // New API fields
-  idProducto?: number;
-  nombre?: string;
-  tipo?: ProductType;
-  idUnidadMedida?: number;
-  cantidad?: number;
-  stockMinimo?: number;
-  precioCompra?: number;
-  precioVenta?: number;
-  porcentajeSobrante?: number;
-
-  // Legacy fields for UI compatibility
-  id: string;
-  name: string;
-  type: ProductType;
-  unit: UnitDTO;
-  stock: number;
-  minStock: number;
-  purchasePrice: number | null;
-  salePrice: number | null;
-  wastePercent: number | null;
-  productionCost: number | null;
-  isLowStock: boolean;
-  composition: CompositionItem[] | null;
+  idProducto: number;
+  nombre: string;
+  tipo: ProductType;
+  idUnidadMedida: number;
+  cantidadDisponible: number;
+  stockMinimo: number;
+  precioCompra: number;
+  precioVenta: number;
+  porcentajeSobrante: number;
+  unidadMedida: string;
+  isLowStock?: boolean; // Mantener para UI
+  composition?: CompositionItem[] | null;
 }
+

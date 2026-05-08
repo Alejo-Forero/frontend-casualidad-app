@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { HelpDialogComponent } from '../shared/components/help-dialog/help-dialog.component';
+import { ForgotPasswordDialogComponent } from '../shared/components/forgot-password-dialog/forgot-password-dialog.component';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +18,7 @@ export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  private readonly dialog = inject(MatDialog);
 
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -23,7 +27,6 @@ export class LoginComponent {
   });
 
   // Estado de UI
-  showHelpModal = false;
   showErrorModal = false;
   isLoading = false;
 
@@ -41,11 +44,11 @@ export class LoginComponent {
       return;
     }
 
-    const { email, password } = this.loginForm.value;
+    const { email, password, remember } = this.loginForm.value;
     this.isLoading = true;
 
-    this.authService.login({ email, password }).subscribe({
-      next: (response) => {
+    this.authService.login({ email, password }, remember).subscribe({
+      next: () => {
         this.router.navigate(['/']);
         this.isLoading = false;
       },
@@ -58,13 +61,23 @@ export class LoginComponent {
     });
   }
 
-  toggleHelpModal() {
-    this.showHelpModal = !this.showHelpModal;
-    document.body.style.overflow = this.showHelpModal ? 'hidden' : '';
+  openHelpDialog() {
+    this.dialog.open(HelpDialogComponent, {
+      panelClass: ['responsive-dialog', 'casualidad-dialog'],
+      maxWidth: '420px',
+      width: '100%',
+    });
+  }
+
+  openForgotPasswordDialog() {
+    this.dialog.open(ForgotPasswordDialogComponent, {
+      panelClass: ['responsive-dialog', 'casualidad-dialog'],
+      maxWidth: '420px',
+      width: '100%',
+    });
   }
 
   closeErrorModal() {
     this.showErrorModal = false;
-    document.body.style.overflow = '';
   }
 }

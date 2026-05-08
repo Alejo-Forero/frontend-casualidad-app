@@ -89,4 +89,69 @@ describe('AuthService', () => {
     sessionStorage.setItem('accessToken', '1');
     expect(service.isAuthenticated()).toBe(true);
   });
+
+  it('should handle login with remember me', () => {
+    const mockResponse = {
+      accessToken: 'at',
+      refreshToken: 'rt',
+      usuario: { id: '1', nombre: 'U', correo: 'u@u', rol: 'ADMIN' }
+    };
+    const credentials = { email: 'test@test.com', password: '123' };
+
+    service.login(credentials, true).subscribe();
+
+    const req = httpMock.expectOne(`${environment.authUrl}/login`);
+    req.flush(mockResponse);
+
+    expect(localStorage.getItem('casualidad_remember')).toBe('true');
+    expect(localStorage.getItem('accessToken')).toBe('at');
+  });
+
+  it('should update user with remember me', () => {
+    localStorage.setItem('casualidad_remember', 'true');
+    const user = { id: '2', nombre: 'Test', correo: 'a@a', rol: 'ADMIN' };
+    service.updateUser(user);
+    expect(localStorage.getItem('user')).toBe(JSON.stringify(user));
+  });
+
+  it('should solicitar recuperación de password', () => {
+    service.recuperarPassword('test@test.com').subscribe(res => {
+      expect(res).toBe('Success');
+    });
+
+    const req = httpMock.expectOne(r => r.url === `${environment.authUrl}/recuperar-password`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.params.get('correo')).toBe('test@test.com');
+    req.flush('Success');
+  });
+
+  it('should reset password public', () => {
+    const payload = { correo: 'a@b.com', codigo: '123456', nuevaPassword: 'Pass' };
+    service.resetPasswordPublic(payload).subscribe(res => {
+      expect(res).toBe('Success');
+    });
+
+    const req = httpMock.expectOne(`${environment.authUrl}/reset-password`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(payload);
+    req.flush('Success');
+  });
+
+  it('should restore session from localStorage in constructor if remember is true', () => {
+    localStorage.setItem('casualidad_remember', 'true');
+    localStorage.setItem('accessToken', 'at_local');
+    localStorage.setItem('refreshToken', 'rt_local');
+    localStorage.setItem('user', JSON.stringify({ id: 'local' }));
+
+    // Re-instantiate through TestBed to trigger constructor again
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [AuthService]
+    });
+    const newService = TestBed.inject(AuthService);
+    
+    expect(sessionStorage.getItem('accessToken')).toBe('at_local');
+    expect(sessionStorage.getItem('refreshToken')).toBe('rt_local');
+  });
 });

@@ -5,6 +5,7 @@ import { PaymentService } from '../core/services/payment.service';
 import { of, throwError } from 'rxjs';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { Router } from '@angular/router';
 
 describe('ReportesComponent', () => {
   let component: ReportesComponent;
@@ -17,12 +18,14 @@ describe('ReportesComponent', () => {
       getSaldosPendientes: jest.fn(() => of({ pedidos: [] })),
       getUnifiedSaldos: jest.fn(() => of([])),
       exportarSaldosPendientes: jest.fn(() => of(new Blob(['test'], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }))),
+      getTopSellingProducts: jest.fn(() => of([])),
     };
 
     await TestBed.configureTestingModule({
       imports: [ReportesComponent, NoopAnimationsModule],
       providers: [
         { provide: PaymentService, useValue: mockPaymentService },
+        { provide: Router, useValue: { navigate: jest.fn() } },
       ],
     }).compileComponents();
 
@@ -112,5 +115,64 @@ describe('ReportesComponent', () => {
     expect(component.getRankProgressClass(2)).toBe('bg-secondary');
     expect(component.getRankProgressClass(3)).toBe('bg-tertiary-fixed-dim');
     expect(component.getRankProgressClass(4)).toBe('bg-neutral-300');
+  });
+
+  it('should handle errors in fetchIngresos', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    (mockPaymentService.getReporteIngresos as jest.Mock).mockReturnValue(throwError(() => new Error('Err')));
+    component.fetchIngresos();
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+
+  it('should handle errors in fetchSaldos', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    (mockPaymentService.getUnifiedSaldos as jest.Mock).mockReturnValue(throwError(() => new Error('Err')));
+    component.fetchSaldos();
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+
+  it('should handle errors in exportExcel', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    (mockPaymentService.exportarSaldosPendientes as jest.Mock).mockReturnValue(throwError(() => new Error('Err')));
+    component.exportExcel();
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+
+  it('should handle errors in fetchTopProducts', () => {
+    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    (mockPaymentService.getTopSellingProducts as jest.Mock).mockReturnValue(throwError(() => new Error('Err')));
+    component.fetchTopProducts();
+    expect(consoleSpy).toHaveBeenCalled();
+    expect(component.topProducts).toEqual([]);
+  });
+
+  it('should navigate to inventory on goToProduct', () => {
+    const router = TestBed.inject(Router);
+    const spy = jest.spyOn(router, 'navigate');
+    component.goToProduct('Test Product');
+    expect(spy).toHaveBeenCalledWith(['/inventario'], { queryParams: { search: 'Test Product' } });
+  });
+
+  it('should handle different response formats in fetchTopProducts', () => {
+    // Array format
+    (mockPaymentService.getTopSellingProducts as jest.Mock).mockReturnValue(of([{ nombreProducto: 'A', cantidadVendida: 10 }]));
+    component.fetchTopProducts();
+    expect(component.topProducts.length).toBe(1);
+    
+    // Object with data format
+    (mockPaymentService.getTopSellingProducts as jest.Mock).mockReturnValue(of({ data: [{ nombreProducto: 'B', cantidadVendida: 5 }] }));
+    component.fetchTopProducts();
+    expect(component.topProducts[0].productName).toBe('B');
+
+    // Object with productos format
+    (mockPaymentService.getTopSellingProducts as jest.Mock).mockReturnValue(of({ productos: [{ nombreProducto: 'C', cantidadVendida: 3 }] }));
+    component.fetchTopProducts();
+    expect(component.topProducts[0].productName).toBe('C');
+  });
+
+  it('should handle nullish response in fetchIngresos', () => {
+    (mockPaymentService.getReporteIngresos as jest.Mock).mockReturnValue(of(null));
+    component.fetchIngresos();
+    expect(component.incomeReport.totalIncome).toBe(0);
   });
 });

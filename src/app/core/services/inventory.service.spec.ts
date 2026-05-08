@@ -32,10 +32,10 @@ describe('InventoryService', () => {
     service.getAll().subscribe(r => result = r);
     const req = httpMock.expectOne(r => r.url.includes('/productos'));
     req.flush({ data: { data: [mockProduct] } });
-    expect(result[0].name).toBe('Tela');
-    expect(result[0].stock).toBe(50);
+    expect(result[0].nombre).toBe('Tela');
+    expect(result[0].cantidadDisponible).toBe(50);
     expect(result[0].isLowStock).toBe(false);
-    expect(result[0].unit.name).toBe('Metro');
+    expect(result[0].unidadMedida).toBe('Metro');
   });
 
   it('should getAll using content fallback', () => {
@@ -117,5 +117,69 @@ describe('InventoryService', () => {
     const req = httpMock.expectOne(r => r.url.includes('/composicion'));
     req.flush({ ok: true });
     expect(result.ok).toBe(true);
+  });
+
+  it('should map inventory item with various fallbacks', () => {
+    let result: any[] = [];
+    service.getAll().subscribe(r => result = r);
+    const req = httpMock.expectOne(r => r.url.includes('/productos'));
+    
+    const incompleteProduct = {
+      id: 99,
+      name: 'Fallback Name',
+      type: 'TRANSFORMADO',
+      unit: { name: 'Litro' },
+      stock: 10,
+      isLowStock: true,
+      purchasePrice: 100,
+      salePrice: 150,
+      wastePercent: 5
+    };
+    
+    req.flush({ data: { content: [incompleteProduct] } });
+    
+    expect(result[0].idProducto).toBe(99);
+    expect(result[0].nombre).toBe('Fallback Name');
+    expect(result[0].tipo).toBe('TRANSFORMADO');
+    expect(result[0].unidadMedida).toBe('Litro');
+    expect(result[0].cantidadDisponible).toBe(10);
+    expect(result[0].isLowStock).toBe(true);
+  });
+
+  it('should map inventory item with minimum data and nulls', () => {
+    let result: any[] = [];
+    service.getAll().subscribe(r => result = r);
+    const req = httpMock.expectOne(r => r.url.includes('/productos'));
+    
+    const minProduct = {
+      idProducto: null,
+      nombre: null,
+      tipo: null,
+      unidadMedida: null,
+      cantidadDisponible: null,
+      stockBajo: null,
+      precioCompra: null,
+      precioVenta: null,
+      porcentajeSobrante: null
+    };
+    
+    req.flush({ data: { data: [minProduct] } });
+    
+    expect(result[0].idProducto).toBe(0);
+    expect(result[0].nombre).toBe('Sin nombre');
+    expect(result[0].tipo).toBe('INSUMO');
+    expect(result[0].unidadMedida).toBe('Unidad');
+    expect(result[0].cantidadDisponible).toBe(0);
+    expect(result[0].isLowStock).toBe(false);
+    expect(result[0].precioCompra).toBe(0);
+    expect(result[0].precioVenta).toBe(0);
+  });
+
+  it('should getUnidadesMedida', () => {
+    let result: any;
+    service.getUnidadesMedida().subscribe(r => result = r);
+    const req = httpMock.expectOne(r => r.url.includes('unidades-medida'));
+    req.flush({ data: [{ id: 1, nombre: 'U' }] });
+    expect(result.length).toBe(1);
   });
 });

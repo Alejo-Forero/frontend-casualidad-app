@@ -9,6 +9,7 @@ import { ClientDTO } from '../core/models/client.dto';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { Subject } from 'rxjs';
+import { UIService } from '../core/services/ui.service';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -18,8 +19,7 @@ const makeClient = (overrides: Partial<ClientDTO> = {}): ClientDTO =>
   name: 'Juan Pérez',
   address: 'Calle 123',
   phones: ['3001234567'],
-  isActive: true,
-  ordersSummary: { total: 0 },
+  correo: 'juan@test.com',
   ...overrides,
 } as any);
 
@@ -34,6 +34,7 @@ describe('ClientesComponent', () => {
   let fixture: ComponentFixture<ClientesComponent>;
   let mockClientService: jest.Mocked<Partial<ClientService>>;
   let mockDialog: { open: jest.Mock };
+  let mockUIService: { showSuccess: jest.Mock, showConfirm: jest.Mock, showError: jest.Mock };
 
   beforeEach(async () => {
     mockClientService = {
@@ -44,10 +45,16 @@ describe('ClientesComponent', () => {
     };
 
     mockDialog = { open: jest.fn(() => dialogRefStub({ action: 'primary' })) };
+    mockUIService = {
+      showSuccess: jest.fn(() => of({ action: 'primary' })),
+      showConfirm: jest.fn(() => of(true)),
+      showError: jest.fn(() => of(true))
+    };
 
     const breakpointSubject = new Subject<BreakpointState>();
     const mockBreakpointObserver = {
       observe: jest.fn(() => breakpointSubject.asObservable()),
+      isMatched: jest.fn(() => false),
     };
 
     const mockRouter = {
@@ -63,11 +70,13 @@ describe('ClientesComponent', () => {
       providers: [
         { provide: ClientService, useValue: mockClientService },
         { provide: MatDialog, useValue: mockDialog },
+        { provide: UIService, useValue: mockUIService },
         { provide: BreakpointObserver, useValue: mockBreakpointObserver },
         { provide: Router, useValue: mockRouter },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
       ],
     }).overrideProvider(MatDialog, { useValue: mockDialog })
+      .overrideProvider(UIService, { useValue: mockUIService })
       .compileComponents();
 
     fixture = TestBed.createComponent(ClientesComponent);
@@ -148,20 +157,10 @@ describe('ClientesComponent', () => {
     expect(accessor(client, 'name')).toBe('juan');
   });
 
-  it('sortingDataAccessor should return 1 for active client', () => {
+  it('sortingDataAccessor should return correo', () => {
     const accessor = component.dataSource.sortingDataAccessor;
-    expect(accessor(makeClient({ isActive: true }), 'isActive')).toBe(1);
-  });
-
-  it('sortingDataAccessor should return 0 for inactive client', () => {
-    const accessor = component.dataSource.sortingDataAccessor;
-    expect(accessor(makeClient({ isActive: false }), 'isActive')).toBe(0);
-  });
-
-  it('sortingDataAccessor should return pedidos total', () => {
-    const accessor = component.dataSource.sortingDataAccessor;
-    const client = makeClient({ ordersSummary: { total: 7 } } as any);
-    expect(accessor(client, 'pedidos')).toBe(7);
+    const client = makeClient({ correo: 'A@TEST.COM' } as any);
+    expect(accessor(client, 'correo')).toBe('a@test.com');
   });
 
   it('sortingDataAccessor should return empty string for unknown property', () => {
@@ -254,35 +253,19 @@ describe('ClientesComponent', () => {
     expect(component.viewMode).toBe('list');
   });
 
-  // ── openProductsModal ─────────────────────────────────────────────────────
-
-  it('openProductsModal should open a dialog', () => {
-    const client = makeClient();
-    component.openProductsModal(client);
-    expect(mockDialog.open).toHaveBeenCalled();
-  });
-
   // ── openDeleteModal & confirmDelete ───────────────────────────────────────
-
-  it('openDeleteModal should skip when client has orders', () => {
-    const client = makeClient({ ordersSummary: { total: 3 } } as any);
-    component.openDeleteModal(client);
-    expect(mockDialog.open).not.toHaveBeenCalled();
-  });
 
   it('openDeleteModal should open confirm dialog', () => {
     const client = makeClient();
     component.openDeleteModal(client);
-    expect(mockDialog.open).toHaveBeenCalled();
+    expect(mockUIService.showConfirm).toHaveBeenCalled();
   });
 
   it('confirmDelete should call delete and open success dialog on success', () => {
     const client = makeClient();
     component.confirmDelete(client);
     expect(mockClientService.delete).toHaveBeenCalledWith('1');
-    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
-      data: expect.objectContaining({ accentColor: 'success' })
-    }));
+    expect(mockUIService.showSuccess).toHaveBeenCalled();
   });
 
   it('confirmDelete should open error dialog when delete fails', () => {
@@ -290,9 +273,7 @@ describe('ClientesComponent', () => {
     (mockClientService.delete as jest.Mock).mockReturnValue(throwError(() => new Error('delete failed')));
     const client = makeClient();
     component.confirmDelete(client);
-    expect(mockDialog.open).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
-      data: expect.objectContaining({ accentColor: 'warning' })
-    }));
+    expect(mockUIService.showError).toHaveBeenCalled();
     consoleSpy.mockRestore();
   });
 
@@ -316,7 +297,7 @@ describe('ClientesComponent', () => {
   });
 
   it('saveClient should go to list after primary action on success dialog', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub({ action: 'primary' }));
+    mockUIService.showSuccess.mockReturnValue(of({ action: 'primary' }));
     component.openAddForm();
     component.clientForm.patchValue({ name: 'N', address: '' });
     component.phonesFormArray.at(0).setValue('3001111111');
@@ -325,7 +306,7 @@ describe('ClientesComponent', () => {
   });
 
   it('saveClient should go to list when dialog result is null', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub(null));
+    mockUIService.showSuccess.mockReturnValue(of(null));
     component.openAddForm();
     component.clientForm.patchValue({ name: 'N' });
     component.phonesFormArray.at(0).setValue('300');
@@ -334,7 +315,7 @@ describe('ClientesComponent', () => {
   });
 
   it('saveClient should call openAddForm again on secondary action after create', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub({ action: 'secondary' }));
+    mockUIService.showSuccess.mockReturnValue(of({ action: 'secondary' }));
     const openAddSpy = jest.spyOn(component, 'openAddForm');
     component.openAddForm();
     component.clientForm.patchValue({ name: 'N' });
@@ -345,7 +326,7 @@ describe('ClientesComponent', () => {
   });
 
   it('saveClient should stay in edit mode on secondary action when editing', () => {
-    mockDialog.open.mockReturnValue(dialogRefStub({ action: 'secondary' }));
+    mockUIService.showSuccess.mockReturnValue(of({ action: 'secondary' }));
     component.openEditForm(makeClient());
     component.clientForm.patchValue({ name: 'Editado' });
     component.saveClient();

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ElementRef, ViewChild, PLATFORM_ID, inject, DestroyRef } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, ViewChild, PLATFORM_ID, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
@@ -35,6 +35,7 @@ export class HomeComponent implements AfterViewInit {
   private readonly inventoryService = inject(InventoryService);
   private readonly orderService = inject(OrderService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   dashboardCards: any[] = [];
   monthlyIncome: number = 0;
@@ -55,7 +56,7 @@ export class HomeComponent implements AfterViewInit {
         iconClass: 'text-orange-600',
         trend: '14.5%',
         trendText: 'vs mes pasado',
-        link: null
+        link: '/reportes'
       },
       {
         title: 'Por Entregar',
@@ -100,6 +101,7 @@ export class HomeComponent implements AfterViewInit {
       next: (res) => {
         this.dashboardData.ordersWithDebt = res?.cantidadPedidosPendientes || 0;
         this.updateDashboardCards();
+        this.cdr.detectChanges();
       }
     });
 
@@ -108,6 +110,7 @@ export class HomeComponent implements AfterViewInit {
       next: (products) => {
         this.dashboardData.lowStockCount = products.filter(p => p.isLowStock).length;
         this.updateDashboardCards();
+        this.cdr.detectChanges();
       }
     });
 
@@ -116,6 +119,7 @@ export class HomeComponent implements AfterViewInit {
       next: (orders) => {
         this.dashboardData.pendingOrders = orders.filter(o => o.status === 'PENDIENTE').length;
         this.updateDashboardCards();
+        this.cdr.detectChanges();
       }
     });
 
@@ -135,6 +139,7 @@ export class HomeComponent implements AfterViewInit {
           this.chartInstance.data.datasets[1].data = this.dashboardData.profitVsExpense.expense;
           this.chartInstance.update();
         }
+        this.cdr.detectChanges();
       }
     });
   }

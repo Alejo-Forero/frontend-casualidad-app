@@ -13,8 +13,8 @@ describe('AjusteDialogComponent', () => {
     product: {
       id: '1',
       idProducto: 1,
-      name: 'Test Product',
-      stock: 10
+      nombre: 'Test Product',
+      cantidadDisponible: 10
     }
   };
 

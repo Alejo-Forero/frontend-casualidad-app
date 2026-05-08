@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { jest } from '@jest/globals';
 import { LoginComponent } from './login';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 
 const mockAuthService = {
   login: () => of({ accessToken: 'tok', refreshToken: 'ref', usuario: { id: '1', nombre: 'A', correo: 'a@b.com', rol: 'ADMIN' } }),
@@ -27,7 +28,8 @@ describe('LoginComponent', () => {
       imports: [LoginComponent],
       providers: [
         { provide: AuthService, useValue: mockAuthService },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: MatDialog, useValue: { open: jest.fn() } }
       ]
     }).compileComponents();
 
@@ -74,12 +76,11 @@ describe('LoginComponent', () => {
     expect(routerSpy.navigate).not.toHaveBeenCalled();
   });
 
-  it('should toggle help modal', () => {
-    expect(component.showHelpModal).toBe(false);
-    component.toggleHelpModal();
-    expect(component.showHelpModal).toBe(true);
-    component.toggleHelpModal();
-    expect(component.showHelpModal).toBe(false);
+  it('should call openHelpDialog', () => {
+    const dialog = TestBed.inject(MatDialog);
+    const spy = jest.spyOn(dialog, 'open');
+    component.openHelpDialog();
+    expect(spy).toHaveBeenCalled();
   });
 
   it('should expose email and password getters', () => {

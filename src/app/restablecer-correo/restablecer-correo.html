@@ -6,7 +6,7 @@
       <span class="opacity-50">/</span>
       <span>SEGURIDAD</span>
     </nav>
-    <h2 class="text-4xl font-extrabold text-on-surface tracking-tighter mb-4">Restablecer Correo</h2>
+    <h2 class="text-3xl sm:text-4xl font-extrabold text-on-surface tracking-tighter mb-4">Restablecer Correo</h2>
     <p class="text-on-surface-variant text-lg leading-relaxed max-w-2xl">
       @if (step === 1) {
       Protege tu identidad. Primero enviaremos un código de seguridad a tu correo actual.
@@ -21,7 +21,7 @@
   </div>
 
   <!-- Form Card -->
-  <div class="bg-white rounded-[2rem] p-8 md:p-12 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] border border-stone-50">
+  <div class="bg-white rounded-[2rem] p-5 sm:p-8 md:p-12 shadow-[0px_12px_32px_rgba(45,47,47,0.06)] border border-stone-50">
 
     @if (errorMessage) {
     <div class="bg-error/10 border border-error/20 rounded-xl p-4 flex gap-3 text-error mb-8">
@@ -65,7 +65,7 @@
           </div>
         </div>
       </div>
-      <div class="flex justify-end gap-4 pt-6">
+      <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 pt-6">
         <button (click)="goBack()" type="button"
           class="px-8 py-4 rounded-xl text-neutral-600 font-bold hover:bg-neutral-100 transition-colors">
           Atrás
@@ -96,7 +96,7 @@
           </div>
         </div>
       </div>
-      <div class="flex justify-end gap-4 pt-6">
+      <div class="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 pt-6">
         <button (click)="goBack()" type="button"
           class="px-8 py-4 rounded-xl text-neutral-600 font-bold hover:bg-neutral-100 transition-colors">
           Atrás

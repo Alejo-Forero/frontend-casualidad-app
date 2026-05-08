@@ -80,12 +80,28 @@ export class OrderService {
   }
 
   create(data: any): Observable<OrderDetailDTO> {
-    const payload: CreateOrderDTO = {
-      idCliente:    Number(data.clientId   || data.idCliente  || 1),
-      idUsuario:    Number(data.idUsuario  || 1),
-      fechaEntrega: data.deliveryDate || data.fechaEntrega || new Date().toISOString().split('T')[0],
-      detalles: (data.items || []).map((item: any) => this.mapOrderItem(item))
+    console.log('DEBUG - Data received in OrderService:', data);
+
+    // El idCliente debe ser un String (UUID) según la imagen de Postman
+    const idCliente = data.clientId ?? data.idCliente ?? data.id_cliente ?? 1;
+
+    const payload: any = {
+      // Duplicidad de campos para máxima compatibilidad
+      idCliente:    idCliente,
+      id_cliente:   idCliente,
+      idUsuario:    Number(data.idUsuario ?? localStorage.getItem('userId') ?? 1),
+      id_usuario:   Number(data.idUsuario ?? localStorage.getItem('userId') ?? 1),
+      fechaEntrega: data.deliveryDate ?? data.fechaEntrega ?? new Date().toISOString().split('T')[0],
+      fecha_entrega: data.deliveryDate ?? data.fechaEntrega ?? new Date().toISOString().split('T')[0],
+      detalles: (data.items || data.detalles || []).map((item: any) => ({
+        idProducto:    Number(item.productId ?? item.idProducto ?? 0),
+        id_producto:   Number(item.productId ?? item.idProducto ?? 0),
+        cantidad:      Number(item.quantity ?? item.cantidad ?? 1),
+        observaciones: item.observaciones ?? item.customization ?? ''
+      }))
     };
+
+    console.log('DEBUG - Payload con UUID String:', payload);
     return this.http.post<OrderDetailDTO>(this.apiUrl, payload);
   }
 

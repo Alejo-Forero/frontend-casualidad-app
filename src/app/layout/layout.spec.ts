@@ -1,16 +1,46 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { LayoutComponent } from './layout';
-import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
+import { MatDialog } from '@angular/material/dialog';
+import { OrderService } from '../core/services/order.service';
+import { InventoryService } from '../core/services/inventory.service';
+import { of, BehaviorSubject } from 'rxjs';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ScreenSizeService } from '../core/services/screen-size.service';
 
 describe('LayoutComponent', () => {
   let component: LayoutComponent;
   let fixture: ComponentFixture<LayoutComponent>;
+  let mockDialog: any;
+  let mockAuthService: any;
+  let mockOrderService: any;
+  let mockInventoryService: any;
+  let screenSizeSubject: BehaviorSubject<boolean>;
 
   beforeEach(async () => {
+    mockDialog = {
+      open: jest.fn()
+    };
+
+    mockAuthService = {
+      getUser: jest.fn(() => ({ id: '1', nombre: 'Test', email: 'test@test.com', rol: 'ADMIN' })),
+      clearSession: jest.fn()
+    };
+
+    mockOrderService = {
+      getAll: jest.fn(() => of([]))
+    };
+
+    mockInventoryService = {
+      getAll: jest.fn(() => of([]))
+    };
+
+    screenSizeSubject = new BehaviorSubject<boolean>(false);
+
     await TestBed.configureTestingModule({
-      imports: [LayoutComponent],
+      imports: [LayoutComponent, NoopAnimationsModule],
       providers: [
         {
           provide: Router,
@@ -18,87 +48,132 @@ describe('LayoutComponent', () => {
         },
         {
           provide: ActivatedRoute,
-          useValue: {}
+          useValue: { queryParams: of({}) }
         },
         {
           provide: AuthService,
-          useValue: {
-            getUser: jest.fn(() => ({ id: '1', nombre: 'Test', email: 'test@test.com', rol: 'ADMIN' })),
-            clearSession: jest.fn()
-          }
+          useValue: mockAuthService
+        },
+        {
+          provide: MatDialog,
+          useValue: mockDialog
+        },
+        {
+          provide: OrderService,
+          useValue: mockOrderService
+        },
+        {
+          provide: InventoryService,
+          useValue: mockInventoryService
+        },
+        {
+          provide: ScreenSizeService,
+          useValue: { isBelowDesktop$: screenSizeSubject.asObservable() }
         }
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(LayoutComponent);
     component = fixture.componentInstance;
+    
     fixture.detectChanges();
+    
+    // Mock sidenav AFTER detectChanges so Angular doesn't overwrite it
+    component.sidenav = {
+      open: jest.fn(),
+      close: jest.fn(),
+      toggle: jest.fn()
+    } as any;
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should toggle profile dropdown on button click', () => {
-    const mockEvent = { stopPropagation: () => { } } as unknown as Event;
+  it('should handle mobile view transition and auto-open sidenav on desktop', () => {
+    // 1. Ir a móvil
+    screenSizeSubject.next(true);
+    fixture.detectChanges();
+    
+    // 2. Volver a escritorio
+    screenSizeSubject.next(false);
+    fixture.detectChanges();
+    expect(component.sidenav.open).toHaveBeenCalled();
+  });
 
+  it('should filter and sort notifications correctly', () => {
+    const mockOrders = [
+      { idPedido: 1, status: 'PENDIENTE', deliveryDate: '2026-05-10' },
+      { idPedido: 2, status: 'ENTREGADO', deliveryDate: '2026-05-01' },
+      { idPedido: 3, status: 'EN_PRODUCCION', deliveryDate: '2026-05-05' }
+    ];
+    mockOrderService.getAll.mockReturnValue(of(mockOrders));
+    
+    component.loadNotifications();
+    expect(component.expiringOrders.length).toBe(2);
+    expect(component.expiringOrders[0].idPedido).toBe(3); // 2026-05-05 comes before 2026-05-10
+  });
+
+  it('should toggle profile dropdown on button click', () => {
+    const mockEvent = { stopPropagation: jest.fn() } as any;
     component.toggleProfileDropdown(mockEvent);
     expect(component.showProfileDropdown).toBe(true);
+    expect(mockEvent.stopPropagation).toHaveBeenCalled();
 
     component.toggleProfileDropdown(mockEvent);
     expect(component.showProfileDropdown).toBe(false);
   });
 
-  it('should close profile dropdown only when open', () => {
-    component.showProfileDropdown = false;
-    component.closeProfileDropdown(); // should not throw, no-op
-    expect(component.showProfileDropdown).toBe(false);
+  it('should toggle notifications dropdown and handle both branches', () => {
+    const mockEvent = { stopPropagation: jest.fn() } as any;
+    
+    // Toggle ON
+    component.toggleNotificationsDropdown(mockEvent);
+    expect(component.showNotificationsDropdown).toBe(true);
+    expect(mockInventoryService.getAll).toHaveBeenCalled();
 
-    component.showProfileDropdown = true;
-    component.closeProfileDropdown();
-    expect(component.showProfileDropdown).toBe(false);
+    // Toggle OFF
+    component.toggleNotificationsDropdown(mockEvent);
+    expect(component.showNotificationsDropdown).toBe(false);
   });
 
-  it('should open and close config modal', () => {
-    const mockEvent = { stopPropagation: () => { } } as unknown as Event;
-
+  it('should open config modal and close others', () => {
+    const mockEvent = { stopPropagation: jest.fn() } as any;
+    component.showProfileDropdown = true;
     component.openConfigModal(mockEvent);
     expect(component.showConfigModal).toBe(true);
     expect(component.showProfileDropdown).toBe(false);
+    expect(mockEvent.stopPropagation).toHaveBeenCalled();
 
     component.closeConfigModal();
     expect(component.showConfigModal).toBe(false);
-
-    // Without event
-    component.openConfigModal();
-    expect(component.showConfigModal).toBe(true);
   });
 
-  it('should open and close delete modal', () => {
-    const mockEvent = { stopPropagation: () => { }, preventDefault: () => { } } as unknown as Event;
-
-    component.openDeleteModal(mockEvent);
-    expect(component.showDeleteModal).toBe(true);
-    expect(component.showConfigModal).toBe(false);
-
-    component.closeDeleteModal();
-    expect(component.showDeleteModal).toBe(false);
-
-    // Without event
-    component.openDeleteModal();
-    expect(component.showDeleteModal).toBe(true);
+  it('should handle missing user data gracefully', () => {
+    mockAuthService.getUser.mockReturnValue(null);
+    const newComponent = TestBed.createComponent(LayoutComponent).componentInstance;
+    expect(newComponent.currentUser.nombre).toBe('Usuario');
   });
 
-  it('should confirm delete and close modal', () => {
-    component.showDeleteModal = true;
-    component.confirmDelete();
-    expect(component.showDeleteModal).toBe(false);
-  });
-
-  it('should close profile dropdown on document click', () => {
+  it('should handle document click to close dropdowns', () => {
     component.showProfileDropdown = true;
+    component.showNotificationsDropdown = true;
     component.onDocumentClick();
     expect(component.showProfileDropdown).toBe(false);
+    expect(component.showNotificationsDropdown).toBe(false);
+  });
+
+  it('should open various dialogs with event prevention', () => {
+    const event = { preventDefault: jest.fn(), stopPropagation: jest.fn() } as any;
+    
+    component.openLogoutDialog(event);
+    expect(event.preventDefault).toHaveBeenCalled();
+    
+    component.openDeleteUserDialog(event);
+    expect(event.stopPropagation).toHaveBeenCalled();
+    
+    component.openHelpDialog(event);
+    expect(mockDialog.open).toHaveBeenCalledTimes(3);
   });
 
   it('should navigate to nuevo pedido', () => {
@@ -107,27 +182,4 @@ describe('LayoutComponent', () => {
     component.navigateToNuevoPedido();
     expect(spy).toHaveBeenCalledWith(['/pedidos'], { queryParams: { new: 'true' } });
   });
-
-  it('should open and close logout modal', () => {
-    const mockEvent = { stopPropagation: () => { }, preventDefault: () => { } } as any;
-    component.openLogoutModal(mockEvent);
-    expect(component.showLogoutModal).toBe(true);
-    expect(component.showProfileDropdown).toBe(false);
-    
-    component.closeLogoutModal();
-    expect(component.showLogoutModal).toBe(false);
-  });
-
-  it('should confirm logout', () => {
-    const authService = TestBed.inject(AuthService);
-    const router = TestBed.inject(Router);
-    const spyClear = jest.spyOn(authService, 'clearSession');
-    const spyNav = jest.spyOn(router, 'navigate');
-    
-    component.confirmLogout();
-    expect(spyClear).toHaveBeenCalled();
-    expect(spyNav).toHaveBeenCalledWith(['/login']);
-    expect(component.showLogoutModal).toBe(false);
-  });
 });
-

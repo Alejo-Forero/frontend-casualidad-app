@@ -110,6 +110,18 @@ export class PaymentService {
     });
   }
 
+  /**
+   * GET /api/v1/reportes/mas-vendidos?fechaInicio=...&fechaFin=...&ordenarPor=CANTIDAD
+   * Retorna: [{ nombreProducto, cantidadVendida, ingresosTotales }]
+   */
+  getTopSellingProducts(fechaInicio: string, fechaFin: string, ordenarPor: 'CANTIDAD' | 'INGRESOS' = 'CANTIDAD'): Observable<any[]> {
+    const params = new HttpParams()
+      .set('fechaInicio', fechaInicio)
+      .set('fechaFin', fechaFin)
+      .set('ordenarPor', ordenarPor);
+    return this.http.get<any[]>(`${this.reportesUrl}/mas-vendidos`, { params });
+  }
+
   // ─── Compatibilidad hacia atrás ───────────────────────────────────────────────
 
   /** @deprecated Usar registrarAbono() con idPedido. */

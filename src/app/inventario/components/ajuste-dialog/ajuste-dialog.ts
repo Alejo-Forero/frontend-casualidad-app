@@ -19,7 +19,7 @@ import { ProductDTO } from '../../../core/models/inventory.dto';
                     </div>
                     <div>
                         <h2 class="text-xl font-extrabold text-on-surface tracking-tight">Ajustar Inventario</h2>
-                        <p class="text-sm text-on-surface-variant font-medium">{{ data.product.name }} — Stock actual: <strong>{{ data.product.stock }}</strong></p>
+                        <p class="text-sm text-on-surface-variant font-medium">{{ data.product.nombre }} — Stock actual: <strong>{{ data.product.cantidadDisponible }}</strong></p>
                     </div>
                 </div>
                 <button mat-dialog-close class="text-on-surface-variant hover:text-on-surface transition-colors p-2 hover:bg-surface-container rounded-full">
@@ -75,8 +75,8 @@ export class AjusteDialogComponent implements OnInit {
 
   ngOnInit() {
     this.ajusteForm.patchValue({
-      idProducto: Number(this.data.product.idProducto || this.data.product.id),
-      cantidadNueva: this.data.product.stock,
+      idProducto: Number(this.data.product.idProducto),
+      cantidadNueva: this.data.product.cantidadDisponible,
       motivo: ''
     });
   }

@@ -1,0 +1,1016 @@
+File src/app/app.css skipped! Code lines=1 not in limits (5:1000)
+File src/app/app.html skipped! Code lines=2 not in limits (5:1000)
+File src/app/cambiar-contrasena/cambiar-contrasena.css skipped! Code lines=2 not in limits (5:1000)
+File src/app/clientes/clientes.css skipped! Code lines=2 not in limits (5:1000)
+File src/app/home/home.css skipped! Code lines=2 not in limits (5:1000)
+File src/app/inventario/inventario.css skipped! Code lines=2 not in limits (5:1000)
+File src/app/layout/layout.css skipped! Code lines=2 not in limits (5:1000)
+File src/app/login/login.css skipped! Code lines=2 not in limits (5:1000)
+File src/app/pagos/pagos.css skipped! Code lines=2 not in limits (5:1000)
+File src/app/pedidos/pedidos.css skipped! Code lines=2 not in limits (5:1000)
+File src/app/perfil/perfil.css skipped! Code lines=2 not in limits (5:1000)
+File src/app/reportes/reportes.css skipped! Code lines=2 not in limits (5:1000)
+File src/app/restablecer-correo/restablecer-correo.css skipped! Code lines=2 not in limits (5:1000)
+File src/app/shared/pagination/pagination.css skipped! Code lines=2 not in limits (5:1000)
+File src/app/inventario/components/inventario-form/inventario-form.css skipped! Code lines=2 not in limits (5:1000)
+START_DETECTION
+Start detection for source id=src/app/shared/components/success-dialog/success-dialog.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/shared/components/logout-dialog/logout-dialog.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/shared/components/help-dialog/help-dialog.component.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/shared/components/forgot-password-dialog/forgot-password-dialog.component.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/shared/components/forgot-password-dialog/forgot-password-dialog.component.html format=markup
+START_DETECTION
+Start detection for source id=src/app/shared/components/confirm-dialog/confirm-dialog.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/inventario/components/inventario-form/inventario-form.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/inventario/components/inventario-form/inventario-form.html format=markup
+START_DETECTION
+Start detection for source id=src/app/inventario/components/entrada-dialog/entrada-dialog.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/inventario/components/ajuste-dialog/ajuste-dialog.ts format=typescript
+CLONE_FOUND
+{
+	"format": "typescript",
+	"foundDate": 1778220081180,
+	"duplicationA": {
+		"sourceId": "src/app/inventario/components/ajuste-dialog/ajuste-dialog.ts",
+		"start": {
+			"line": 1,
+			"column": 1,
+			"position": 0
+		},
+		"end": {
+			"line": 8,
+			"column": 20,
+			"position": 96
+		},
+		"range": [
+			0,
+			398
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/inventario/components/entrada-dialog/entrada-dialog.ts",
+		"start": {
+			"line": 1,
+			"column": 1,
+			"position": 0
+		},
+		"end": {
+			"line": 8,
+			"column": 21,
+			"position": 96
+		},
+		"range": [
+			0,
+			399
+		]
+	}
+}
+Clone found (typescript):
+ - src/app/inventario/components/ajuste-dialog/ajuste-dialog.ts [1:1 - 8:20] (7 lines, 96 tokens)
+   src/app/inventario/components/entrada-dialog/entrada-dialog.ts [1:1 - 8:21]
+
+START_DETECTION
+Start detection for source id=src/app/shared/utils/list-helper.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/shared/pagination/pagination.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/shared/pagination/pagination.html format=markup
+START_DETECTION
+Start detection for source id=src/app/shared/constants/ui-constants.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/shared/components/base-table.component.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/services/ui.service.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/services/screen-size.service.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/services/perfil.service.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/services/payment.service.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/services/paginator-intl.service.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/services/order.service.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/services/inventory.service.ts format=typescript
+CLONE_FOUND
+{
+	"format": "typescript",
+	"foundDate": 1778220081293,
+	"duplicationA": {
+		"sourceId": "src/app/core/services/inventory.service.ts",
+		"start": {
+			"line": 98,
+			"column": 4,
+			"position": 1203
+		},
+		"end": {
+			"line": 104,
+			"column": 12,
+			"position": 1291
+		},
+		"range": [
+			3642,
+			3886
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/core/services/inventory.service.ts",
+		"start": {
+			"line": 70,
+			"column": 7,
+			"position": 843
+		},
+		"end": {
+			"line": 76,
+			"column": 5,
+			"position": 931
+		},
+		"range": [
+			2597,
+			2834
+		]
+	}
+}
+Clone found (typescript):
+ - src/app/core/services/inventory.service.ts [98:4 - 104:12] (6 lines, 88 tokens)
+   src/app/core/services/inventory.service.ts [70:7 - 76:5]
+
+START_DETECTION
+Start detection for source id=src/app/core/services/client.service.ts format=typescript
+CLONE_FOUND
+{
+	"format": "typescript",
+	"foundDate": 1778220081311,
+	"duplicationA": {
+		"sourceId": "src/app/core/services/client.service.ts",
+		"start": {
+			"line": 72,
+			"column": 2,
+			"position": 646
+		},
+		"end": {
+			"line": 79,
+			"column": 4,
+			"position": 752
+		},
+		"range": [
+			2364,
+			2642
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/core/services/client.service.ts",
+		"start": {
+			"line": 56,
+			"column": 2,
+			"position": 488
+		},
+		"end": {
+			"line": 63,
+			"column": 5,
+			"position": 594
+		},
+		"range": [
+			1875,
+			2154
+		]
+	}
+}
+Clone found (typescript):
+ - src/app/core/services/client.service.ts [72:2 - 79:4] (7 lines, 106 tokens)
+   src/app/core/services/client.service.ts [56:2 - 63:5]
+
+START_DETECTION
+Start detection for source id=src/app/core/services/auth.service.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/models/report.dto.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/models/payment.dto.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/models/order.dto.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/models/inventory.dto.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/models/dashboard.dto.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/models/client.dto.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/models/auth.dto.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/interceptors/auth.interceptor.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/guards/guest.guard.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/core/guards/auth.guard.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/restablecer-correo/restablecer-correo.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/restablecer-correo/restablecer-correo.html format=markup
+CLONE_FOUND
+{
+	"format": "markup",
+	"foundDate": 1778220081389,
+	"duplicationA": {
+		"sourceId": "src/app/restablecer-correo/restablecer-correo.html",
+		"start": {
+			"line": 95,
+			"column": 6,
+			"position": 958
+		},
+		"end": {
+			"line": 104,
+			"column": 31,
+			"position": 1032
+		},
+		"range": [
+			4869,
+			5266
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/restablecer-correo/restablecer-correo.html",
+		"start": {
+			"line": 64,
+			"column": 2,
+			"position": 679
+		},
+		"end": {
+			"line": 73,
+			"column": 31,
+			"position": 753
+		},
+		"range": [
+			3303,
+			3700
+		]
+	}
+}
+Clone found (markup):
+ - src/app/restablecer-correo/restablecer-correo.html [95:6 - 104:31] (9 lines, 74 tokens)
+   src/app/restablecer-correo/restablecer-correo.html [64:2 - 73:31]
+
+START_DETECTION
+Start detection for source id=src/app/reportes/reportes.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/reportes/reportes.html format=markup
+START_DETECTION
+Start detection for source id=src/app/perfil/perfil.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/perfil/perfil.html format=markup
+CLONE_FOUND
+{
+	"format": "markup",
+	"foundDate": 1778220081482,
+	"duplicationA": {
+		"sourceId": "src/app/perfil/perfil.html",
+		"start": {
+			"line": 12,
+			"column": 5,
+			"position": 141
+		},
+		"end": {
+			"line": 25,
+			"column": 4,
+			"position": 228
+		},
+		"range": [
+			660,
+			1093
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/restablecer-correo/restablecer-correo.html",
+		"start": {
+			"line": 20,
+			"column": 5,
+			"position": 270
+		},
+		"end": {
+			"line": 33,
+			"column": 16,
+			"position": 357
+		},
+		"range": [
+			1046,
+			1491
+		]
+	}
+}
+Clone found (markup):
+ - src/app/perfil/perfil.html [12:5 - 25:4] (13 lines, 87 tokens)
+   src/app/restablecer-correo/restablecer-correo.html [20:5 - 33:16]
+
+START_DETECTION
+Start detection for source id=src/app/pedidos/pedidos.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/pedidos/pedidos.html format=markup
+START_DETECTION
+Start detection for source id=src/app/pagos/pagos.ts format=typescript
+CLONE_FOUND
+{
+	"format": "typescript",
+	"foundDate": 1778220081801,
+	"duplicationA": {
+		"sourceId": "src/app/pagos/pagos.ts",
+		"start": {
+			"line": 7,
+			"column": 7,
+			"position": 122
+		},
+		"end": {
+			"line": 16,
+			"column": 7,
+			"position": 241
+		},
+		"range": [
+			504,
+			1045
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/pedidos/pedidos.ts",
+		"start": {
+			"line": 10,
+			"column": 37,
+			"position": 176
+		},
+		"end": {
+			"line": 20,
+			"column": 10,
+			"position": 296
+		},
+		"range": [
+			784,
+			1329
+		]
+	}
+}
+Clone found (typescript):
+ - src/app/pagos/pagos.ts [7:7 - 16:7] (9 lines, 119 tokens)
+   src/app/pedidos/pedidos.ts [10:37 - 20:10]
+
+START_DETECTION
+Start detection for source id=src/app/pagos/pagos.html format=markup
+CLONE_FOUND
+{
+	"format": "markup",
+	"foundDate": 1778220081875,
+	"duplicationA": {
+		"sourceId": "src/app/pagos/pagos.html",
+		"start": {
+			"line": 177,
+			"column": 34,
+			"position": 1748
+		},
+		"end": {
+			"line": 189,
+			"column": 2,
+			"position": 1850
+		},
+		"range": [
+			11393,
+			12010
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/pedidos/pedidos.html",
+		"start": {
+			"line": 162,
+			"column": 34,
+			"position": 1467
+		},
+		"end": {
+			"line": 174,
+			"column": 2,
+			"position": 1569
+		},
+		"range": [
+			10212,
+			10829
+		]
+	}
+}
+Clone found (markup):
+ - src/app/pagos/pagos.html [177:34 - 189:2] (12 lines, 102 tokens)
+   src/app/pedidos/pedidos.html [162:34 - 174:2]
+
+START_DETECTION
+Start detection for source id=src/app/login/login.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/login/login.html format=markup
+START_DETECTION
+Start detection for source id=src/app/layout/layout.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/layout/layout.html format=markup
+START_DETECTION
+Start detection for source id=src/app/inventario/inventario.ts format=typescript
+CLONE_FOUND
+{
+	"format": "typescript",
+	"foundDate": 1778220081995,
+	"duplicationA": {
+		"sourceId": "src/app/inventario/inventario.ts",
+		"start": {
+			"line": 10,
+			"column": 30,
+			"position": 134
+		},
+		"end": {
+			"line": 21,
+			"column": 17,
+			"position": 270
+		},
+		"range": [
+			587,
+			1210
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/pedidos/pedidos.ts",
+		"start": {
+			"line": 10,
+			"column": 37,
+			"position": 176
+		},
+		"end": {
+			"line": 21,
+			"column": 11,
+			"position": 312
+		},
+		"range": [
+			784,
+			1401
+		]
+	}
+}
+Clone found (typescript):
+ - src/app/inventario/inventario.ts [10:30 - 21:17] (11 lines, 136 tokens)
+   src/app/pedidos/pedidos.ts [10:37 - 21:11]
+
+START_DETECTION
+Start detection for source id=src/app/inventario/inventario.html format=markup
+START_DETECTION
+Start detection for source id=src/app/home/home.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/home/home.html format=markup
+START_DETECTION
+Start detection for source id=src/app/clientes/clientes.ts format=typescript
+CLONE_FOUND
+{
+	"format": "typescript",
+	"foundDate": 1778220082096,
+	"duplicationA": {
+		"sourceId": "src/app/clientes/clientes.ts",
+		"start": {
+			"line": 13,
+			"column": 26,
+			"position": 179
+		},
+		"end": {
+			"line": 20,
+			"column": 23,
+			"position": 275
+		},
+		"range": [
+			777,
+			1220
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/pedidos/pedidos.ts",
+		"start": {
+			"line": 14,
+			"column": 27,
+			"position": 216
+		},
+		"end": {
+			"line": 21,
+			"column": 11,
+			"position": 312
+		},
+		"range": [
+			970,
+			1401
+		]
+	}
+}
+Clone found (typescript):
+ - src/app/clientes/clientes.ts [13:26 - 20:23] (7 lines, 96 tokens)
+   src/app/pedidos/pedidos.ts [14:27 - 21:11]
+
+CLONE_FOUND
+{
+	"format": "typescript",
+	"foundDate": 1778220082111,
+	"duplicationA": {
+		"sourceId": "src/app/clientes/clientes.ts",
+		"start": {
+			"line": 235,
+			"column": 13,
+			"position": 2300
+		},
+		"end": {
+			"line": 243,
+			"column": 2,
+			"position": 2399
+		},
+		"range": [
+			8070,
+			8381
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/pagos/pagos.ts",
+		"start": {
+			"line": 349,
+			"column": 11,
+			"position": 3371
+		},
+		"end": {
+			"line": 357,
+			"column": 2,
+			"position": 3470
+		},
+		"range": [
+			12608,
+			12903
+		]
+	}
+}
+Clone found (typescript):
+ - src/app/clientes/clientes.ts [235:13 - 243:2] (8 lines, 99 tokens)
+   src/app/pagos/pagos.ts [349:11 - 357:2]
+
+START_DETECTION
+Start detection for source id=src/app/clientes/clientes.html format=markup
+CLONE_FOUND
+{
+	"format": "markup",
+	"foundDate": 1778220082192,
+	"duplicationA": {
+		"sourceId": "src/app/clientes/clientes.html",
+		"start": {
+			"line": 131,
+			"column": 82,
+			"position": 1143
+		},
+		"end": {
+			"line": 144,
+			"column": 2,
+			"position": 1250
+		},
+		"range": [
+			7419,
+			8094
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/inventario/inventario.html",
+		"start": {
+			"line": 184,
+			"column": 9,
+			"position": 1534
+		},
+		"end": {
+			"line": 197,
+			"column": 3,
+			"position": 1641
+		},
+		"range": [
+			11227,
+			11903
+		]
+	}
+}
+Clone found (markup):
+ - src/app/clientes/clientes.html [131:82 - 144:2] (13 lines, 107 tokens)
+   src/app/inventario/inventario.html [184:9 - 197:3]
+
+START_DETECTION
+Start detection for source id=src/app/cambiar-contrasena/cambiar-contrasena.ts format=typescript
+CLONE_FOUND
+{
+	"format": "typescript",
+	"foundDate": 1778220082221,
+	"duplicationA": {
+		"sourceId": "src/app/cambiar-contrasena/cambiar-contrasena.ts",
+		"start": {
+			"line": 1,
+			"column": 1,
+			"position": 0
+		},
+		"end": {
+			"line": 8,
+			"column": 25,
+			"position": 90
+		},
+		"range": [
+			0,
+			365
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/restablecer-correo/restablecer-correo.ts",
+		"start": {
+			"line": 1,
+			"column": 1,
+			"position": 0
+		},
+		"end": {
+			"line": 8,
+			"column": 25,
+			"position": 90
+		},
+		"range": [
+			0,
+			365
+		]
+	}
+}
+Clone found (typescript):
+ - src/app/cambiar-contrasena/cambiar-contrasena.ts [1:1 - 8:25] (7 lines, 90 tokens)
+   src/app/restablecer-correo/restablecer-correo.ts [1:1 - 8:25]
+
+CLONE_FOUND
+{
+	"format": "typescript",
+	"foundDate": 1778220082223,
+	"duplicationA": {
+		"sourceId": "src/app/cambiar-contrasena/cambiar-contrasena.ts",
+		"start": {
+			"line": 28,
+			"column": 13,
+			"position": 265
+		},
+		"end": {
+			"line": 38,
+			"column": 14,
+			"position": 365
+		},
+		"range": [
+			938,
+			1287
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/shared/components/forgot-password-dialog/forgot-password-dialog.component.ts",
+		"start": {
+			"line": 29,
+			"column": 10,
+			"position": 286
+		},
+		"end": {
+			"line": 39,
+			"column": 14,
+			"position": 386
+		},
+		"range": [
+			1096,
+			1445
+		]
+	}
+}
+Clone found (typescript):
+ - src/app/cambiar-contrasena/cambiar-contrasena.ts [28:13 - 38:14] (10 lines, 100 tokens)
+   src/app/shared/components/forgot-password-dialog/forgot-password-dialog.component.ts [29:10 - 39:14]
+
+CLONE_FOUND
+{
+	"format": "typescript",
+	"foundDate": 1778220082226,
+	"duplicationA": {
+		"sourceId": "src/app/cambiar-contrasena/cambiar-contrasena.ts",
+		"start": {
+			"line": 53,
+			"column": 42,
+			"position": 552
+		},
+		"end": {
+			"line": 65,
+			"column": 16,
+			"position": 642
+		},
+		"range": [
+			1926,
+			2231
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/restablecer-correo/restablecer-correo.ts",
+		"start": {
+			"line": 48,
+			"column": 2,
+			"position": 542
+		},
+		"end": {
+			"line": 60,
+			"column": 29,
+			"position": 632
+		},
+		"range": [
+			1865,
+			2183
+		]
+	}
+}
+Clone found (typescript):
+ - src/app/cambiar-contrasena/cambiar-contrasena.ts [53:42 - 65:16] (12 lines, 90 tokens)
+   src/app/restablecer-correo/restablecer-correo.ts [48:2 - 60:29]
+
+CLONE_FOUND
+{
+	"format": "typescript",
+	"foundDate": 1778220082228,
+	"duplicationA": {
+		"sourceId": "src/app/cambiar-contrasena/cambiar-contrasena.ts",
+		"start": {
+			"line": 78,
+			"column": 2,
+			"position": 770
+		},
+		"end": {
+			"line": 85,
+			"column": 54,
+			"position": 850
+		},
+		"range": [
+			2653,
+			2928
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/restablecer-correo/restablecer-correo.ts",
+		"start": {
+			"line": 100,
+			"column": 2,
+			"position": 1007
+		},
+		"end": {
+			"line": 107,
+			"column": 21,
+			"position": 1087
+		},
+		"range": [
+			3445,
+			3687
+		]
+	}
+}
+Clone found (typescript):
+ - src/app/cambiar-contrasena/cambiar-contrasena.ts [78:2 - 85:54] (7 lines, 80 tokens)
+   src/app/restablecer-correo/restablecer-correo.ts [100:2 - 107:21]
+
+CLONE_FOUND
+{
+	"format": "typescript",
+	"foundDate": 1778220082228,
+	"duplicationA": {
+		"sourceId": "src/app/cambiar-contrasena/cambiar-contrasena.ts",
+		"start": {
+			"line": 80,
+			"column": 5,
+			"position": 796
+		},
+		"end": {
+			"line": 92,
+			"column": 22,
+			"position": 886
+		},
+		"range": [
+			2724,
+			3040
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/shared/components/forgot-password-dialog/forgot-password-dialog.component.ts",
+		"start": {
+			"line": 90,
+			"column": 2,
+			"position": 870
+		},
+		"end": {
+			"line": 102,
+			"column": 6,
+			"position": 960
+		},
+		"range": [
+			3013,
+			3313
+		]
+	}
+}
+Clone found (typescript):
+ - src/app/cambiar-contrasena/cambiar-contrasena.ts [80:5 - 92:22] (12 lines, 90 tokens)
+   src/app/shared/components/forgot-password-dialog/forgot-password-dialog.component.ts [90:2 - 102:6]
+
+CLONE_FOUND
+{
+	"format": "typescript",
+	"foundDate": 1778220082229,
+	"duplicationA": {
+		"sourceId": "src/app/cambiar-contrasena/cambiar-contrasena.ts",
+		"start": {
+			"line": 85,
+			"column": 54,
+			"position": 851
+		},
+		"end": {
+			"line": 98,
+			"column": 5,
+			"position": 933
+		},
+		"range": [
+			2928,
+			3155
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/restablecer-correo/restablecer-correo.ts",
+		"start": {
+			"line": 107,
+			"column": 21,
+			"position": 1088
+		},
+		"end": {
+			"line": 120,
+			"column": 3,
+			"position": 1170
+		},
+		"range": [
+			3687,
+			3912
+		]
+	}
+}
+Clone found (typescript):
+ - src/app/cambiar-contrasena/cambiar-contrasena.ts [85:54 - 98:5] (13 lines, 82 tokens)
+   src/app/restablecer-correo/restablecer-correo.ts [107:21 - 120:3]
+
+START_DETECTION
+Start detection for source id=src/app/cambiar-contrasena/cambiar-contrasena.html format=markup
+CLONE_FOUND
+{
+	"format": "markup",
+	"foundDate": 1778220082233,
+	"duplicationA": {
+		"sourceId": "src/app/cambiar-contrasena/cambiar-contrasena.html",
+		"start": {
+			"line": 1,
+			"column": 1,
+			"position": 0
+		},
+		"end": {
+			"line": 9,
+			"column": 8,
+			"position": 89
+		},
+		"range": [
+			0,
+			477
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/restablecer-correo/restablecer-correo.html",
+		"start": {
+			"line": 1,
+			"column": 1,
+			"position": 0
+		},
+		"end": {
+			"line": 9,
+			"column": 12,
+			"position": 89
+		},
+		"range": [
+			0,
+			481
+		]
+	}
+}
+Clone found (markup):
+ - src/app/cambiar-contrasena/cambiar-contrasena.html [1:1 - 9:8] (8 lines, 89 tokens)
+   src/app/restablecer-correo/restablecer-correo.html [1:1 - 9:12]
+
+CLONE_FOUND
+{
+	"format": "markup",
+	"foundDate": 1778220082235,
+	"duplicationA": {
+		"sourceId": "src/app/cambiar-contrasena/cambiar-contrasena.html",
+		"start": {
+			"line": 15,
+			"column": 7,
+			"position": 186
+		},
+		"end": {
+			"line": 29,
+			"column": 16,
+			"position": 278
+		},
+		"range": [
+			791,
+			1246
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/restablecer-correo/restablecer-correo.html",
+		"start": {
+			"line": 19,
+			"column": 7,
+			"position": 267
+		},
+		"end": {
+			"line": 25,
+			"column": 17,
+			"position": 230
+		},
+		"range": [
+			1040,
+			1110
+		]
+	}
+}
+Clone found (markup):
+ - src/app/cambiar-contrasena/cambiar-contrasena.html [15:7 - 29:16] (14 lines, 92 tokens)
+   src/app/restablecer-correo/restablecer-correo.html [19:7 - 25:17]
+
+CLONE_FOUND
+{
+	"format": "markup",
+	"foundDate": 1778220082243,
+	"duplicationA": {
+		"sourceId": "src/app/cambiar-contrasena/cambiar-contrasena.html",
+		"start": {
+			"line": 112,
+			"column": 34,
+			"position": 1087
+		},
+		"end": {
+			"line": 128,
+			"column": 4,
+			"position": 1178
+		},
+		"range": [
+			5684,
+			6231
+		]
+	},
+	"duplicationB": {
+		"sourceId": "src/app/restablecer-correo/restablecer-correo.html",
+		"start": {
+			"line": 131,
+			"column": 31,
+			"position": 1291
+		},
+		"end": {
+			"line": 147,
+			"column": 7,
+			"position": 1382
+		},
+		"range": [
+			6670,
+			7220
+		]
+	}
+}
+Clone found (markup):
+ - src/app/cambiar-contrasena/cambiar-contrasena.html [112:34 - 128:4] (16 lines, 91 tokens)
+   src/app/restablecer-correo/restablecer-correo.html [131:31 - 147:7]
+
+START_DETECTION
+Start detection for source id=src/environments/environment.ts format=typescript
+START_DETECTION
+Start detection for source id=src/environments/environment.development.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/app.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/app.routes.ts format=typescript
+START_DETECTION
+Start detection for source id=src/app/app.config.ts format=typescript
+START_DETECTION
+Start detection for source id=src/styles.css format=css
+START_DETECTION
+Start detection for source id=src/main.ts format=typescript
+START_DETECTION
+Start detection for source id=src/index.html format=markup
+┌────────────┬────────────────┬─────────────┬──────────────┬──────────────┬──────────────────┬───────────────────┐
+│ Format     │ Files analyzed │ Total lines │ Total tokens │ Clones found │ Duplicated lines │ Duplicated tokens │
+├────────────┼────────────────┼─────────────┼──────────────┼──────────────┼──────────────────┼───────────────────┤
+│ typescript │ 48             │ 4934        │ 45136        │ 13           │ 116 (2.35%)      │ 1272 (2.82%)      │
+├────────────┼────────────────┼─────────────┼──────────────┼──────────────┼──────────────────┼───────────────────┤
+│ markup     │ 15             │ 3872        │ 35862        │ 7            │ 85 (2.2%)        │ 642 (1.79%)       │
+├────────────┼────────────────┼─────────────┼──────────────┼──────────────┼──────────────────┼───────────────────┤
+│ css        │ 1              │ 309         │ 1659         │ 0            │ 0 (0%)           │ 0 (0%)            │
+├────────────┼────────────────┼─────────────┼──────────────┼──────────────┼──────────────────┼───────────────────┤
+│ Total:     │ 64             │ 9115        │ 82657        │ 20           │ 201 (2.21%)      │ 1914 (2.32%)      │
+└────────────┴────────────────┴─────────────┴──────────────┴──────────────┴──────────────────┴───────────────────┘
+Found 20 clones.
+time: 1.309s
