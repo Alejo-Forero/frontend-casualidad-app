@@ -1,16 +1,7 @@
-<!-- =========================================================
-     LAYOUT PRINCIPAL – Casualidad App
-     Breakpoints (sincronizados con ScreenSizeService):
-       desktop: ≥ 1024px → sidenav side (abierto)
-       tablet/mobile: < 1024px → sidenav over (colapsado, hamburguesa)
-     ========================================================= -->
-<mat-sidenav-container class="h-screen bg-background" (click)="onDocumentClick()" (keydown.escape)="onDocumentClick()" tabindex="-1">
+<mat-sidenav-container class="h-screen bg-background" (click)="onDocumentClick()" (keydown.escape)="onDocumentClick()">
 
   <!-- ── Sidenav ─────────────────────────────────────────── -->
-  <mat-sidenav
-    #sidenav
-    [mode]="screenSize.isBelowDesktop() ? 'over' : 'side'"
-    [opened]="!screenSize.isBelowDesktop()"
+  <mat-sidenav #sidenav [mode]="screenSize.isBelowDesktop() ? 'over' : 'side'" [opened]="!screenSize.isBelowDesktop()"
     class="w-64 bg-neutral-50 dark:bg-neutral-950 border-r border-neutral-200/50 font-['Plus_Jakarta_Sans'] text-sm font-medium z-40">
 
     <div class="flex flex-col h-full py-6 pr-4 space-y-2">
@@ -18,7 +9,8 @@
       <!-- Logo -->
       <div class="px-6 mb-10">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container shrink-0">
+          <div
+            class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container shrink-0">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">lightbulb</span>
           </div>
           <div class="overflow-hidden">
@@ -33,39 +25,33 @@
       <!-- Nav links -->
       <nav class="flex-1 space-y-1" aria-label="Navegación principal">
         @for (link of navLinks; track link.path) {
-          <a class="flex items-center gap-3 px-6 py-3 transition-transform duration-200 cursor-pointer active:opacity-80 hover:translate-x-1 text-neutral-600 dark:text-neutral-400 hover:text-orange-600 rounded-r-full"
-             [routerLink]="link.path"
-             routerLinkActive="!text-orange-700 font-bold bg-orange-50 dark:bg-orange-900/20"
-             [routerLinkActiveOptions]="link.exact ? { exact: true } : {}"
-             (click)="screenSize.isBelowDesktop() && sidenav.close()">
-            <span class="material-symbols-outlined shrink-0">{{ link.icon }}</span>
-            <span>{{ link.label }}</span>
-          </a>
+        <a class="flex items-center gap-3 px-6 py-3 transition-transform duration-200 cursor-pointer active:opacity-80 hover:translate-x-1 text-neutral-600 dark:text-neutral-400 hover:text-orange-600 rounded-r-full"
+          [routerLink]="link.path" routerLinkActive="!text-orange-700 font-bold bg-orange-50 dark:bg-orange-900/20"
+          [routerLinkActiveOptions]="link.exact ? { exact: true } : {}"
+          (click)="screenSize.isBelowDesktop() && sidenav.close()">
+          <span class="material-symbols-outlined shrink-0">{{ link.icon }}</span>
+          <span>{{ link.label }}</span>
+        </a>
         }
       </nav>
 
       <!-- Bottom actions -->
       <div class="px-4 mt-auto space-y-1">
-        <button
-          (click)="navigateToNuevoPedido()"
-          class="w-full px-4 text-white font-bold flex items-center justify-center gap-2 mb-6
+        <button (click)="navigateToNuevoPedido()" class="w-full px-4 text-white font-bold flex items-center justify-center gap-2 mb-6
                  hover:opacity-90 transition-all active:scale-[0.98] rounded-lg py-4 shadow-lg"
-          style="background: linear-gradient(to right, #c25e23, #f28b4b);"
-          aria-label="Crear nuevo pedido">
+          style="background: linear-gradient(to right, #c25e23, #f28b4b);" aria-label="Crear nuevo pedido">
           <span class="material-symbols-outlined shrink-0">add</span>
           <span>Nuevo Pedido</span>
         </button>
 
         <a class="flex items-center gap-3 text-neutral-600 dark:text-neutral-400 px-6 py-3 hover:text-orange-600 hover:translate-x-1 transition-transform duration-200 cursor-pointer rounded-r-full"
-           href="javascript:void(0)"
-           (click)="openConfigModal($event)">
+          href="javascript:void(0)" (click)="openConfigModal($event)">
           <span class="material-symbols-outlined shrink-0">settings</span>
           <span>Configuración</span>
         </a>
 
         <a class="flex items-center gap-3 text-neutral-600 dark:text-neutral-400 px-6 py-3 hover:text-orange-600 hover:translate-x-1 transition-transform duration-200 cursor-pointer rounded-r-full"
-           href="javascript:void(0)"
-           (click)="openHelpDialog($event)">
+          href="javascript:void(0)" (click)="openHelpDialog($event)">
           <span class="material-symbols-outlined shrink-0">help</span>
           <span>Ayuda</span>
         </a>
@@ -78,8 +64,7 @@
   <mat-sidenav-content class="flex flex-col min-h-screen">
 
     <!-- Top Toolbar -->
-    <mat-toolbar
-      class="flex justify-between items-center px-3 sm:px-6 lg:px-8 h-16 w-full
+    <mat-toolbar class="flex justify-between items-center px-3 sm:px-6 lg:px-8 h-16 w-full
              bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md
              font-['Plus_Jakarta_Sans'] tracking-tight sticky top-0 z-50
              shadow-[0px_4px_16px_rgba(45,47,47,0.06)]">
@@ -87,12 +72,10 @@
       <div class="flex items-center gap-2 sm:gap-4 overflow-hidden">
         <!-- Hamburger (tablet/mobile) -->
         @if (screenSize.isBelowDesktop()) {
-          <button mat-icon-button
-                  (click)="sidenav.toggle(); $event.stopPropagation()"
-                  class="shrink-0 text-neutral-500 hover:text-primary transition-colors"
-                  aria-label="Abrir menú">
-            <span class="material-symbols-outlined text-2xl">menu</span>
-          </button>
+        <button mat-icon-button (click)="sidenav.toggle(); $event.stopPropagation()"
+          class="shrink-0 text-neutral-500 hover:text-primary transition-colors" aria-label="Abrir menú">
+          <span class="material-symbols-outlined text-2xl">menu</span>
+        </button>
         }
 
       </div>
@@ -101,12 +84,12 @@
       <div class="flex items-center gap-2 sm:gap-4 shrink-0">
         <!-- Notifications -->
         <div class="relative flex items-center">
-          <button class="p-2 text-neutral-500 hover:bg-orange-50 rounded-full transition-colors active:scale-95 duration-200 relative"
-                  aria-label="Ver notificaciones"
-                  (click)="toggleNotificationsDropdown($event)"
-                  [attr.aria-expanded]="showNotificationsDropdown"
-                  aria-haspopup="true">
-            <span class="material-symbols-outlined">notifications</span>
+          <button
+            class="p-2 text-neutral-500 hover:bg-orange-50 rounded-full transition-colors active:scale-95 duration-200 relative"
+            aria-label="Ver notificaciones" (click)="toggleNotificationsDropdown($event)"
+            [attr.aria-expanded]="showNotificationsDropdown" aria-haspopup="true">
+            <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
+            <span class="sr-only">Notificaciones</span>
             @if (expiringOrders.length > 0 || lowStockProducts.length > 0) {
             <span class="absolute top-2 right-2 flex h-2 w-2" aria-hidden="true">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -117,72 +100,76 @@
 
           <!-- Notifications Dropdown -->
           @if (showNotificationsDropdown) {
-            <div class="absolute right-0 top-full mt-3 w-80 bg-white dark:bg-neutral-900
+          <div class="absolute right-0 top-full mt-3 w-80 bg-white dark:bg-neutral-900
                         rounded-xl border border-surface-variant/20 shadow-lg py-2 z-50
                         font-headline animate-[dropdownFadeIn_0.2s_ease-out] max-h-96 overflow-y-auto"
-                 (click)="$event.stopPropagation()"
-                 role="menu"
-                 aria-label="Notificaciones">
-              <div class="px-4 py-3 border-b border-surface-variant/10 flex justify-between items-center">
-                <h3 class="font-bold text-sm text-on-surface">Notificaciones</h3>
-                <span class="text-[10px] font-black tracking-widest text-primary uppercase bg-orange-50 px-2 py-0.5 rounded-full">
-                  {{ expiringOrders.length + lowStockProducts.length }} Nuevas
-                </span>
-              </div>
-              
-              <div class="flex flex-col">
-                <!-- Por vencer -->
-                @if (expiringOrders.length > 0) {
-                  <div class="px-4 py-2 bg-stone-50 border-b border-stone-100">
-                    <p class="text-[10px] font-black tracking-widest text-stone-500 uppercase">Pedidos por vencer</p>
-                  </div>
-                  @for (order of expiringOrders; track order.idPedido) {
-                    <a class="flex items-start gap-3 px-4 py-3 hover:bg-orange-50/50 transition-colors border-b border-stone-50 last:border-0"
-                       [routerLink]="['/pedidos']" [queryParams]="{view: order.idPedido || order.id}"
-                       (click)="closeNotificationsDropdown()">
-                      <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
-                        <span class="material-symbols-outlined text-sm">schedule</span>
-                      </div>
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-stone-700 truncate">Pedido {{ order.code }}</p>
-                        <p class="text-xs text-stone-500 truncate">{{ order.clientName }}</p>
-                        <p class="text-[10px] text-blue-600 font-bold mt-1">Entrega: {{ order.deliveryDate | date:'dd MMM yyyy' }}</p>
-                      </div>
-                    </a>
-                  }
-                }
-
-                <!-- Stock crítico -->
-                @if (lowStockProducts.length > 0) {
-                  <div class="px-4 py-2 bg-stone-50 border-b border-stone-100">
-                    <p class="text-[10px] font-black tracking-widest text-stone-500 uppercase">Inventario bajo</p>
-                  </div>
-                  @for (product of lowStockProducts; track product.idProducto) {
-                    <a class="flex items-start gap-3 px-4 py-3 hover:bg-orange-50/50 transition-colors border-b border-stone-50 last:border-0"
-                       [routerLink]="['/inventario']" [queryParams]="{addStock: product.idProducto || product.id}"
-                       (click)="closeNotificationsDropdown()">
-                      <div class="w-8 h-8 rounded-full bg-error/10 text-error flex items-center justify-center shrink-0 mt-0.5">
-                        <span class="material-symbols-outlined text-sm">inventory_2</span>
-                      </div>
-                      <div class="flex-1 min-w-0">
-                        <p class="text-sm font-bold text-stone-700 truncate">{{ product.nombre }}</p>
-                        <p class="text-[10px] text-error font-bold mt-1">Stock: {{ product.cantidadDisponible }} (Mín: {{ product.stockMinimo }})</p>
-                      </div>
-                    </a>
-                  }
-                }
-
-                @if (expiringOrders.length === 0 && lowStockProducts.length === 0) {
-                  <div class="px-4 py-8 text-center">
-                    <div class="w-12 h-12 rounded-full bg-stone-50 flex items-center justify-center mx-auto mb-3">
-                      <span class="material-symbols-outlined text-stone-300 text-2xl">done_all</span>
-                    </div>
-                    <p class="text-sm font-bold text-stone-600">Todo al día</p>
-                    <p class="text-xs text-stone-400 mt-1">No tienes notificaciones pendientes.</p>
-                  </div>
-                }
-              </div>
+            (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()"
+            (keydown.space)="$event.stopPropagation()" role="menu" aria-label="Notificaciones">
+            <div class="px-4 py-3 border-b border-surface-variant/10 flex justify-between items-center">
+              <h3 class="font-bold text-sm text-on-surface">Notificaciones</h3>
+              <span
+                class="text-[10px] font-black tracking-widest text-primary uppercase bg-orange-50 px-2 py-0.5 rounded-full">
+                {{ expiringOrders.length + lowStockProducts.length }} Nuevas
+              </span>
             </div>
+
+            <div class="flex flex-col">
+              <!-- Por vencer -->
+              @if (expiringOrders.length > 0) {
+              <div class="px-4 py-2 bg-stone-50 border-b border-stone-100">
+                <p class="text-[10px] font-black tracking-widest text-stone-500 uppercase">Pedidos por vencer</p>
+              </div>
+              @for (order of expiringOrders; track order.idPedido) {
+              <a class="flex items-start gap-3 px-4 py-3 hover:bg-orange-50/50 transition-colors border-b border-stone-50 last:border-0"
+                [routerLink]="['/pedidos']" [queryParams]="{view: order.idPedido || order.id}"
+                (click)="closeNotificationsDropdown()">
+                <div
+                  class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <span class="material-symbols-outlined text-sm">schedule</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-bold text-stone-700 truncate">Pedido {{ order.code }}</p>
+                  <p class="text-xs text-stone-500 truncate">{{ order.clientName }}</p>
+                  <p class="text-[10px] text-blue-600 font-bold mt-1">Entrega: {{ order.deliveryDate | date:'dd MMM
+                    yyyy' }}</p>
+                </div>
+              </a>
+              }
+              }
+
+              <!-- Stock crítico -->
+              @if (lowStockProducts.length > 0) {
+              <div class="px-4 py-2 bg-stone-50 border-b border-stone-100">
+                <p class="text-[10px] font-black tracking-widest text-stone-500 uppercase">Inventario bajo</p>
+              </div>
+              @for (product of lowStockProducts; track product.idProducto) {
+              <a class="flex items-start gap-3 px-4 py-3 hover:bg-orange-50/50 transition-colors border-b border-stone-50 last:border-0"
+                [routerLink]="['/inventario']" [queryParams]="{addStock: product.idProducto || product.id}"
+                (click)="closeNotificationsDropdown()">
+                <div
+                  class="w-8 h-8 rounded-full bg-error/10 text-error flex items-center justify-center shrink-0 mt-0.5">
+                  <span class="material-symbols-outlined text-sm">inventory_2</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-bold text-stone-700 truncate">{{ product.nombre }}</p>
+                  <p class="text-[10px] text-error font-bold mt-1">Stock: {{ product.cantidadDisponible }} (Mín: {{
+                    product.stockMinimo }})</p>
+                </div>
+              </a>
+              }
+              }
+
+              @if (expiringOrders.length === 0 && lowStockProducts.length === 0) {
+              <div class="px-4 py-8 text-center">
+                <div class="w-12 h-12 rounded-full bg-stone-50 flex items-center justify-center mx-auto mb-3">
+                  <span class="material-symbols-outlined text-stone-300 text-2xl">done_all</span>
+                </div>
+                <p class="text-sm font-bold text-stone-600">Todo al día</p>
+                <p class="text-xs text-stone-400 mt-1">No tienes notificaciones pendientes.</p>
+              </div>
+              }
+            </div>
+          </div>
           }
         </div>
 
@@ -191,9 +178,8 @@
         <!-- Profile -->
         <div class="relative flex items-center gap-2 sm:gap-3 pl-1">
           <button class="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity"
-                  (click)="toggleProfileDropdown($event)"
-                  aria-label="Menú de perfil"
-                  [attr.aria-expanded]="showProfileDropdown">
+            (click)="toggleProfileDropdown($event)" aria-label="Menú de perfil"
+            [attr.aria-expanded]="showProfileDropdown">
             <!-- Name/email (hidden on mobile) -->
             <div class="hidden sm:block text-left mr-1 overflow-hidden max-w-[140px]">
               <p class="text-xs font-bold text-on-surface truncate">{{ currentUser.nombre }}</p>
@@ -208,40 +194,34 @@
 
           <!-- Profile dropdown -->
           @if (showProfileDropdown) {
-            <div class="absolute right-0 top-full mt-3 w-56 bg-white dark:bg-neutral-900
+          <div class="absolute right-0 top-full mt-3 w-56 bg-white dark:bg-neutral-900
                         rounded-xl border border-surface-variant/20 shadow-lg py-2 z-50
-                        font-headline animate-[dropdownFadeIn_0.2s_ease-out]"
-                 (click)="$event.stopPropagation()"
-                 role="menu"
-                 aria-label="Opciones de perfil">
-              <!-- User info (mobile only) -->
-              <div class="px-4 py-3 border-b border-surface-variant/10 sm:hidden">
-                <p class="text-sm font-bold text-on-surface truncate">{{ currentUser.nombre }}</p>
-                <p class="text-[10px] text-neutral-500 uppercase truncate">{{ currentUser.email }}</p>
-              </div>
-              <a class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-neutral-50 transition-colors"
-                 routerLink="/perfil"
-                 (click)="closeProfileDropdown()"
-                 role="menuitem">
-                <span class="material-symbols-outlined text-xl opacity-70">account_circle</span>
-                <span class="font-semibold">Mi Perfil</span>
-              </a>
-              <a class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-neutral-50 transition-colors"
-                 href="javascript:void(0)"
-                 (click)="openConfigModal($event)"
-                 role="menuitem">
-                <span class="material-symbols-outlined text-xl opacity-70">settings</span>
-                <span class="font-semibold">Configuración</span>
-              </a>
-              <div class="mx-2 my-1 border-t border-surface-variant/10"></div>
-              <button class="flex items-center gap-3 px-4 py-2.5 text-sm text-white bg-primary
-                             mx-2 rounded-lg hover:opacity-90 shadow-sm transition-all w-[calc(100%-1rem)]"
-                      (click)="openLogoutDialog($event)"
-                      role="menuitem">
-                <span class="material-symbols-outlined text-xl">logout</span>
-                <span class="font-bold">Cerrar Sesión</span>
-              </button>
+                        font-headline animate-[dropdownFadeIn_0.2s_ease-out]" (click)="$event.stopPropagation()"
+            (keydown.enter)="$event.stopPropagation()" (keydown.space)="$event.stopPropagation()" role="menu"
+            aria-label="Opciones de perfil">
+            <!-- User info (mobile only) -->
+            <div class="px-4 py-3 border-b border-surface-variant/10 sm:hidden">
+              <p class="text-sm font-bold text-on-surface truncate">{{ currentUser.nombre }}</p>
+              <p class="text-[10px] text-neutral-500 uppercase truncate">{{ currentUser.email }}</p>
             </div>
+            <a class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-neutral-50 transition-colors"
+              routerLink="/perfil" (click)="closeProfileDropdown()" role="menuitem">
+              <span class="material-symbols-outlined text-xl opacity-70">account_circle</span>
+              <span class="font-semibold">Mi Perfil</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-neutral-50 transition-colors"
+              href="javascript:void(0)" (click)="openConfigModal($event)" role="menuitem">
+              <span class="material-symbols-outlined text-xl opacity-70">settings</span>
+              <span class="font-semibold">Configuración</span>
+            </a>
+            <div class="mx-2 my-1 border-t border-surface-variant/10"></div>
+            <button class="flex items-center gap-3 px-4 py-2.5 text-sm text-white bg-primary
+                             mx-2 rounded-lg hover:opacity-90 shadow-sm transition-all w-[calc(100%-1rem)]"
+              (click)="openLogoutDialog($event)" role="menuitem">
+              <span class="material-symbols-outlined text-xl">logout</span>
+              <span class="font-bold">Cerrar Sesión</span>
+            </button>
+          </div>
           }
         </div>
       </div>
@@ -257,76 +237,75 @@
 
 <!-- ── Configuration Modal ───────────────────────────────── -->
 @if (showConfigModal) {
-  <div class="fixed inset-0 bg-inverse-surface/40 backdrop-blur-[2px] z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4"
-       (click)="closeConfigModal()"
-       (keydown.escape)="closeConfigModal()"
-       tabindex="0">
-    <div class="bg-white dark:bg-neutral-900 w-full sm:max-w-[420px] rounded-t-2xl sm:rounded-2xl
+<div
+  class="fixed inset-0 bg-inverse-surface/40 backdrop-blur-[2px] z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4"
+  (click)="closeConfigModal()" (keydown.escape)="closeConfigModal()" (keydown.enter)="closeConfigModal()"
+  (keydown.space)="closeConfigModal()">
+  <div class="bg-white dark:bg-neutral-900 w-full sm:max-w-[420px] rounded-t-2xl sm:rounded-2xl
                 shadow-2xl overflow-hidden sm:mx-4 animate-[dropdownFadeIn_0.3s_ease-out]"
-         (click)="$event.stopPropagation()"
-         role="dialog"
-         aria-modal="true"
-         aria-label="Configuración">
+    (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()"
+    (keydown.space)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-label="Configuración">
 
-      <!-- Header -->
-      <div class="bg-gradient-to-br from-primary to-primary-container p-6 flex items-center justify-between text-white relative">
-        <!-- Handle (mobile only) -->
-        <div class="w-12 h-1.5 bg-white/30 rounded-full sm:hidden absolute left-1/2 -translate-x-1/2 top-3"></div>
-        
-        <div class="flex items-center gap-4 mt-2 sm:mt-0">
-          <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
-            <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">settings</span>
-          </div>
-          <div>
-            <h3 class="text-xl font-bold tracking-tight">Configuración</h3>
-            <p class="text-[10px] text-white/70 uppercase font-black tracking-widest sm:hidden">Panel de Usuario</p>
-          </div>
+    <!-- Header -->
+    <div
+      class="bg-gradient-to-br from-primary to-primary-container p-6 flex items-center justify-between text-white relative">
+      <!-- Handle (mobile only) -->
+      <div class="w-12 h-1.5 bg-white/30 rounded-full sm:hidden absolute left-1/2 -translate-x-1/2 top-3"></div>
+
+      <div class="flex items-center gap-4 mt-2 sm:mt-0">
+        <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+          <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">settings</span>
         </div>
-        
-        <button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors mt-2 sm:mt-0"
-                (click)="closeConfigModal()"
-                aria-label="Cerrar configuración">
-          <span class="material-symbols-outlined text-2xl">close</span>
-        </button>
+        <div>
+          <h3 class="text-xl font-bold tracking-tight">Configuración</h3>
+          <p class="text-[10px] text-white/70 uppercase font-black tracking-widest sm:hidden">Panel de Usuario</p>
+        </div>
       </div>
 
-      <!-- Body -->
-      <div class="p-5 space-y-2">
-        <p class="px-3 py-1 text-[10px] font-black text-stone-400 uppercase tracking-[0.2em] mb-2">
-          Seguridad y Cuenta
-        </p>
-        @for (item of configItems; track item.path) {
-          <a class="flex items-center justify-between p-4 rounded-2xl bg-stone-50/50 border border-transparent hover:border-orange-200 hover:bg-orange-50/50 transition-all group"
-             [routerLink]="item.path"
-             (click)="closeConfigModal()"
-             role="menuitem">
-            <div class="flex items-center gap-4">
-              <div class="w-11 h-11 rounded-full bg-white shadow-sm flex items-center justify-center text-stone-400 group-hover:text-primary transition-colors shrink-0">
-                <span class="material-symbols-outlined text-xl">{{ item.icon }}</span>
-              </div>
-              <span class="font-bold text-sm text-stone-700 group-hover:text-stone-900 transition-colors">{{ item.label }}</span>
-            </div>
-            <span class="material-symbols-outlined text-stone-300 group-hover:text-primary transition-colors shrink-0">
-              chevron_right
-            </span>
-          </a>
-        }
-        
-        <div class="h-px bg-stone-100 my-4 mx-2"></div>
-        
-        <a class="flex items-center justify-between p-4 rounded-2xl bg-red-50/30 border border-transparent hover:border-red-200 hover:bg-red-50/60 transition-all group"
-           href="javascript:void(0)"
-           (click)="openDeleteUserDialog($event)"
-           role="menuitem">
-          <div class="flex items-center gap-4">
-            <div class="w-11 h-11 rounded-full bg-white shadow-sm flex items-center justify-center text-red-300 group-hover:text-red-600 transition-colors shrink-0">
-              <span class="material-symbols-outlined text-xl">delete_forever</span>
-            </div>
-            <span class="font-bold text-sm text-red-600">Eliminar mi usuario</span>
+      <button
+        class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/20 transition-colors mt-2 sm:mt-0"
+        (click)="closeConfigModal()" aria-label="Cerrar configuración">
+        <span class="material-symbols-outlined text-2xl">close</span>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="p-5 space-y-2">
+      <p class="px-3 py-1 text-[10px] font-black text-stone-400 uppercase tracking-[0.2em] mb-2">
+        Seguridad y Cuenta
+      </p>
+      @for (item of configItems; track item.path) {
+      <a class="flex items-center justify-between p-4 rounded-2xl bg-stone-50/50 border border-transparent hover:border-orange-200 hover:bg-orange-50/50 transition-all group"
+        [routerLink]="item.path" (click)="closeConfigModal()" role="menuitem">
+        <div class="flex items-center gap-4">
+          <div
+            class="w-11 h-11 rounded-full bg-white shadow-sm flex items-center justify-center text-stone-400 group-hover:text-primary transition-colors shrink-0">
+            <span class="material-symbols-outlined text-xl">{{ item.icon }}</span>
           </div>
-          <span class="material-symbols-outlined text-red-200 group-hover:text-red-500 transition-colors shrink-0">warning</span>
-        </a>
-      </div>
+          <span class="font-bold text-sm text-stone-700 group-hover:text-stone-900 transition-colors">{{ item.label
+            }}</span>
+        </div>
+        <span class="material-symbols-outlined text-stone-300 group-hover:text-primary transition-colors shrink-0">
+          chevron_right
+        </span>
+      </a>
+      }
+
+      <div class="h-px bg-stone-100 my-4 mx-2"></div>
+
+      <a class="flex items-center justify-between p-4 rounded-2xl bg-red-50/30 border border-transparent hover:border-red-200 hover:bg-red-50/60 transition-all group"
+        href="javascript:void(0)" (click)="openDeleteUserDialog($event)" role="menuitem">
+        <div class="flex items-center gap-4">
+          <div
+            class="w-11 h-11 rounded-full bg-white shadow-sm flex items-center justify-center text-red-300 group-hover:text-red-600 transition-colors shrink-0">
+            <span class="material-symbols-outlined text-xl">delete_forever</span>
+          </div>
+          <span class="font-bold text-sm text-red-600">Eliminar mi usuario</span>
+        </div>
+        <span
+          class="material-symbols-outlined text-red-200 group-hover:text-red-500 transition-colors shrink-0">warning</span>
+      </a>
     </div>
   </div>
+</div>
 }

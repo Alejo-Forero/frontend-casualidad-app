@@ -313,8 +313,8 @@ describe('InventarioFormComponent', () => {
     expect(call.unidadMedida).toBe('Metros');
   });
 
-  it('should emit close on onCancel', () => {
-    const spy = jest.spyOn(component.close, 'emit');
+  it('should emit formClose on onCancel', () => {
+    const spy = jest.spyOn(component.formClose, 'emit');
     component.onCancel();
     expect(spy).toHaveBeenCalled();
   });

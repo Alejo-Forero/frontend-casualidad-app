@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { OrderSummaryDTO } from '../core/models/order.dto';
+import { ProductDTO, ProductType } from '../core/models/inventory.dto';
 import { UIService } from '../core/services/ui.service';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -41,6 +42,20 @@ const dialogRefStub = (result: any) => ({
   afterClosed: () => of(result),
 });
 
+const makeProduct = (overrides: Partial<ProductDTO> = {}): ProductDTO => ({
+  idProducto: 1,
+  nombre: 'Producto Test',
+  tipo: 'ELABORADO' as ProductType,
+  idUnidadMedida: 1,
+  cantidadDisponible: 10,
+  stockMinimo: 2,
+  precioCompra: 50,
+  precioVenta: 100,
+  porcentajeSobrante: 0,
+  unidadMedida: 'Unidad',
+  ...overrides
+});
+
 // ─── Suite ──────────────────────────────────────────────────────────────────
 
 describe('PedidosComponent', () => {
@@ -69,7 +84,7 @@ describe('PedidosComponent', () => {
       getAll: jest.fn(() => of([{ id: 10, name: 'Alpha', idCliente: 10, nombre: 'Alpha' }])),
     };
     mockInventoryService = {
-      getAll: jest.fn(() => of([{ idProducto: 1, nombre: 'P1', tipo: 'ELABORADO', precioVenta: 100 }])),
+      getAll: jest.fn(() => of([makeProduct({ idProducto: 1, nombre: 'P1', precioVenta: 100 })])),
     };
     mockDialog = { open: jest.fn(() => dialogRefStub(true)) };
     mockUIService = {

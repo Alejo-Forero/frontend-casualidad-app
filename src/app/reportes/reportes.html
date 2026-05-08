@@ -213,7 +213,12 @@
       </div>
       <div class="space-y-3 sm:space-y-4">
         @for (product of topProducts; track product.productId) {
-        <div (click)="goToProduct(product.productName)" class="bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-surface-container/50 flex gap-4 items-start hover:translate-y-[-2px] hover:border-primary/30 cursor-pointer transition-all">
+        <div (click)="goToProduct(product.productName)"
+             (keydown.enter)="goToProduct(product.productName)"
+             (keydown.space)="goToProduct(product.productName)"
+             tabindex="0"
+             role="button"
+             class="bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-surface-container/50 flex gap-4 items-start hover:translate-y-[-2px] hover:border-primary/30 cursor-pointer transition-all">
           <div class="w-6 h-6 shrink-0 rounded-full flex items-center justify-center text-[10px] font-black mt-0.5"
             [ngClass]="getRankColorClass(product.rank)">
             {{ product.rank }}

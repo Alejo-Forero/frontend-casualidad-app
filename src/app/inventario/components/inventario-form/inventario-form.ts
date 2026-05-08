@@ -11,7 +11,6 @@ import { MatDividerModule } from '@angular/material/divider';
 import { ProductDTO } from '../../../core/models/inventory.dto';
 import { InventoryService } from '../../../core/services/inventory.service';
 import { UIService } from '../../../core/services/ui.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -36,8 +35,8 @@ export class InventarioFormComponent implements OnInit, OnChanges {
   @Input() product: ProductDTO | null = null;
   @Input() allProducts: ProductDTO[] = [];
   @Input() mode: 'add' | 'edit' = 'add';
-  @Output() close = new EventEmitter<void>();
-  @Output() saved = new EventEmitter<void>();
+  @Output() formClose = new EventEmitter<void>();
+  @Output() formSaved = new EventEmitter<void>();
 
   private readonly fb = inject(FormBuilder);
   private readonly inventoryService = inject(InventoryService);
@@ -156,7 +155,6 @@ export class InventarioFormComponent implements OnInit, OnChanges {
   private updateValidatorsByType(type: string): void {
     const wasteCtrl = this.inventoryForm.get('wastePercent');
     const purchasePriceCtrl = this.inventoryForm.get('purchasePrice');
-    const productionCostCtrl = this.inventoryForm.get('productionCost');
 
     if (type === 'ELABORADO' || type === 'TRANSFORMADO') {
       wasteCtrl?.disable();
@@ -315,10 +313,10 @@ export class InventarioFormComponent implements OnInit, OnChanges {
             cantidadUsada: c.cantidadUsada
           }));
           this.inventoryService.addComposicion(id, insumos).subscribe(() => {
-            this.saved.emit();
+            this.formSaved.emit();
           });
         } else {
-          this.saved.emit();
+          this.formSaved.emit();
         }
       },
       error: (err) => {
@@ -330,6 +328,6 @@ export class InventarioFormComponent implements OnInit, OnChanges {
   }
 
   onCancel(): void {
-    this.close.emit();
+    this.formClose.emit();
   }
 }

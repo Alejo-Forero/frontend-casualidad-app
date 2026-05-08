@@ -42,7 +42,7 @@ export interface OrderItemDTO {
   quantity:      number;
   unitPrice:     number;
   subtotal:      number;
-  customization?: string | undefined;
+  customization?: string;
   observaciones?: string | null;
   idDetalle?:     number | null;
 }

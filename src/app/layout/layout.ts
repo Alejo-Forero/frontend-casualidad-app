@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, ViewChild, OnInit, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { Component, inject, ViewChild, OnInit, ChangeDetectorRef, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';

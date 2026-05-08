@@ -44,7 +44,7 @@ export class InventoryService {
     const toNum = (val: any): number => {
       if (val === null || val === undefined) return 0;
       const n = Number(val);
-      return isNaN(n) ? 0 : n;
+      return Number.isNaN(n) ? 0 : n;
     };
 
     return {

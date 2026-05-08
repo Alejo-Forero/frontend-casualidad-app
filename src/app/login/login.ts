@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { HelpDialogComponent } from '../shared/components/help-dialog/help-dialog.component';
 import { ForgotPasswordDialogComponent } from '../shared/components/forgot-password-dialog/forgot-password-dialog.component';
 
