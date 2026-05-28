@@ -97,6 +97,7 @@ export class InventarioFormComponent implements OnInit, OnChanges {
     if (changes['allProducts']) {
       this.calculateTotalCost();
     }
+
   }
 
   private loadUnidadesMedida(): void {

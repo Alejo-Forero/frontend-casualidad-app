@@ -88,21 +88,36 @@ export class LayoutComponent implements OnInit {
     this.loadNotifications();
   }
 
-  loadNotifications(): void {
-    this.inventoryService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(products => {
-      this.lowStockProducts = products.filter(p => p.isLowStock);
-      this.cdr.detectChanges();
-    });
-    
-    this.orderService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(orders => {
-      // Pedidos por vencer: pendientes ordenados por fecha
-      this.expiringOrders = orders
-        .filter(o => o.status === 'PENDIENTE' || o.status === 'EN_PRODUCCION')
-        .sort((a, b) => new Date(a.deliveryDate).getTime() - new Date(b.deliveryDate).getTime())
-        .slice(0, 5); // top 5
-      this.cdr.detectChanges();
-    });
-  }
+ loadNotifications(): void {
+    this.inventoryService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(products => {
+      this.lowStockProducts = products.filter(p => p.isLowStock);
+      this.cdr.detectChanges();
+    });
+   
+    this.orderService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(orders => {
+      // 1. Obtenemos la fecha actual y la seteamos a medianoche para evitar problemas con las horas
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Pedidos por vencer: pendientes, ordenados por fecha y que NO estén vencidos
+      this.expiringOrders = orders
+        .filter(o => {
+          // Verificamos que el estado sea válido
+          const isActive = o.status === 'PENDIENTE' || o.status === 'EN_PRODUCCION';
+         
+          // 2. Parseamos la fecha de entrega de la base de datos
+          const deliveryDate = new Date(o.deliveryDate);
+          deliveryDate.setHours(0, 0, 0, 0);
+
+          // 3. Retornamos true SOLO si está activo y la fecha de entrega es HOY o en el futuro
+          return isActive && deliveryDate.getTime() >= today.getTime();
+        })
+        .sort((a, b) => new Date(a.deliveryDate).getTime() - new Date(b.deliveryDate).getTime())
+        .slice(0, 5); // top 5
+       
+      this.cdr.detectChanges();
+    });
+  }
 
   toggleProfileDropdown(event: Event): void {
     event.stopPropagation();
@@ -117,7 +132,7 @@ export class LayoutComponent implements OnInit {
     event.stopPropagation();
     this.showNotificationsDropdown = !this.showNotificationsDropdown;
     this.showProfileDropdown = false;
-    
+
     // Refresh notifications every time the user opens the dropdown
     if (this.showNotificationsDropdown) {
       this.loadNotifications();

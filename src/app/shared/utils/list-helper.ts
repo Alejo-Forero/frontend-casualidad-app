@@ -34,6 +34,7 @@ export class ListHelper {
 
   static handleSearch(dataSource: any, term: string) {
     dataSource.filter = term.trim().toLowerCase();
+    console.log('Filtering with term:', dataSource.filter);
     if (dataSource.paginator) {
       dataSource.paginator.firstPage();
     }

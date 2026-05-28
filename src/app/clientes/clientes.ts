@@ -43,7 +43,7 @@ import { BaseTableComponent } from '../shared/components/base-table.component';
 export class ClientesComponent extends BaseTableComponent<ClientDTO> implements OnInit, AfterViewInit {
   clientsData: ClientDTO[] = [];
   dataSource = new MatTableDataSource<ClientDTO>([]);
-  displayedColumns: string[] = ['id', 'name', 'correo', 'telefonos', 'acciones'];
+  displayedColumns: string[] = [ 'name', 'correo', 'telefonos'];
   searchTerm = '';
 
   // Modals state
@@ -113,7 +113,11 @@ export class ClientesComponent extends BaseTableComponent<ClientDTO> implements 
     };
 
     this.dataSource.filterPredicate = (data, filter) => {
-      return data.name.toLowerCase().includes(filter) || data.id.toLowerCase().includes(filter);
+      const matchTelefonos = data.telefonos?.some(phone => phone.toLowerCase().includes(filter)) ?? false;
+
+      const matchPhones = data.phones?.some(phone => phone.toLowerCase().includes(filter)) ?? false;
+
+      return matchTelefonos || matchPhones;
     };
   }
 
@@ -135,10 +139,10 @@ export class ClientesComponent extends BaseTableComponent<ClientDTO> implements 
   viewDetails(client: ClientDTO): void {
     this.selectedClient = client;
     this.viewMode = 'details';
-    
+
     // Reset acquired products list
     this.acquiredProducts = [];
-    
+
     this.cdr.detectChanges();
   }
 
