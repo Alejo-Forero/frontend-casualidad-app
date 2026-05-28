@@ -4,9 +4,8 @@ import { RouterModule } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
 import { DashboardDTO } from '../core/models/dashboard.dto';
 import { PaymentService } from '../core/services/payment.service';
-import { InventoryService } from '../core/services/inventory.service';
-import { OrderService } from '../core/services/order.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -22,23 +21,25 @@ export class HomeComponent implements AfterViewInit {
 
   dashboardData: DashboardDTO = {
     pendingOrders: 0,
+    ordersInProduction: 0,
     ordersWithDebt: 0,
+    overdueOrders: 0,
+    lowStockCount: 0,
+    ingresosMesActual: 0,
+    ingresosMesAnterior: 0,
+    ingresosPorMes: [],
     profitVsExpense: {
-      months: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-      profit: [0, 0, 0, 0, 0, 0],
-      expense: [0, 0, 0, 0, 0, 0]
-    },
-    lowStockCount: 0
+      months: [],
+      profit: [],
+      expense: []
+    }
   };
 
   private readonly paymentService = inject(PaymentService);
-  private readonly inventoryService = inject(InventoryService);
-  private readonly orderService = inject(OrderService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly cdr = inject(ChangeDetectorRef);
 
   dashboardCards: any[] = [];
-  monthlyIncome: number = 0;
 
   constructor() {
     Chart.register(...registerables);
@@ -50,11 +51,11 @@ export class HomeComponent implements AfterViewInit {
     this.dashboardCards = [
       {
         title: 'Ingresos de este Mes',
-        value: this.monthlyIncome,
+        value: this.dashboardData.ingresosMesActual ?? 0,
         isCurrency: true,
         icon: 'trending_up',
         iconClass: 'text-orange-600',
-        trend: '14.5%',
+        trend: '—',
         trendText: 'vs mes pasado',
         link: '/reportes'
       },
@@ -68,13 +69,22 @@ export class HomeComponent implements AfterViewInit {
         footer: 'Pedidos en estado pendiente'
       },
       {
-        title: 'Con Deuda',
+        title: 'Con Saldo Pendiente',
         value: this.dashboardData.ordersWithDebt,
         isCurrency: false,
         icon: 'money_off',
         iconClass: 'text-orange-500',
-        link: '/pedidos',
+        link: '/pagos',
         footer: 'Requieren gestión de cobro'
+      },
+      {
+        title: 'Pedidos Vencidos',
+        value: this.dashboardData.overdueOrders,
+        isCurrency: false,
+        icon: 'event_busy',
+        iconClass: 'text-red-600',
+        link: '/pedidos',
+        footer: 'Fecha de entrega superada'
       },
       {
         title: 'Stock Crítico',
@@ -89,62 +99,56 @@ export class HomeComponent implements AfterViewInit {
   }
 
   private updateDashboardCards(): void {
-    this.dashboardCards[0].value = this.monthlyIncome;
+    const actual = this.dashboardData.ingresosMesActual ?? 0;
+    const anterior = this.dashboardData.ingresosMesAnterior ?? 0;
+    const trend = anterior > 0
+      ? ((actual - anterior) / anterior * 100).toFixed(1) + '%'
+      : '—';
+
+    this.dashboardCards[0].value = actual;
+    this.dashboardCards[0].trend = trend;
     this.dashboardCards[1].value = this.dashboardData.pendingOrders;
     this.dashboardCards[2].value = this.dashboardData.ordersWithDebt;
-    this.dashboardCards[3].value = this.dashboardData.lowStockCount;
+    this.dashboardCards[3].value = this.dashboardData.overdueOrders;
+    this.dashboardCards[4].value = this.dashboardData.lowStockCount;
   }
 
   private loadData(): void {
-    // 1. Fetch Saldos Pendientes & Debt Orders
-    this.paymentService.getSaldosPendientes().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.paymentService.getDashboard().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
-        this.dashboardData.ordersWithDebt = res?.cantidadPedidosPendientes || 0;
-        this.updateDashboardCards();
-        this.cdr.detectChanges();
-      }
-    });
+        this.dashboardData.ingresosMesActual   = Number(res?.ingresosMesActual ?? 0);
+        this.dashboardData.ingresosMesAnterior = Number(res?.ingresosMesAnterior ?? 0);
+        this.dashboardData.pendingOrders       = res?.pedidosPendientes ?? 0;
+        this.dashboardData.ordersInProduction  = res?.pedidosEnProduccion ?? 0;
+        this.dashboardData.ordersWithDebt      = res?.pedidosConSaldo ?? 0;
+        this.dashboardData.overdueOrders       = res?.pedidosVencidos ?? 0;
+        this.dashboardData.lowStockCount       = res?.stockCritico ?? 0;
+        this.dashboardData.ingresosPorMes      = res?.ingresosPorMes ?? [];
 
-    // 2. Fetch Low Stock Count
-    this.inventoryService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (products) => {
-        this.dashboardData.lowStockCount = products.filter(p => p.isLowStock).length;
-        this.updateDashboardCards();
-        this.cdr.detectChanges();
-      }
-    });
+        // Actualizar datos del gráfico con los últimos 6 meses reales
+        if (res?.ingresosPorMes?.length) {
+          this.dashboardData.profitVsExpense.months = res.ingresosPorMes.map((m: any) => m.etiqueta);
+          this.dashboardData.profitVsExpense.profit  = res.ingresosPorMes.map((m: any) => Number(m.total));
+          this.dashboardData.profitVsExpense.expense = new Array(res.ingresosPorMes.length).fill(0);
+        }
 
-    // 3. Fetch Pending Orders
-    this.orderService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (orders) => {
-        this.dashboardData.pendingOrders = orders.filter(o => o.status === 'PENDIENTE').length;
         this.updateDashboardCards();
-        this.cdr.detectChanges();
-      }
-    });
 
-    // 4. Fetch Profit Data (Chart)
-    const firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
-    const lastDay = new Date().toISOString().split('T')[0];
-    this.paymentService.getReporteIngresos(firstDay, lastDay).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (res) => {
-        this.monthlyIncome = res?.totalGeneral || 0;
-        this.updateDashboardCards();
-        const monthIndex = 5; // June in our default labels
-        this.dashboardData.profitVsExpense.profit[monthIndex] = res?.totalGeneral || 0;
-        this.dashboardData.profitVsExpense.expense[monthIndex] = (res?.totalGeneral || 0) * 0.4; // Mock expense as 40%
-        
         if (this.chartInstance) {
+          this.chartInstance.data.labels = this.dashboardData.profitVsExpense.months;
           this.chartInstance.data.datasets[0].data = this.dashboardData.profitVsExpense.profit;
           this.chartInstance.data.datasets[1].data = this.dashboardData.profitVsExpense.expense;
           this.chartInstance.update();
         }
+
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // Si el endpoint aún no está disponible, no romper la UI
         this.cdr.detectChanges();
       }
     });
   }
-
-
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId) && this.chartCanvas) {
@@ -174,7 +178,7 @@ export class HomeComponent implements AfterViewInit {
         labels: this.dashboardData.profitVsExpense.months,
         datasets: [
           {
-            label: 'Ganancias',
+            label: 'Ingresos',
             data: this.dashboardData.profitVsExpense.profit,
             backgroundColor: '#fd8e4a',
             borderColor: '#974300',

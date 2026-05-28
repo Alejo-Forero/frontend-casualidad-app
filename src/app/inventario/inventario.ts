@@ -21,6 +21,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { EntradaDialogComponent } from './components/entrada-dialog/entrada-dialog';
 import { AjusteDialogComponent } from './components/ajuste-dialog/ajuste-dialog';
+import { SalidaDialogComponent } from './components/salida-dialog/salida-dialog';
 import { BaseTableComponent } from '../shared/components/base-table.component';
 import { InventarioFormComponent } from './components/inventario-form/inventario-form';
 
@@ -61,13 +62,15 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
 
   private readonly route = inject(ActivatedRoute);
 
-  // Motivos de movimiento — enum MotivoMovimiento del backend
   readonly motivosEntrada = [
     { value: 'COMPRA_INSUMOS', label: 'Compra de Insumos' },
-    { value: 'VENTA_PRODUCTO', label: 'Venta de Producto' },
+    { value: 'REINTEGRO_PEDIDO', label: 'Reintegro de Pedido' }
+  ];
+
+  readonly motivosSalida = [
+    { value: 'VENTA_PRODUCTO', label: 'Venta Directa' },
     { value: 'CONSUMO', label: 'Consumo interno' },
-    { value: 'DESPERDICIO', label: 'Desperdicio / Merma' },
-    { value: 'AJUSTE_INVENTARIO', label: 'Ajuste de Inventario' }
+    { value: 'DESPERDICIO', label: 'Desperdicio / Merma' }
   ];
 
   // UI state
@@ -204,6 +207,29 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
     });
   }
 
+  // --- SALIDA DE STOCK ---
+  openSalidaModal(product: ProductDTO): void {
+    const dialogRef = this.dialog.open(SalidaDialogComponent, {
+      panelClass: 'casualidad-dialog',
+      data: { product, motivos: this.motivosSalida }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.inventoryService.registrarSalida(result.idProducto, result.cantidad, result.motivo, result.comentario).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+          next: () => {
+            this.loadInventory();
+            this.uiService.showSuccess({
+              title: '¡Salida Registrada!',
+              message: 'El stock ha sido descontado correctamente del inventario.',
+              icon: 'remove_circle'
+            });
+          },
+          error: (err) => console.error('Error registrando salida', err)
+        });
+      }
+    });
+  }
+
   // --- AJUSTE DE INVENTARIO ---
   openAjusteModal(product: ProductDTO): void {
     const dialogRef = this.dialog.open(AjusteDialogComponent, {
@@ -227,35 +253,35 @@ export class InventarioComponent extends BaseTableComponent<ProductDTO> implemen
     });
   }
 
-  // --- DELETE ---
-  openDeleteModal(product: ProductDTO): void {
+  // --- VACIAR STOCK ---
+  openVaciarStockModal(product: ProductDTO): void {
     this.uiService.showConfirm({
-      title: '¿Eliminar artículo?',
-      message: 'Estás a punto de eliminar ',
+      title: '¿Vaciar el stock?',
+      message: 'Vas a poner el stock de ',
       highlightText: product.nombre,
-      warningText: 'Esta acción no se puede deshacer y ',
-      confirmLabel: 'Sí, eliminar artículo',
-      icon: 'delete_forever',
+      warningText: 'El stock quedará en 0. El producto seguirá existiendo y podrás recibir nuevas entradas. ',
+      confirmLabel: 'Sí, vaciar stock',
+      icon: 'production_quantity_limits',
       accentColor: 'error'
     }).subscribe(result => {
       if (result) {
-        this.confirmDelete(product);
+        this.confirmVaciarStock(product);
       }
     });
   }
 
-  confirmDelete(product: ProductDTO): void {
-    this.inventoryService.delete(product.idProducto).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+  confirmVaciarStock(product: ProductDTO): void {
+    this.inventoryService.vaciarStock(product.idProducto).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.loadInventory();
         this.uiService.showSuccess({
-          title: '¡Artículo Eliminado!',
-          message: 'El artículo ha sido eliminado permanentemente del inventario.'
+          title: '¡Stock Vaciado!',
+          message: 'El stock del artículo ha sido puesto a cero.'
         });
       },
       error: (err) => {
-        console.error('Error eliminando producto', err);
-        this.uiService.showError('No se pudo eliminar el artículo. Es posible que tenga movimientos asociados.');
+        console.error('Error vaciando stock', err);
+        this.uiService.showError('No se pudo vaciar el stock del artículo.');
       }
     });
   }

@@ -32,7 +32,7 @@ export class ReportesComponent implements OnInit, AfterViewInit {
   };
 
   dataSource = new MatTableDataSource<PendingBalanceDTO>([]);
-  displayedColumns: string[] = ['cliente', 'codigo', 'fechaEntrega', 'montoTotal', 'pendiente'];
+  displayedColumns: string[] = ['cliente', 'fechaEntrega', 'montoTotal', 'pendiente'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;

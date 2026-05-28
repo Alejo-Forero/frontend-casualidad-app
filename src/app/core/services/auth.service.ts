@@ -101,6 +101,13 @@ export class AuthService {
     localStorage.removeItem(this.USER_KEY);
   }
 
+  getUserId(): number | null {
+    const user = this.getUser();
+    if (!user || !user.id) return null;
+    const id = Number(user.id);
+    return isNaN(id) ? null : id;
+  }
+
   isAuthenticated(): boolean {
     return !!this.getAccessToken();
   }

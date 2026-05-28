@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { OrderSummaryDTO, OrderDetailDTO, CreateOrderDTO, UpdateOrderDTO } from '../models/order.dto';
+import { OrderSummaryDTO, OrderDetailDTO, UpdateOrderDTO } from '../models/order.dto';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ import { OrderSummaryDTO, OrderDetailDTO, CreateOrderDTO, UpdateOrderDTO } from 
 export class OrderService {
   private readonly apiUrl = `${environment.apiUrl}/pedidos`;
   private readonly http = inject(HttpClient);
+  private readonly authService = inject(AuthService);
   private _orderDraft: any = null;
 
   setOrderDraft(draft: any) {
@@ -35,7 +37,7 @@ export class OrderService {
   }): Observable<OrderSummaryDTO[]> {
     let params = new HttpParams()
       .set('page', String(filtros?.page ?? 0))
-      .set('size', String(filtros?.size ?? 100));
+      .set('size', String(filtros?.size ?? 100000));
 
     if (filtros?.idCliente) params = params.set('idCliente', String(filtros.idCliente));
     if (filtros?.estado)    params = params.set('estado', filtros.estado);
@@ -80,33 +82,40 @@ export class OrderService {
   }
 
   create(data: any): Observable<OrderDetailDTO> {
-    console.log('DEBUG - Data received in OrderService:', data);
+    const idCliente = data.clientId ?? data.idCliente;
+    if (idCliente === null || idCliente === undefined) {
+      return throwError(() => new Error('Cliente requerido para crear pedido'));
+    }
 
-    // El idCliente debe ser un String (UUID) según la imagen de Postman
-    const idCliente = data.clientId ?? data.idCliente ?? data.id_cliente ?? 1;
+    const idUsuario = this.authService.getUserId();
+    if (!idUsuario) {
+      return throwError(() => new Error('Sesión inválida: vuelve a iniciar sesión'));
+    }
 
-    const payload: any = {
-      // Duplicidad de campos para máxima compatibilidad
-      idCliente:    idCliente,
-      id_cliente:   idCliente,
-      idUsuario:    Number(data.idUsuario ?? localStorage.getItem('userId') ?? 1),
-      id_usuario:   Number(data.idUsuario ?? localStorage.getItem('userId') ?? 1),
-      fechaEntrega: data.deliveryDate ?? data.fechaEntrega ?? new Date().toISOString().split('T')[0],
-      fecha_entrega: data.deliveryDate ?? data.fechaEntrega ?? new Date().toISOString().split('T')[0],
+    const payload = {
+      idCliente,
+      idUsuario,
+      fechaEntrega: data.deliveryDate ?? data.fechaEntrega,
       detalles: (data.items || data.detalles || []).map((item: any) => ({
         idProducto:    Number(item.productId ?? item.idProducto ?? 0),
-        id_producto:   Number(item.productId ?? item.idProducto ?? 0),
         cantidad:      Number(item.quantity ?? item.cantidad ?? 1),
         observaciones: item.observaciones ?? item.customization ?? ''
       }))
     };
 
-    console.log('DEBUG - Payload con UUID String:', payload);
     return this.http.post<OrderDetailDTO>(this.apiUrl, payload);
   }
 
   activarProduccion(idPedido: number): Observable<{ mensaje: string; codigoUnico: string; estado: string }> {
     return this.http.post<{ mensaje: string; codigoUnico: string; estado: string }>(`${this.apiUrl}/${idPedido}/activar-produccion`, {});
+  }
+
+  marcarListo(idPedido: number): Observable<{ estado: string; mensaje: string; estadoNuevo: string }> {
+    return this.http.patch<{ estado: string; mensaje: string; estadoNuevo: string }>(`${this.apiUrl}/${idPedido}/listo`, {});
+  }
+
+  marcarEntregado(idPedido: number): Observable<{ estado: string; mensaje: string; estadoNuevo: string }> {
+    return this.http.patch<{ estado: string; mensaje: string; estadoNuevo: string }>(`${this.apiUrl}/${idPedido}/entregado`, {});
   }
 
   update(id: string | number, data: any): Observable<{ estado: string; mensaje: string }> {

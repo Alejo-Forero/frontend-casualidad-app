@@ -30,7 +30,7 @@ interface PaymentRow {
   clientName: string;
   amount: number;       // saldoPendiente
   type: 'EFECTIVO' | 'TRANSFERENCIA';
-  status: 'TERMINADO' | 'PENDIENTE' | 'CANCELADO' | 'EN_PRODUCCION';
+  status: 'PENDIENTE' | 'EN_PRODUCCION' | 'LISTO' | 'ENTREGADO' | 'CANCELADO' | 'TERMINADO';
   createdAt: string;    // fechaEntrega como ISO string
   voucherUrl: string | null;
   registeredBy: { id: string; name: string };
@@ -39,7 +39,7 @@ interface PaymentRow {
   idPedido: number;
 }
 
-export type PaymentStatus = 'TERMINADO' | 'PENDIENTE' | 'CANCELADO' | 'EN_PRODUCCION';
+export type PaymentStatus = 'PENDIENTE' | 'EN_PRODUCCION' | 'LISTO' | 'ENTREGADO' | 'CANCELADO' | 'TERMINADO';
 export type PaymentType = 'EFECTIVO' | 'TRANSFERENCIA';
 
 @Component({
@@ -100,8 +100,9 @@ export class PagosComponent extends BaseTableComponent<PaymentListItemDTO> imple
 
   // ─── Computed ─────────────────────────────────────────────────────────────
   get totalMonthlyBalance(): number {
+    const ESTADOS_CON_SALDO = ['PENDIENTE', 'EN_PRODUCCION', 'LISTO'];
     return this.paymentsListed
-      .filter(p => p.estadoPedido === 'PENDIENTE')
+      .filter(p => ESTADOS_CON_SALDO.includes(p.estadoPedido))
       .reduce((acc, p) => acc + (p.monto ?? 0), 0);
   }
 
@@ -135,7 +136,10 @@ export class PagosComponent extends BaseTableComponent<PaymentListItemDTO> imple
     this.dataSource.filterPredicate = (data, filter) => {
       const dataStr = `${data.idPago} ${data.nombreCliente} ${data.estadoPedido} ${data.fechaPago} ${data.metodoPago}`.toLowerCase();
       const matchSearch = dataStr.includes(this.searchTerm.trim().toLowerCase());
-      const matchFilter = this.currentFilter === 'ALL' || data.estadoPedido === this.currentFilter;
+      const matchFilter = this.currentFilter === 'ALL' ||
+        data.estadoPedido === this.currentFilter ||
+        // Compatibilidad: LISTO y TERMINADO son equivalentes en el filtro
+        (this.currentFilter === 'LISTO' && (data.estadoPedido === 'LISTO' || data.estadoPedido === 'TERMINADO'));
       return matchSearch && matchFilter;
     };
 

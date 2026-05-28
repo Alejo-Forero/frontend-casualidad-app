@@ -27,26 +27,49 @@ export class ClientService {
 
     return this.http.get<any>(this.apiUrl, { params }).pipe(
       map(res => {
-        // ApiResponse structure: { data: PageResponse<ClienteListadoDto> }
-        // PageResponse structure: { data: [], content: [] }
         const page = res.data;
         const list: any[] = page?.data || page?.content || [];
-        return list.map((item: any) => ({
-          idCliente: item.idCliente,
-          nombre: item.nombre,
-          direccion: item.direccion || '',
-          telefonos: item.telefonos || [],
-          correo: item.correo || '',
-          // Aliases para compatibilidad con la UI
-          id: String(item.idCliente),
-          name: item.nombre,
-          phones: item.telefonos || [],
-          address: item.direccion || '',
-          email: item.correo || '',
-          isActive: true
-        }));
+        return list.map((item: any) => this.mapClientItem(item));
       })
     );
+  }
+
+  /**
+   * Búsqueda server-side con tamaño reducido, para autocomplete.
+   * GET /api/v1/clientes?filtro=<term>&page=0&size=20
+   */
+  search(term: string, limit = 20): Observable<any[]> {
+    let params = new HttpParams()
+      .set('page', '0')
+      .set('size', String(limit));
+
+    if (term && term.trim() !== '') {
+      params = params.set('filtro', term.trim());
+    }
+
+    return this.http.get<any>(this.apiUrl, { params }).pipe(
+      map(res => {
+        const page = res.data;
+        const list: any[] = page?.data || page?.content || [];
+        return list.map((item: any) => this.mapClientItem(item));
+      })
+    );
+  }
+
+  private mapClientItem(item: any): any {
+    return {
+      idCliente: item.idCliente,
+      nombre: item.nombre,
+      direccion: item.direccion || '',
+      telefonos: item.telefonos || [],
+      correo: item.correo || '',
+      id: String(item.idCliente),
+      name: item.nombre,
+      phones: item.telefonos || [],
+      address: item.direccion || '',
+      email: item.correo || '',
+      isActive: true
+    };
   }
 
   /**

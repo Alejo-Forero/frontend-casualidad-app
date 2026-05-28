@@ -6,7 +6,7 @@ import { UIService } from '../../../core/services/ui.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 import { ProductDTO, ProductType } from '../../../core/models/inventory.dto';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -67,9 +67,13 @@ describe('InventarioFormComponent', () => {
     fixture.detectChanges();
   });
 
+  // ─── Creación básica ──────────────────────────────────────────────────────
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  // ─── Validadores por tipo ─────────────────────────────────────────────────
 
   it('should disable purchasePrice and wastePercent for ELABORADO', () => {
     component.inventoryForm.get('type')?.setValue('ELABORADO');
@@ -83,13 +87,15 @@ describe('InventarioFormComponent', () => {
     expect(component.inventoryForm.get('wastePercent')?.enabled).toBe(true);
   });
 
+  // ─── Composición ─────────────────────────────────────────────────────────
+
   it('should add a component when addComponent is called', () => {
     const insumo = makeProduct({ idProducto: 2, nombre: 'Insumo 1', precioCompra: 10, cantidadDisponible: 100 });
     (mockInventoryService.getById as jest.Mock).mockReturnValue(of(insumo));
-    
+
     component.selectedInsumoId = 2;
     component.addComponent();
-    
+
     expect(component.componentsFormArray.length).toBe(1);
     expect(component.componentsFormArray.at(0).get('idInsumo')?.value).toBe(2);
   });
@@ -99,22 +105,24 @@ describe('InventarioFormComponent', () => {
     (mockInventoryService.getById as jest.Mock).mockReturnValue(of(insumo));
     component.selectedInsumoId = 2;
     component.addComponent();
-    
+
     component.removeComponent(0);
     expect(component.componentsFormArray.length).toBe(0);
   });
+
+  // ─── Submit — modo add/edit ───────────────────────────────────────────────
 
   it('should call create on submit when mode is add', () => {
     component.mode = 'add';
     component.inventoryForm.patchValue({
       name: 'Nuevo',
       type: 'INSUMO',
-      unit: 'kg',
+      unit: '1',
       stock: 10,
       minStock: 2,
       purchasePrice: 100
     });
-    
+
     component.onSubmit();
     expect(mockInventoryService.create).toHaveBeenCalled();
     expect(mockInventoryService.update).not.toHaveBeenCalled();
@@ -127,11 +135,11 @@ describe('InventarioFormComponent', () => {
       id: 1,
       name: 'Editado',
       type: 'INSUMO',
-      unit: 'kg',
+      unit: '1',
       minStock: 2,
       purchasePrice: 100
     });
-    
+
     component.onSubmit();
     expect(mockInventoryService.update).toHaveBeenCalled();
     expect(mockInventoryService.create).not.toHaveBeenCalled();
@@ -143,15 +151,17 @@ describe('InventarioFormComponent', () => {
     component.inventoryForm.patchValue({
       name: 'Nuevo',
       type: 'INSUMO',
-      unit: 'kg',
+      unit: '1',
       stock: 10,
       minStock: 2,
       purchasePrice: 100
     });
-    
+
     component.onSubmit();
     expect(component.errorMessage).toBeTruthy();
   });
+
+  // ─── ngOnChanges ─────────────────────────────────────────────────────────
 
   it('should populate form when product input changes', () => {
     const product = makeProduct({ nombre: 'Prueba Pop' });
@@ -164,7 +174,7 @@ describe('InventarioFormComponent', () => {
         isFirstChange: () => true
       }
     });
-    
+
     expect(component.inventoryForm.get('name')?.value).toBe('Prueba Pop');
   });
 
@@ -193,7 +203,7 @@ describe('InventarioFormComponent', () => {
       cantidadUsada: [2],
       precioUnidad: [50]
     }));
-    
+
     component.ngOnChanges({
       allProducts: {
         currentValue: component.allProducts,
@@ -202,9 +212,11 @@ describe('InventarioFormComponent', () => {
         isFirstChange: () => false
       }
     });
-    
+
     expect(component.inventoryForm.get('productionCost')?.value).toBe(100);
   });
+
+  // ─── Validadores de composición ───────────────────────────────────────────
 
   it('should detect duplicate insumos', () => {
     const group1 = component['fb'].group({ idInsumo: [1] });
@@ -223,7 +235,7 @@ describe('InventarioFormComponent', () => {
       idInsumo: [10],
       cantidadUsada: [10]
     });
-    
+
     const validator = component['stockLimitValidator']();
     expect(validator(group)).toEqual({ exceedStock: true });
   });
@@ -238,11 +250,13 @@ describe('InventarioFormComponent', () => {
   it('should show error if adding insumo with zero stock', () => {
     const zeroStockInsumo = makeProduct({ idProducto: 20, cantidadDisponible: 0 });
     (mockInventoryService.getById as jest.Mock).mockReturnValue(of(zeroStockInsumo));
-    
+
     component.selectedInsumoId = 20;
     component.addComponent();
     expect(mockUIService.showError).toHaveBeenCalledWith(expect.stringContaining('no tiene stock'), expect.anything());
   });
+
+  // ─── Helpers ──────────────────────────────────────────────────────────────
 
   it('should filter insumos correctly', () => {
     component.allProducts = [
@@ -250,7 +264,7 @@ describe('InventarioFormComponent', () => {
       makeProduct({ idProducto: 2, nombre: 'Botón', tipo: 'INSUMO' }),
       makeProduct({ idProducto: 3, nombre: 'Proceso', tipo: 'ELABORADO' })
     ];
-    
+
     const results = component.getFilteredInsumos('tel');
     expect(results.length).toBe(1);
     expect(results[0].nombre).toBe('Tela');
@@ -267,7 +281,7 @@ describe('InventarioFormComponent', () => {
   });
 
   it('should mark form as touched if invalid on submit', () => {
-    component.inventoryForm.get('name')?.setValue(''); // Required
+    component.inventoryForm.get('name')?.setValue('');
     component.onSubmit();
     expect(component.inventoryForm.get('name')?.touched).toBe(true);
   });
@@ -277,7 +291,7 @@ describe('InventarioFormComponent', () => {
     component.inventoryForm.patchValue({
       name: 'Prod Comp',
       type: 'ELABORADO',
-      unit: 'Und',
+      unit: '1',
       minStock: 1,
       stock: 10,
       salePrice: 100
@@ -286,36 +300,171 @@ describe('InventarioFormComponent', () => {
       idInsumo: [5],
       cantidadUsada: [1]
     }));
-    
+
     (mockInventoryService.create as jest.Mock).mockReturnValue(of(100));
-    
+
     component.onSubmit();
     expect(mockInventoryService.addComposicion).toHaveBeenCalledWith(100, expect.any(Array));
-  });
-
-  it('should use newUnitName if unit is NEW_UNIT', () => {
-    component.mode = 'add';
-    component.inventoryForm.patchValue({
-      name: 'Prod Unit',
-      type: 'INSUMO',
-      unit: 'NEW_UNIT',
-      newUnitName: 'Metros',
-      stock: 10,
-      minStock: 1,
-      salePrice: 100,
-      purchasePrice: 50,
-      wastePercent: 0
-    });
-    
-    component.onSubmit();
-    // Reviso el payload enviado a create
-    const call = (mockInventoryService.create as jest.Mock).mock.calls[0][0] as any;
-    expect(call.unidadMedida).toBe('Metros');
   });
 
   it('should emit formClose on onCancel', () => {
     const spy = jest.spyOn(component.formClose, 'emit');
     component.onCancel();
     expect(spy).toHaveBeenCalled();
+  });
+
+  // ─── onSubmit() — payload por tipo ────────────────────────────────────────
+
+  describe('onSubmit() — payload por tipo', () => {
+
+    /** Rellena el form con defaults sensatos; los overrides los pisan. */
+    function fill(values: Partial<any>) {
+      component.inventoryForm.patchValue({
+        name: 'Item', type: 'INSUMO', unit: '1', newUnitName: '',
+        stock: 10, minStock: 1,
+        purchasePrice: 100, salePrice: null, productionCost: null, wastePercent: 0,
+        ...values
+      });
+    }
+
+    it('INSUMO: precioCompra = purchasePrice, precioVenta = null', () => {
+      component.mode = 'add';
+      fill({ type: 'INSUMO', purchasePrice: 100 });
+      component.onSubmit();
+      const payload = (mockInventoryService.create as jest.Mock).mock.calls[0][0] as any;
+      expect(payload.precioCompra).toBe(100);
+      expect(payload.precioVenta).toBeNull();
+      expect(payload.idUnidadMedida).toBe(1);
+      expect(payload.nuevaUnidadMedida).toBeNull();
+    });
+
+    it('REVENTA: precioCompra = purchasePrice y precioVenta = salePrice', () => {
+      component.mode = 'add';
+      fill({ type: 'REVENTA', purchasePrice: 800, salePrice: 1500 });
+      component.onSubmit();
+      const payload = (mockInventoryService.create as jest.Mock).mock.calls[0][0] as any;
+      expect(payload.precioCompra).toBe(800);
+      expect(payload.precioVenta).toBe(1500);
+    });
+
+    it('REVENTA: form inválido si falta salePrice — create NO se llama', () => {
+      component.mode = 'add';
+      fill({ type: 'REVENTA', purchasePrice: 800, salePrice: null });
+      component.onSubmit();
+      expect(mockInventoryService.create).not.toHaveBeenCalled();
+      expect(component.inventoryForm.invalid).toBe(true);
+    });
+
+    it('ELABORADO sin composición: precioCompra = null, precioVenta = salePrice', () => {
+      component.mode = 'add';
+      fill({ type: 'ELABORADO', salePrice: 5000, purchasePrice: 100 });
+      component.onSubmit();
+      const payload = (mockInventoryService.create as jest.Mock).mock.calls[0][0] as any;
+      expect(payload.precioCompra).toBeNull();
+      expect(payload.precioVenta).toBe(5000);
+      expect(mockInventoryService.addComposicion).not.toHaveBeenCalled();
+    });
+
+    it('ELABORADO con composición: tras create() llama addComposicion con la lista', () => {
+      component.mode = 'add';
+      fill({ type: 'ELABORADO', salePrice: 5000 });
+      component.componentsFormArray.push(component['fb'].group({
+        idInsumo: [42], cantidadUsada: [3], precioUnidad: [100]
+      }));
+      (mockInventoryService.create as jest.Mock).mockReturnValue(of(99));
+      component.onSubmit();
+      expect(mockInventoryService.addComposicion).toHaveBeenCalledWith(99, [
+        { idInsumo: 42, cantidadUsada: 3 }
+      ]);
+    });
+
+    it('NEW_UNIT: envía nuevaUnidadMedida con el nombre tipeado, sin idUnidadMedida', () => {
+      component.mode = 'add';
+      fill({ type: 'INSUMO', unit: 'NEW_UNIT', newUnitName: 'Litros', purchasePrice: 50 });
+      component.onSubmit();
+      const payload = (mockInventoryService.create as jest.Mock).mock.calls[0][0] as any;
+      expect(payload.nuevaUnidadMedida).toBe('Litros');
+      expect(payload.idUnidadMedida).toBeNull();
+    });
+
+    it('NEW_UNIT con newUnitName vacío: forma inválida y NO envía', () => {
+      component.mode = 'add';
+      fill({ type: 'INSUMO', unit: 'NEW_UNIT', newUnitName: '', purchasePrice: 50 });
+      component.onSubmit();
+      expect(mockInventoryService.create).not.toHaveBeenCalled();
+    });
+  });
+
+  // ─── handleBackendError ────────────────────────────────────────────────────
+
+  describe('handleBackendError', () => {
+
+    beforeEach(() => {
+      component.mode = 'add';
+      component.inventoryForm.patchValue({
+        name: 'Algo', type: 'INSUMO', unit: '1', stock: 1, minStock: 0, purchasePrice: 50
+      });
+    });
+
+    it('muestra mensajes por campo si el backend devuelve un Map en data', () => {
+      const err = {
+        error: {
+          message: 'Error en la validación',
+          data: {
+            precioVenta: 'El precio de venta debe ser mayor a 0',
+            nombre: 'El nombre es obligatorio'
+          }
+        }
+      };
+      (mockInventoryService.create as jest.Mock).mockReturnValue(throwError(() => err));
+      component.onSubmit();
+      expect(component.errorMessage).toContain('Error en la validación');
+      expect(component.errorMessage).toContain('El precio de venta debe ser mayor a 0');
+    });
+
+    it('muestra message directamente si data no es un objeto', () => {
+      const err = { error: { message: 'Ya existe un producto con este nombre.' } };
+      (mockInventoryService.create as jest.Mock).mockReturnValue(throwError(() => err));
+      component.onSubmit();
+      expect(component.errorMessage).toBe('Ya existe un producto con este nombre.');
+    });
+
+    it('cae al mensaje genérico cuando no hay estructura ApiResponse', () => {
+      (mockInventoryService.create as jest.Mock).mockReturnValue(throwError(() => new Error('boom')));
+      component.onSubmit();
+      expect(component.errorMessage).toContain('Error al guardar');
+    });
+  });
+
+  // ─── updateValidatorsByType ────────────────────────────────────────────────
+
+  describe('updateValidatorsByType', () => {
+
+    it('REVENTA: salePrice obligatorio y enabled', () => {
+      component.inventoryForm.get('type')?.setValue('REVENTA');
+      const sale = component.inventoryForm.get('salePrice')!;
+      expect(sale.enabled).toBe(true);
+      expect(sale.hasValidator(Validators.required)).toBe(true);
+    });
+
+    it('INSUMO: salePrice limpiado a null y disabled', () => {
+      component.inventoryForm.get('salePrice')?.setValue(999);
+      component.inventoryForm.get('type')?.setValue('INSUMO');
+      expect(component.inventoryForm.get('salePrice')?.value).toBeNull();
+      expect(component.inventoryForm.get('salePrice')?.disabled).toBe(true);
+    });
+
+    it('ELABORADO: purchasePrice y wastePercent limpiados a null y disabled', () => {
+      component.inventoryForm.patchValue({ purchasePrice: 100, wastePercent: 5 });
+      component.inventoryForm.get('type')?.setValue('ELABORADO');
+      expect(component.inventoryForm.get('purchasePrice')?.value).toBeNull();
+      expect(component.inventoryForm.get('wastePercent')?.value).toBeNull();
+      expect(component.inventoryForm.get('purchasePrice')?.disabled).toBe(true);
+    });
+
+    it('TRANSFORMADO: igual que ELABORADO — purchasePrice disabled', () => {
+      component.inventoryForm.get('type')?.setValue('TRANSFORMADO');
+      expect(component.inventoryForm.get('purchasePrice')?.disabled).toBe(true);
+    });
   });
 });

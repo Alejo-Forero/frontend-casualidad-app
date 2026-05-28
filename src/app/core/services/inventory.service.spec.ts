@@ -27,6 +27,8 @@ describe('InventoryService', () => {
     expect(service).toBeTruthy();
   });
 
+  // ─── getAll ─────────────────────────────────────────────────────────────────
+
   it('should getAll and map data array', () => {
     let result: any[] = [];
     service.getAll().subscribe(r => result = r);
@@ -46,46 +48,113 @@ describe('InventoryService', () => {
     expect(result[0].nombre).toBe('Tela');
   });
 
-  it('should create a product with string unit', () => {
-    let result: any;
-    service.create({ name: 'Hilo', type: 'INSUMO', stock: 10, minStock: 2, unit: 'Unidad', salePrice: 5, productionCost: 3, wastePercent: 0 }).subscribe(r => result = r);
-    const req = httpMock.expectOne(r => r.method === 'POST' && r.url.includes('/productos'));
-    expect(req.request.body.nuevaUnidadMedida).toBe('Unidad');
-    req.flush({ data: { idProducto: 5 } });
-    expect(result.idProducto).toBe(5);
-  });
+  // ─── create() — contrato de payload ─────────────────────────────────────────
 
-  it('should create a product with numeric unit ID', () => {
-    service.create({ name: 'Hilo', type: 'INSUMO', stock: 10, minStock: 2, unit: '3', salePrice: 5, productionCost: 3, wastePercent: 0 }).subscribe();
+  it('create: envía idUnidadMedida cuando viene número, sin nuevaUnidadMedida', () => {
+    service.create({ nombre: 'Hilo', tipo: 'INSUMO', stock: 10, minStock: 2, idUnidadMedida: 3, precioCompra: 50 }).subscribe();
     const req = httpMock.expectOne(r => r.method === 'POST' && r.url.includes('/productos'));
     expect(req.request.body.idUnidadMedida).toBe(3);
-    req.flush({ data: {} });
+    expect(req.request.body).not.toHaveProperty('nuevaUnidadMedida');
+    req.flush({ data: 5 });
   });
 
-  it('should create a product with empty unit fallback', () => {
-    service.create({ name: 'Hilo', type: 'INSUMO', stock: 10, unit: '' }).subscribe();
+  it('create: envía nuevaUnidadMedida cuando es string, sin idUnidadMedida', () => {
+    service.create({ nombre: 'Hilo', tipo: 'INSUMO', stock: 10, minStock: 2, nuevaUnidadMedida: 'Metros', precioCompra: 50 }).subscribe();
     const req = httpMock.expectOne(r => r.method === 'POST' && r.url.includes('/productos'));
-    expect(req.request.body.nuevaUnidadMedida).toBe('Unidad');
+    expect(req.request.body.nuevaUnidadMedida).toBe('Metros');
+    expect(req.request.body).not.toHaveProperty('idUnidadMedida');
+    req.flush({ data: 5 });
+  });
+
+  it('create: NO envía precioVenta cuando es null (INSUMO no tiene precio de venta)', () => {
+    service.create({
+      nombre: 'Tela', tipo: 'INSUMO', stock: 10, minStock: 2,
+      idUnidadMedida: 3, precioCompra: 100, precioVenta: null
+    }).subscribe();
+    const req = httpMock.expectOne(r => r.method === 'POST' && r.url.includes('/productos'));
+    expect(req.request.body.precioCompra).toBe(100);
+    expect(req.request.body).not.toHaveProperty('precioVenta');
+    req.flush({ data: 7 });
+  });
+
+  it('create: NO envía precioCompra cuando es null o 0 (ELABORADO sin composición)', () => {
+    service.create({
+      nombre: 'Pastel', tipo: 'ELABORADO', stock: 0, minStock: 1,
+      idUnidadMedida: 1, precioCompra: null, precioVenta: 5000
+    }).subscribe();
+    const req = httpMock.expectOne(r => r.method === 'POST');
+    expect(req.request.body).not.toHaveProperty('precioCompra');
+    expect(req.request.body.precioVenta).toBe(5000);
+    req.flush({ data: 9 });
+  });
+
+  it('create: redondea precios decimales a enteros (Math.round)', () => {
+    service.create({
+      nombre: 'Z', tipo: 'INSUMO', stock: 1, minStock: 0,
+      idUnidadMedida: 1, precioCompra: 100.6, precioVenta: 200.4
+    }).subscribe();
+    const req = httpMock.expectOne(r => r.method === 'POST');
+    expect(req.request.body.precioCompra).toBe(101);
+    expect(req.request.body.precioVenta).toBe(200);
+    req.flush({ data: 3 });
+  });
+
+  it('create: NUNCA envía idUnidadMedida ni nuevaUnidadMedida si ambos están vacíos', () => {
+    service.create({
+      nombre: 'W', tipo: 'INSUMO', stock: 1, minStock: 0,
+      idUnidadMedida: null, nuevaUnidadMedida: '', precioCompra: 50
+    }).subscribe();
+    const req = httpMock.expectOne(r => r.method === 'POST');
+    expect(req.request.body).not.toHaveProperty('idUnidadMedida');
+    expect(req.request.body).not.toHaveProperty('nuevaUnidadMedida');
+    req.flush({ data: 4 });
+  });
+
+  it('create: incluye tipo y cantidad (campos propios de create)', () => {
+    service.create({ nombre: 'Item', tipo: 'REVENTA', stock: 5, minStock: 1, idUnidadMedida: 2, precioCompra: 80, precioVenta: 120 }).subscribe();
+    const req = httpMock.expectOne(r => r.method === 'POST');
+    expect(req.request.body.tipo).toBe('REVENTA');
+    expect(req.request.body.cantidad).toBe(5);
+    req.flush({ data: 10 });
+  });
+
+  // ─── update() — contrato de payload ─────────────────────────────────────────
+
+  it('update: envía idUnidadMedida cuando viene número', () => {
+    service.update(1, { nombre: 'Tela Premium', minStock: 5, idUnidadMedida: 2, precioCompra: 200, precioVenta: 300 }).subscribe();
+    const req = httpMock.expectOne(r => r.method === 'PUT');
+    expect(req.request.body.idUnidadMedida).toBe(2);
+    expect(req.request.body).not.toHaveProperty('nuevaUnidadMedida');
     req.flush({ data: {} });
   });
 
-  it('should update a product with string unit', () => {
-    service.update(1, { name: 'Tela Premium', minStock: 5, unit: 'Kg', salePrice: 20, productionCost: 12, wastePercent: 5 }).subscribe();
+  it('update: envía nuevaUnidadMedida cuando es string', () => {
+    service.update(1, { nombre: 'Tela Premium', minStock: 5, nuevaUnidadMedida: 'Kg', precioCompra: 200 }).subscribe();
     const req = httpMock.expectOne(r => r.method === 'PUT');
     expect(req.request.body.nuevaUnidadMedida).toBe('Kg');
     req.flush({ data: {} });
   });
 
-  it('should update a product with numeric unit ID', () => {
-    service.update(1, { name: 'Tela Premium', minStock: 5, unit: '2', salePrice: 20 }).subscribe();
+  it('update: NO envía precioVenta = 0 ni null', () => {
+    service.update(10, { nombre: 'Edit', minStock: 1, idUnidadMedida: 2, precioCompra: 200, precioVenta: 0 }).subscribe();
     const req = httpMock.expectOne(r => r.method === 'PUT');
-    expect(req.request.body.idUnidadMedida).toBe(2);
+    expect(req.request.body).not.toHaveProperty('precioVenta');
+    req.flush({ data: null });
+  });
+
+  it('update: NO envía tipo ni cantidad (solo aplican en create)', () => {
+    service.update(1, { nombre: 'Test', tipo: 'INSUMO', stock: 99, minStock: 1, idUnidadMedida: 1, precioCompra: 50 }).subscribe();
+    const req = httpMock.expectOne(r => r.method === 'PUT');
+    expect(req.request.body).not.toHaveProperty('tipo');
+    expect(req.request.body).not.toHaveProperty('cantidad');
     req.flush({ data: {} });
   });
 
-  it('should delete (ajuste a 0)', () => {
+  // ─── Otros métodos ──────────────────────────────────────────────────────────
+
+  it('should vaciarStock (ajuste a 0)', () => {
     let called = false;
-    service.delete(1).subscribe(() => called = true);
+    service.vaciarStock(1).subscribe(() => called = true);
     const req = httpMock.expectOne(r => r.url.includes('/inventario/ajustes'));
     expect(req.request.body.cantidadNueva).toBe(0);
     req.flush({});
@@ -123,7 +192,7 @@ describe('InventoryService', () => {
     let result: any[] = [];
     service.getAll().subscribe(r => result = r);
     const req = httpMock.expectOne(r => r.url.includes('/productos'));
-    
+
     const incompleteProduct = {
       id: 99,
       name: 'Fallback Name',
@@ -135,9 +204,9 @@ describe('InventoryService', () => {
       salePrice: 150,
       wastePercent: 5
     };
-    
+
     req.flush({ data: { content: [incompleteProduct] } });
-    
+
     expect(result[0].idProducto).toBe(99);
     expect(result[0].nombre).toBe('Fallback Name');
     expect(result[0].tipo).toBe('TRANSFORMADO');
@@ -150,21 +219,15 @@ describe('InventoryService', () => {
     let result: any[] = [];
     service.getAll().subscribe(r => result = r);
     const req = httpMock.expectOne(r => r.url.includes('/productos'));
-    
+
     const minProduct = {
-      idProducto: null,
-      nombre: null,
-      tipo: null,
-      unidadMedida: null,
-      cantidadDisponible: null,
-      stockBajo: null,
-      precioCompra: null,
-      precioVenta: null,
-      porcentajeSobrante: null
+      idProducto: null, nombre: null, tipo: null, unidadMedida: null,
+      cantidadDisponible: null, stockBajo: null, precioCompra: null,
+      precioVenta: null, porcentajeSobrante: null
     };
-    
+
     req.flush({ data: { data: [minProduct] } });
-    
+
     expect(result[0].idProducto).toBe(0);
     expect(result[0].nombre).toBe('Sin nombre');
     expect(result[0].tipo).toBe('INSUMO');

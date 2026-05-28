@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, inject, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnDestroy, Output, inject, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -31,7 +31,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './inventario-form.html',
   styleUrls: ['./inventario-form.css']
 })
-export class InventarioFormComponent implements OnInit, OnChanges {
+export class InventarioFormComponent implements OnInit, OnChanges, OnDestroy {
   @Input() product: ProductDTO | null = null;
   @Input() allProducts: ProductDTO[] = [];
   @Input() mode: 'add' | 'edit' = 'add';
@@ -48,6 +48,7 @@ export class InventarioFormComponent implements OnInit, OnChanges {
   selectedInsumoId: number | null = null;
   errorMessage: string | null = null;
   private costSub?: Subscription;
+  private statusSub?: Subscription;
 
   constructor() {
     this.inventoryForm = this.fb.group({
@@ -58,16 +59,19 @@ export class InventarioFormComponent implements OnInit, OnChanges {
       unit: ['', Validators.required],
       newUnitName: [''],
       minStock: [null, [Validators.required, Validators.min(0)]],
-      purchasePrice: [null, [Validators.required, Validators.min(0)]],
+      purchasePrice: [null, [Validators.required, Validators.min(1)]],
       productionCost: [{ value: null, disabled: true }],
-      salePrice: [null, [Validators.min(0)]],
+      salePrice: [null, [Validators.min(1)]],
       wastePercent: [null, [Validators.min(0), Validators.max(100)]],
       components: this.fb.array([])
     });
 
-    // Cambiar validaciones según el tipo
     this.inventoryForm.get('type')?.valueChanges.subscribe(type => {
       this.updateValidatorsByType(type);
+    });
+
+    this.inventoryForm.get('unit')?.valueChanges.subscribe(unit => {
+      this.updateUnitValidators(unit);
     });
 
     // Capear porcentaje a 100% en tiempo real
@@ -85,6 +89,14 @@ export class InventarioFormComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.loadUnidadesMedida();
     this.setupCostCalculation();
+    // Fuerza detección de cambios cuando el estado de validez del form cambia
+    // (necesario con provideZonelessChangeDetection)
+    this.statusSub = this.inventoryForm.statusChanges.subscribe(() => this.cdr.markForCheck());
+  }
+
+  ngOnDestroy(): void {
+    this.statusSub?.unsubscribe();
+    this.costSub?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -97,7 +109,6 @@ export class InventarioFormComponent implements OnInit, OnChanges {
     if (changes['allProducts']) {
       this.calculateTotalCost();
     }
-
   }
 
   private loadUnidadesMedida(): void {
@@ -154,17 +165,52 @@ export class InventarioFormComponent implements OnInit, OnChanges {
   }
 
   private updateValidatorsByType(type: string): void {
-    const wasteCtrl = this.inventoryForm.get('wastePercent');
-    const purchasePriceCtrl = this.inventoryForm.get('purchasePrice');
+    const purchaseCtrl   = this.inventoryForm.get('purchasePrice');
+    const wasteCtrl      = this.inventoryForm.get('wastePercent');
+    const saleCtrl       = this.inventoryForm.get('salePrice');
+    const productionCtrl = this.inventoryForm.get('productionCost');
 
-    if (type === 'ELABORADO' || type === 'TRANSFORMADO') {
-      wasteCtrl?.disable();
-      purchasePriceCtrl?.disable();
-    } else {
-      wasteCtrl?.enable();
-      purchasePriceCtrl?.enable();
+    purchaseCtrl?.clearValidators();
+    saleCtrl?.clearValidators();
+
+    if (type === 'INSUMO') {
+      purchaseCtrl?.setValidators([Validators.required, Validators.min(1)]);
+      purchaseCtrl?.enable({ emitEvent: false });
+      wasteCtrl?.enable({ emitEvent: false });
+      saleCtrl?.setValidators([Validators.min(1)]);
+      saleCtrl?.disable({ emitEvent: false });
+      saleCtrl?.setValue(null, { emitEvent: false });
+      productionCtrl?.setValue(null, { emitEvent: false });
+    } else if (type === 'REVENTA') {
+      purchaseCtrl?.setValidators([Validators.required, Validators.min(1)]);
+      purchaseCtrl?.enable({ emitEvent: false });
+      saleCtrl?.setValidators([Validators.required, Validators.min(1)]);
+      saleCtrl?.enable({ emitEvent: false });
+      wasteCtrl?.disable({ emitEvent: false });
+      wasteCtrl?.setValue(null, { emitEvent: false });
+      productionCtrl?.setValue(null, { emitEvent: false });
+    } else if (type === 'ELABORADO' || type === 'TRANSFORMADO') {
+      purchaseCtrl?.disable({ emitEvent: false });
+      purchaseCtrl?.setValue(null, { emitEvent: false });
+      wasteCtrl?.disable({ emitEvent: false });
+      wasteCtrl?.setValue(null, { emitEvent: false });
+      saleCtrl?.setValidators([Validators.required, Validators.min(1)]);
+      saleCtrl?.enable({ emitEvent: false });
     }
-    // productionCost se mantiene siempre disabled (solo lectura)
+
+    purchaseCtrl?.updateValueAndValidity({ emitEvent: false });
+    saleCtrl?.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private updateUnitValidators(unit: string): void {
+    const newUnitCtrl = this.inventoryForm.get('newUnitName');
+    if (unit === 'NEW_UNIT') {
+      newUnitCtrl?.setValidators([Validators.required]);
+    } else {
+      newUnitCtrl?.clearValidators();
+      newUnitCtrl?.setValue('', { emitEvent: false });
+    }
+    newUnitCtrl?.updateValueAndValidity({ emitEvent: false });
   }
 
   private setupCostCalculation(): void {
@@ -220,7 +266,6 @@ export class InventarioFormComponent implements OnInit, OnChanges {
       return;
     }
 
-    // Traer el detalle por ID para obtener el precio real y stock
     this.inventoryService.getById(this.selectedInsumoId).subscribe({
       next: (insumo) => {
         if (insumo.cantidadDisponible <= 0) {
@@ -274,11 +319,9 @@ export class InventarioFormComponent implements OnInit, OnChanges {
   }
 
   getInsumoPrice(id: any): number {
-    // Primero buscar en el form array
     const group = this.componentsFormArray.controls.find(c => c.get('idInsumo')?.value === id);
     if (group) return group.get('precioUnidad')?.value || 0;
 
-    // Si no, buscar en la lista local
     const insumo = this.allProducts.find(p => p.idProducto === id);
     return insumo ? insumo.precioCompra : 0;
   }
@@ -292,40 +335,83 @@ export class InventarioFormComponent implements OnInit, OnChanges {
       this.inventoryForm.markAllAsTouched();
       return;
     }
+    this.errorMessage = null;
 
-    const rawData = this.inventoryForm.getRawValue();
-    const payload = {
-      ...rawData,
-      precioCompra: rawData.type === 'INSUMO' ? rawData.purchasePrice : rawData.productionCost,
-      unidadMedida: rawData.unit === 'NEW_UNIT' ? rawData.newUnitName : rawData.unit
-    };
+    const raw = this.inventoryForm.getRawValue();
+    const payload = this.buildSubmitPayload(raw);
 
     const request$ = this.mode === 'edit'
-      ? this.inventoryService.update(rawData.id, payload)
+      ? this.inventoryService.update(raw.id, payload)
       : this.inventoryService.create(payload);
 
     request$.subscribe({
       next: (res: any) => {
-        const id = this.mode === 'edit' ? rawData.id : Number(res);
+        const id = this.mode === 'edit' ? raw.id : Number(res);
+        const tieneComposicion = this.componentsFormArray.length > 0
+          && (raw.type === 'ELABORADO' || raw.type === 'TRANSFORMADO');
 
-        if (this.componentsFormArray.length > 0 && (rawData.type === 'ELABORADO' || rawData.type === 'TRANSFORMADO')) {
+        if (tieneComposicion) {
           const insumos = this.componentsFormArray.getRawValue().map((c: any) => ({
             idInsumo: c.idInsumo,
             cantidadUsada: c.cantidadUsada
           }));
-          this.inventoryService.addComposicion(id, insumos).subscribe(() => {
-            this.formSaved.emit();
+          this.inventoryService.addComposicion(id, insumos).subscribe({
+            next: () => this.formSaved.emit(),
+            error: (err) => this.handleBackendError(err, 'composición')
           });
         } else {
           this.formSaved.emit();
         }
       },
-      error: (err) => {
-        console.error('Error saving product', err);
-        this.errorMessage = 'Error al guardar el artículo. Por favor, revisa los datos.';
-        this.cdr.detectChanges();
-      }
+      error: (err) => this.handleBackendError(err, 'producto')
     });
+  }
+
+  private buildSubmitPayload(raw: any): any {
+    const tipo      = raw.type;
+    const isInsumo  = tipo === 'INSUMO';
+    const isReventa = tipo === 'REVENTA';
+
+    // Para ELABORADO/TRANSFORMADO, precioCompra es null (lo calcula la composición).
+    const precioCompra = (isInsumo || isReventa) ? raw.purchasePrice : null;
+    // Para INSUMO, no hay precio de venta.
+    const precioVenta = isInsumo ? null : raw.salePrice;
+
+    const isNewUnit = raw.unit === 'NEW_UNIT';
+    const idUnidadMedida   = isNewUnit ? null : this.tryParseId(raw.unit);
+    const nuevaUnidadMedida = isNewUnit ? (raw.newUnitName || '').trim() || null : null;
+
+    return {
+      nombre: (raw.name || '').trim(),
+      tipo,
+      cantidad: raw.stock,
+      stockMinimo: raw.minStock,
+      idUnidadMedida,
+      nuevaUnidadMedida,
+      precioCompra,
+      precioVenta,
+      porcentajeSobrante: isInsumo ? raw.wastePercent : null
+    };
+  }
+
+  private tryParseId(value: any): number | null {
+    if (value === null || value === undefined || value === '' || value === 'NEW_UNIT') return null;
+    const n = Number(value);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  }
+
+  private handleBackendError(err: any, ctx: 'producto' | 'composición'): void {
+    console.error(`Error al guardar ${ctx}`, err);
+    const apiErr = err?.error;
+    if (apiErr?.data && typeof apiErr.data === 'object') {
+      const detalle = Object.values(apiErr.data).join(' • ');
+      this.errorMessage = `${apiErr.message || 'Error de validación'}: ${detalle}`;
+    } else if (apiErr?.message) {
+      this.errorMessage = apiErr.message;
+    } else {
+      this.errorMessage = `Error al guardar la ${ctx}. Por favor, revisa los datos.`;
+    }
+    this.cdr.detectChanges();
   }
 
   onCancel(): void {

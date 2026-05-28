@@ -44,10 +44,11 @@ describe('InventarioComponent', () => {
   const setupTestBed = async (queryParams: any = {}, products: ProductDTO[] = []) => {
     mockInventoryService = {
       getAll: jest.fn(() => of(products)),
-      delete: jest.fn(() => of({})),
+      vaciarStock: jest.fn(() => of({})),
       create: jest.fn(() => of(1)),
       update: jest.fn(() => of({})),
       registrarEntrada: jest.fn(() => of({})),
+      registrarSalida: jest.fn(() => of({})),
       ajustarInventario: jest.fn(() => of({})),
       addComposicion: jest.fn(() => of({})),
       getUnidadesMedida: jest.fn(() => of([])),
@@ -147,12 +148,12 @@ describe('InventarioComponent', () => {
     expect(component.viewMode).toBe('edit');
   });
 
-  it('should call delete service after confirmation', async () => {
+  it('should call vaciarStock service after confirmation', async () => {
     await setupTestBed();
     mockUIService.showConfirm.mockReturnValue(of(true));
     const product = makeProduct({ idProducto: 1 });
-    component.openDeleteModal(product);
-    expect(mockInventoryService.delete).toHaveBeenCalledWith(1);
+    component.openVaciarStockModal(product);
+    expect(mockInventoryService.vaciarStock).toHaveBeenCalledWith(1);
   });
 
   it('should call registrarEntrada when dialog returns a result', async () => {
@@ -231,12 +232,12 @@ describe('InventarioComponent', () => {
     expect(consoleSpy).toHaveBeenCalled();
   });
 
-  it('should handle errors in confirmDelete', async () => {
+  it('should handle errors in confirmVaciarStock', async () => {
     await setupTestBed();
     const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    (mockInventoryService.delete as jest.Mock).mockReturnValue(throwError(() => new Error('Err')));
-    
-    component.confirmDelete(makeProduct());
+    (mockInventoryService.vaciarStock as jest.Mock).mockReturnValue(throwError(() => new Error('Err')));
+
+    component.confirmVaciarStock(makeProduct());
     expect(consoleSpy).toHaveBeenCalled();
     expect(mockUIService.showError).toHaveBeenCalled();
   });

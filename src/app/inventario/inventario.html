@@ -158,6 +158,11 @@
                                 title="Registrar Entrada de Stock">
                                 <span class="material-symbols-outlined text-xl">add_circle</span>
                             </button>
+                            <button (click)="openSalidaModal(product)"
+                                class="p-2 text-error hover:bg-error/10 rounded-lg transition-colors"
+                                title="Registrar Salida de Stock">
+                                <span class="material-symbols-outlined text-xl">remove_circle</span>
+                            </button>
                             <button (click)="openAjusteModal(product)"
                                 class="p-2 text-zinc-500 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                                 title="Ajustar Inventario">
@@ -168,10 +173,10 @@
                                 title="Editar">
                                 <span class="material-symbols-outlined text-xl">edit</span>
                             </button>
-                            <button (click)="openDeleteModal(product)"
+                            <button (click)="openVaciarStockModal(product)"
                                 class="p-2 text-zinc-400 hover:text-error hover:bg-error/10 rounded-lg transition-colors"
-                                title="Eliminar">
-                                <span class="material-symbols-outlined text-xl">delete</span>
+                                title="Vaciar stock">
+                                <span class="material-symbols-outlined text-xl">production_quantity_limits</span>
                             </button>
                         </div>
                     </td>
@@ -231,6 +236,10 @@
                         class="flex-1 py-2 text-primary bg-primary/10 hover:bg-primary/20 font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
                         <span class="material-symbols-outlined text-sm">add_circle</span> Entrada
                     </button>
+                    <button (click)="openSalidaModal(product)"
+                        class="flex-1 py-2 text-error bg-error/10 hover:bg-error/20 font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">remove_circle</span> Salida
+                    </button>
                     <button (click)="openAjusteModal(product)"
                         class="flex-1 py-2 text-zinc-600 bg-surface-container hover:bg-surface-container-high font-bold rounded-lg transition-colors text-sm flex justify-center items-center gap-1">
                         <span class="material-symbols-outlined text-sm">tune</span> Ajustar
@@ -239,9 +248,10 @@
                         class="py-2 px-3 text-zinc-600 bg-surface-container hover:bg-surface-container-high rounded-lg transition-colors flex justify-center items-center">
                         <span class="material-symbols-outlined text-sm">edit</span>
                     </button>
-                    <button (click)="openDeleteModal(product)"
-                        class="py-2 px-3 bg-error-container/10 text-error hover:bg-error-container/20 font-bold rounded-lg transition-colors flex justify-center items-center">
-                        <span class="material-symbols-outlined text-sm">delete</span>
+                    <button (click)="openVaciarStockModal(product)"
+                        class="py-2 px-3 bg-error-container/10 text-error hover:bg-error-container/20 font-bold rounded-lg transition-colors flex justify-center items-center"
+                        title="Vaciar stock">
+                        <span class="material-symbols-outlined text-sm">production_quantity_limits</span>
                     </button>
                 </div>
             </div>

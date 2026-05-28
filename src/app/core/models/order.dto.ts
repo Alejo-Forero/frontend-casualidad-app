@@ -1,7 +1,26 @@
 import { OrderClientDTO } from './client.dto';
 
-export type OrderStatus = 'PENDING_ACCEPTANCE' | 'PENDING_PAYMENT' | 'EN_PRODUCCION' | 'IN_PRODUCTION' | 'DONE' | 'DELIVERED' | 'CANCELLED' | 'PENDIENTE' | 'TERMINADO' | 'CANCELADO';
+export type OrderStatus =
+  | 'PENDIENTE' | 'EN_PRODUCCION' | 'LISTO' | 'ENTREGADO' | 'CANCELADO'
+  // Aliases legacy
+  | 'PENDING_ACCEPTANCE' | 'PENDING_PAYMENT' | 'IN_PRODUCTION' | 'DONE' | 'DELIVERED' | 'CANCELLED' | 'TERMINADO';
+
 export type PaymentStatus = 'PENDING' | 'PARTIAL' | 'PAID';
+
+export interface HistorialEstadoDTO {
+  estadoAnterior: OrderStatus | null;
+  estadoNuevo: OrderStatus;
+  fechaCambio: string;
+  usuarioResponsable: string;
+}
+
+export interface ResumenDisponibilidadDTO {
+  nombreInsumo: string;
+  unidad: string;
+  requerido: number;
+  disponible: number;
+  esSuficiente: boolean;
+}
 
 export interface OrderProductDTO {
   idDetalle: number;
@@ -49,6 +68,7 @@ export interface OrderItemDTO {
 
 export interface OrderDetailDTO extends OrderSummaryDTO {
   productos: OrderProductDTO[];
+  fechaEntregaReal?: string | null;
   client?:          OrderClientDTO;
   items?:           OrderItemDTO[];
   historialAbonos?: {
@@ -56,6 +76,8 @@ export interface OrderDetailDTO extends OrderSummaryDTO {
     totalElements: number;
   };
   paymentsHistory?: any[];
+  historialEstados?: HistorialEstadoDTO[];
+  disponibilidadInsumos?: ResumenDisponibilidadDTO[];
 }
 
 export interface CreateOrderDTO {

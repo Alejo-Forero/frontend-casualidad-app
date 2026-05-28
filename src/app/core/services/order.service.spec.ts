@@ -1,17 +1,24 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { jest } from '@jest/globals';
 import { OrderService } from './order.service';
+import { AuthService } from './auth.service';
 import { environment } from '../../../environments/environment';
 
 describe('OrderService', () => {
   let service: OrderService;
   let httpMock: HttpTestingController;
+  let mockAuthService: { getUserId: jest.Mock };
   const apiUrl = `${environment.apiUrl}/pedidos`;
 
   beforeEach(() => {
+    mockAuthService = { getUserId: jest.fn().mockReturnValue(42) };
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [OrderService]
+      providers: [
+        OrderService,
+        { provide: AuthService, useValue: mockAuthService }
+      ]
     });
     service = TestBed.inject(OrderService);
     httpMock = TestBed.inject(HttpTestingController);
@@ -27,17 +34,20 @@ describe('OrderService', () => {
   });
 
   it('should create order with various payload options', () => {
-    // 1. Full data
-    service.create({ clientId: 1, deliveryDate: 'D', items: [{ productId: 1, quantity: 1 }] }).subscribe();
+    // 1. Full data using clientId
+    service.create({ clientId: 'uuid-abc', deliveryDate: 'D', items: [{ productId: 1, quantity: 1 }] }).subscribe();
     const req = httpMock.expectOne(apiUrl);
-    expect(req.request.body.idCliente).toBe(1);
+    expect(req.request.body.idCliente).toBe('uuid-abc');
+    expect(req.request.body.idUsuario).toBe(42);
     expect(req.request.body.detalles[0].idProducto).toBe(1);
+    expect(req.request.body).not.toHaveProperty('id_cliente');
     req.flush({});
 
-    // 2. Fallbacks
-    service.create({ idCliente: 2, fechaEntrega: 'E', detalles: [{ idProducto: 2, cantidad: 2 }] }).subscribe();
+    // 2. Fallback to idCliente field
+    service.create({ idCliente: 'uuid-def', fechaEntrega: 'E', detalles: [{ idProducto: 2, cantidad: 2 }] }).subscribe();
     const req2 = httpMock.expectOne(apiUrl);
-    expect(req2.request.body.idCliente).toBe(2);
+    expect(req2.request.body.idCliente).toBe('uuid-def');
+    expect(req2.request.body.idUsuario).toBe(42);
     req2.flush({});
   });
 
@@ -97,13 +107,23 @@ describe('OrderService', () => {
     expect(result[1].id).toContain('tmp-');
   });
 
-  it('should use default values in create when data is missing', () => {
-    service.create({}).subscribe();
-    const req = httpMock.expectOne(apiUrl);
-    expect(req.request.body.idCliente).toBe(1);
-    expect(req.request.body.idUsuario).toBe(1);
-    expect(req.request.body.fechaEntrega).toBeDefined();
-    req.flush({});
+  it('should error when no client is provided', () => {
+    let errorOccurred = false;
+    service.create({ deliveryDate: 'D', items: [] }).subscribe({
+      error: () => { errorOccurred = true; }
+    });
+    httpMock.expectNone(apiUrl);
+    expect(errorOccurred).toBe(true);
+  });
+
+  it('should error when no session (getUserId returns null)', () => {
+    (mockAuthService.getUserId as jest.Mock).mockReturnValue(null);
+    let errorOccurred = false;
+    service.create({ clientId: 'uuid-abc', deliveryDate: 'D', items: [] }).subscribe({
+      error: () => { errorOccurred = true; }
+    });
+    httpMock.expectNone(apiUrl);
+    expect(errorOccurred).toBe(true);
   });
 
   it('should handle alternative field names in update', () => {

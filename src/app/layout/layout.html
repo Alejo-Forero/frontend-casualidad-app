@@ -90,7 +90,7 @@
             [attr.aria-expanded]="showNotificationsDropdown" aria-haspopup="true">
             <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
             <span class="sr-only">Notificaciones</span>
-            @if (expiringOrders.length > 0 || lowStockProducts.length > 0) {
+            @if (totalNotifications > 0) {
             <span class="absolute top-2 right-2 flex h-2 w-2" aria-hidden="true">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
               <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
@@ -107,59 +107,112 @@
             (keydown.space)="$event.stopPropagation()" role="menu" aria-label="Notificaciones">
             <div class="px-4 py-3 border-b border-surface-variant/10 flex justify-between items-center">
               <h3 class="font-bold text-sm text-on-surface">Notificaciones</h3>
-              <span
-                class="text-[10px] font-black tracking-widest text-primary uppercase bg-orange-50 px-2 py-0.5 rounded-full">
-                {{ expiringOrders.length + lowStockProducts.length }} Nuevas
+              @if (totalNotifications > 0) {
+              <span class="text-[10px] font-black tracking-widest text-primary uppercase bg-orange-50 px-2 py-0.5 rounded-full">
+                {{ totalNotifications }} alerta{{ totalNotifications !== 1 ? 's' : '' }}
               </span>
+              }
             </div>
 
             <div class="flex flex-col">
-              <!-- Por vencer -->
+
+              <!-- VENCIDOS (prioridad máxima) -->
+              @if (overdueOrders.length > 0) {
+              <div class="px-4 py-2 bg-red-50 border-b border-red-100 flex items-center gap-2">
+                <span class="material-symbols-outlined text-red-500 text-[14px]">event_busy</span>
+                <p class="text-[10px] font-black tracking-widest text-red-500 uppercase">Pedidos vencidos ({{ overdueOrders.length }})</p>
+              </div>
+              @for (order of overdueOrders; track order.idPedido) {
+              <a class="flex items-start gap-3 px-4 py-3 hover:bg-red-50/40 transition-colors border-b border-stone-50 last:border-0"
+                [routerLink]="['/pedidos']" [queryParams]="{view: order.idPedido || order.id}"
+                (click)="closeNotificationsDropdown()">
+                <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <span class="material-symbols-outlined text-sm">event_busy</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 mb-0.5">
+                    <p class="text-sm font-bold text-stone-700 truncate">{{ order.code || order.codigoUnico || ('#' + order.idPedido) }}</p>
+                    <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full"
+                      [ngClass]="(statusMap[order.status] || statusMap[order.estadoPedido])?.css ?? 'bg-stone-100 text-stone-500'">
+                      {{ (statusMap[order.status] || statusMap[order.estadoPedido])?.text ?? order.status }}
+                    </span>
+                  </div>
+                  <p class="text-xs text-stone-500 truncate">{{ order.clientName || order.nombreCliente }}</p>
+                  <p class="text-[10px] text-red-600 font-bold mt-1">Venció el {{ order.deliveryDate | date:'dd MMM yyyy' }}</p>
+                </div>
+              </a>
+              }
+              }
+
+              <!-- PRÓXIMOS A VENCER (7 días) -->
               @if (expiringOrders.length > 0) {
-              <div class="px-4 py-2 bg-stone-50 border-b border-stone-100">
-                <p class="text-[10px] font-black tracking-widest text-stone-500 uppercase">Pedidos por vencer</p>
+              <div class="px-4 py-2 bg-orange-50 border-b border-orange-100 flex items-center gap-2">
+                <span class="material-symbols-outlined text-orange-500 text-[14px]">schedule</span>
+                <p class="text-[10px] font-black tracking-widest text-orange-500 uppercase">Próximos a vencer ({{ expiringOrders.length }})</p>
               </div>
               @for (order of expiringOrders; track order.idPedido) {
               <a class="flex items-start gap-3 px-4 py-3 hover:bg-orange-50/50 transition-colors border-b border-stone-50 last:border-0"
                 [routerLink]="['/pedidos']" [queryParams]="{view: order.idPedido || order.id}"
                 (click)="closeNotificationsDropdown()">
-                <div
-                  class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                <div class="w-8 h-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center shrink-0 mt-0.5">
                   <span class="material-symbols-outlined text-sm">schedule</span>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-bold text-stone-700 truncate">Pedido {{ order.code }}</p>
-                  <p class="text-xs text-stone-500 truncate">{{ order.clientName }}</p>
-                  <p class="text-[10px] text-blue-600 font-bold mt-1">Entrega: {{ order.deliveryDate | date:'dd MMM
-                    yyyy' }}</p>
+                  <div class="flex items-center gap-2 mb-0.5">
+                    <p class="text-sm font-bold text-stone-700 truncate">{{ order.code || order.codigoUnico || ('#' + order.idPedido) }}</p>
+                    <span class="text-[9px] font-black px-1.5 py-0.5 rounded-full"
+                      [ngClass]="(statusMap[order.status] || statusMap[order.estadoPedido])?.css ?? 'bg-stone-100 text-stone-500'">
+                      {{ (statusMap[order.status] || statusMap[order.estadoPedido])?.text ?? order.status }}
+                    </span>
+                  </div>
+                  <p class="text-xs text-stone-500 truncate">{{ order.clientName || order.nombreCliente }}</p>
+                  <p class="text-[10px] text-orange-600 font-bold mt-1">Entrega: {{ order.deliveryDate | date:'dd MMM yyyy' }}</p>
                 </div>
               </a>
               }
               }
 
-              <!-- Stock crítico -->
+              <!-- SALDO PENDIENTE -->
+              @if (saldosPendientesTotal > 0) {
+              <div class="px-4 py-2 bg-stone-50 border-b border-stone-100 flex items-center gap-2">
+                <span class="material-symbols-outlined text-stone-500 text-[14px]">payments</span>
+                <p class="text-[10px] font-black tracking-widest text-stone-500 uppercase">Saldos por cobrar</p>
+              </div>
+              <a class="flex items-start gap-3 px-4 py-3 hover:bg-stone-50 transition-colors border-b border-stone-50"
+                [routerLink]="['/pagos']" (click)="closeNotificationsDropdown()">
+                <div class="w-8 h-8 rounded-full bg-stone-100 text-stone-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <span class="material-symbols-outlined text-sm">account_balance_wallet</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-bold text-stone-700">Total por cobrar</p>
+                  <p class="text-[11px] text-orange-600 font-black mt-0.5">{{ saldosPendientesTotal | currency:'USD' }}</p>
+                  <p class="text-[10px] text-stone-400 mt-0.5">Ver módulo de pagos</p>
+                </div>
+              </a>
+              }
+
+              <!-- STOCK CRÍTICO -->
               @if (lowStockProducts.length > 0) {
-              <div class="px-4 py-2 bg-stone-50 border-b border-stone-100">
-                <p class="text-[10px] font-black tracking-widest text-stone-500 uppercase">Inventario bajo</p>
+              <div class="px-4 py-2 bg-stone-50 border-b border-stone-100 flex items-center gap-2">
+                <span class="material-symbols-outlined text-error text-[14px]">inventory_2</span>
+                <p class="text-[10px] font-black tracking-widest text-stone-500 uppercase">Inventario bajo ({{ lowStockProducts.length }})</p>
               </div>
               @for (product of lowStockProducts; track product.idProducto) {
               <a class="flex items-start gap-3 px-4 py-3 hover:bg-orange-50/50 transition-colors border-b border-stone-50 last:border-0"
                 [routerLink]="['/inventario']" [queryParams]="{addStock: product.idProducto || product.id}"
                 (click)="closeNotificationsDropdown()">
-                <div
-                  class="w-8 h-8 rounded-full bg-error/10 text-error flex items-center justify-center shrink-0 mt-0.5">
+                <div class="w-8 h-8 rounded-full bg-error/10 text-error flex items-center justify-center shrink-0 mt-0.5">
                   <span class="material-symbols-outlined text-sm">inventory_2</span>
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-bold text-stone-700 truncate">{{ product.nombre }}</p>
-                  <p class="text-[10px] text-error font-bold mt-1">Stock: {{ product.cantidadDisponible }} (Mín: {{
-                    product.stockMinimo }})</p>
+                  <p class="text-[10px] text-error font-bold mt-1">Stock: {{ product.cantidadDisponible }} (Mín: {{ product.stockMinimo }})</p>
                 </div>
               </a>
               }
               }
 
-              @if (expiringOrders.length === 0 && lowStockProducts.length === 0) {
+              @if (totalNotifications === 0 && saldosPendientesTotal === 0) {
               <div class="px-4 py-8 text-center">
                 <div class="w-12 h-12 rounded-full bg-stone-50 flex items-center justify-center mx-auto mb-3">
                   <span class="material-symbols-outlined text-stone-300 text-2xl">done_all</span>

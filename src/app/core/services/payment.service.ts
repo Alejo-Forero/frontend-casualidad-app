@@ -100,6 +100,10 @@ export class PaymentService {
     return this.http.get<any>(`${this.reportesUrl}/saldos-pendientes`);
   }
 
+  getDashboard(): Observable<any> {
+    return this.http.get<any>(`${this.reportesUrl}/dashboard`);
+  }
+
   /**
    * GET /api/v1/reportes/saldos-pendientes/exportar
    * Retorna: archivo .xlsx (blob)

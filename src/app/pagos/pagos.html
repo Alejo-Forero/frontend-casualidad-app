@@ -69,9 +69,9 @@
         <button (click)="setFilter('ALL')"
             [ngClass]="currentFilter === 'ALL' ? 'bg-primary text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'"
             class="px-4 py-2 rounded-full text-sm font-medium shadow-sm transition-all">Todos</button>
-        <button (click)="setFilter('TERMINADO')"
-            [ngClass]="currentFilter === 'TERMINADO' ? 'bg-primary text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'"
-            class="px-4 py-2 rounded-full text-sm font-medium transition-all">Completados</button>
+        <button (click)="setFilter('LISTO')"
+            [ngClass]="currentFilter === 'LISTO' ? 'bg-primary text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'"
+            class="px-4 py-2 rounded-full text-sm font-medium transition-all">Listos</button>
         <button (click)="setFilter('EN_PRODUCCION')"
             [ngClass]="currentFilter === 'EN_PRODUCCION' ? 'bg-primary text-white' : 'bg-stone-100 text-stone-700 hover:bg-stone-200'"
             class="px-4 py-2 rounded-full text-sm font-medium transition-all">En Producción</button>
