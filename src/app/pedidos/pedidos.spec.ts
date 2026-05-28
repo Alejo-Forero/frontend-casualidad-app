@@ -558,15 +558,13 @@ describe('PedidosComponent', () => {
     expect(openAddSpy).toHaveBeenCalledTimes(2);
   });
 
-  it('saveOrder should log error when create fails', () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-    (mockOrderService.create as jest.Mock).mockReturnValue(throwError(() => new Error('fail')));
+  it('saveOrder should show error dialog when create fails', () => {
+    (mockOrderService.create as jest.Mock).mockReturnValue(throwError(() => ({ error: { mensaje: 'Cliente no encontrado' } })));
     component.openAddForm();
     component.orderForm.patchValue({ clientId: 10, deliveryDate: '2026-06-01' });
     component.itemsFormArray.at(0).patchValue({ productId: 1, quantity: 1 });
     component.saveOrder();
-    expect(consoleSpy).toHaveBeenCalledWith('Error saving order', expect.any(Error));
-    consoleSpy.mockRestore();
+    expect(mockUIService.showError).toHaveBeenCalledWith('Cliente no encontrado');
   });
 
   // ── saveOrder — editar ────────────────────────────────────────────────────

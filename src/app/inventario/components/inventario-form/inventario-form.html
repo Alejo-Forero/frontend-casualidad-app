@@ -33,25 +33,34 @@
                         <h2 class="text-xl font-bold tracking-tight text-on-surface">Información General</h2>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <!-- Nombre -->
                         <div class="space-y-2 md:col-span-2">
                             <label for="nameInput"
-                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Nombre del Artículo</label>
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">
+                                Nombre del Artículo <span class="text-error">*</span>
+                            </label>
                             <div class="relative">
-                                <span
-                                    class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">inventory_2</span>
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">inventory_2</span>
                                 <input id="nameInput" formControlName="name" placeholder="Ej: Papel Bond 80g"
+                                    [class.ring-2]="inventoryForm.get('name')?.invalid && inventoryForm.get('name')?.touched"
+                                    [class.ring-error]="inventoryForm.get('name')?.invalid && inventoryForm.get('name')?.touched"
                                     class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium">
                             </div>
-                            @if (inventoryForm.get('name')?.invalid && (inventoryForm.get('name')?.dirty ||
-                            inventoryForm.get('name')?.touched)) {
-                            <p class="text-[10px] text-error font-bold mt-1 ml-2">El nombre es obligatorio.</p>
+                            @if (inventoryForm.get('name')?.invalid && inventoryForm.get('name')?.touched) {
+                            <p class="text-[10px] text-error font-bold mt-1 ml-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs">error</span>
+                                El nombre es obligatorio (mínimo 3 caracteres).
+                            </p>
                             }
                         </div>
 
+                        <!-- Tipo -->
                         <div class="space-y-2">
                             <label for="typeSelect"
-                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Tipo
-                                de Artículo</label>
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">
+                                Tipo de Artículo <span class="text-error">*</span>
+                            </label>
                             <mat-form-field appearance="outline" class="w-full">
                                 <mat-select id="typeSelect" formControlName="type">
                                     <mat-option value="INSUMO">Insumo</mat-option>
@@ -59,13 +68,16 @@
                                     <mat-option value="TRANSFORMADO">Transformado</mat-option>
                                     <mat-option value="REVENTA">Reventa</mat-option>
                                 </mat-select>
+                                <mat-error>Selecciona un tipo de artículo.</mat-error>
                             </mat-form-field>
                         </div>
 
+                        <!-- Unidad de Medida -->
                         <div class="space-y-2">
                             <label for="unidadSelect"
-                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Unidad
-                                de Medida</label>
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">
+                                Unidad de Medida <span class="text-error">*</span>
+                            </label>
                             <mat-form-field appearance="outline" class="w-full casualidad-select">
                                 <mat-select id="unidadSelect" formControlName="unit" placeholder="Seleccionar unidad">
                                     @for (u of unidadesMedida; track u.idUnidad || u.nombre) {
@@ -83,13 +95,17 @@
                                         </div>
                                     </mat-option>
                                 </mat-select>
+                                <mat-error>Selecciona una unidad de medida.</mat-error>
                             </mat-form-field>
                         </div>
 
+                        <!-- Nueva unidad -->
                         @if (inventoryForm.get('unit')?.value === 'NEW_UNIT') {
                         <div class="space-y-2 animate-[dropdownFadeIn_0.3s_ease-out]">
                             <label for="newUnitInput"
-                                class="block text-sm font-bold text-primary uppercase tracking-wider text-[11px]">Nombre de la Nueva Unidad</label>
+                                class="block text-sm font-bold text-primary uppercase tracking-wider text-[11px]">
+                                Nombre de la Nueva Unidad <span class="text-error">*</span>
+                            </label>
                             <div class="relative group">
                                 <div class="absolute left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-focus-within:bg-primary group-focus-within:text-white transition-all">
                                     <span class="material-symbols-outlined !text-lg">straighten</span>
@@ -97,6 +113,12 @@
                                 <input id="newUnitInput" formControlName="newUnitName" placeholder="Ej: Mililitros, Caja, m2..."
                                     class="w-full bg-surface-container border-2 border-primary/10 rounded-xl py-4 pl-14 pr-4 text-on-surface focus:ring-4 focus:ring-primary/10 focus:border-primary/30 transition-all font-bold placeholder:text-stone-300">
                             </div>
+                            @if (inventoryForm.get('newUnitName')?.invalid && inventoryForm.get('newUnitName')?.touched) {
+                            <p class="text-[10px] text-error font-bold mt-1 ml-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs">error</span>
+                                Escribe el nombre de la nueva unidad.
+                            </p>
+                            }
                         </div>
                         }
                     </div>
@@ -110,106 +132,147 @@
                         <h2 class="text-xl font-bold tracking-tight text-on-surface">Gestión de Stock y Costos</h2>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <!-- Stock Actual -->
                         <div class="space-y-2">
                             <label for="stockInput"
-                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Stock Actual</label>
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">
+                                Stock Actual <span class="text-error">*</span>
+                            </label>
                             <div class="relative">
-                                <span
-                                    class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">inventory</span>
-                                <input id="stockInput" type="number" formControlName="stock" step="any"
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">inventory</span>
+                                <input id="stockInput" type="number" formControlName="stock" step="any" min="0"
                                     class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
                             </div>
+                            @if (inventoryForm.get('stock')?.invalid && inventoryForm.get('stock')?.touched) {
+                            <p class="text-[10px] text-error font-bold mt-1 ml-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs">error</span>
+                                {{ inventoryForm.get('stock')?.errors?.['min'] ? 'El stock no puede ser negativo.' : 'Este campo es obligatorio.' }}
+                            </p>
+                            }
                         </div>
 
+                        <!-- Stock Mínimo -->
                         <div class="space-y-2">
                             <label for="minStockInput"
-                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Stock Mínimo</label>
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">
+                                Stock Mínimo <span class="text-error">*</span>
+                            </label>
                             <div class="relative">
-                                <span
-                                    class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">notifications_active</span>
-                                <input id="minStockInput" type="number" formControlName="minStock" step="any"
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">notifications_active</span>
+                                <input id="minStockInput" type="number" formControlName="minStock" step="any" min="0"
                                     class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
                             </div>
+                            @if (inventoryForm.get('minStock')?.invalid && inventoryForm.get('minStock')?.touched) {
+                            <p class="text-[10px] text-error font-bold mt-1 ml-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs">error</span>
+                                {{ inventoryForm.get('minStock')?.errors?.['required'] ? 'El stock mínimo es obligatorio (puede ser 0).' : 'No puede ser negativo.' }}
+                            </p>
+                            }
                         </div>
 
+                        <!-- Precio de Compra (INSUMO / REVENTA) -->
                         @if (inventoryForm.get('type')?.value === 'INSUMO' || inventoryForm.get('type')?.value === 'REVENTA') {
                         <div class="space-y-2">
                             <label for="purchaseInput"
-                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Precio de Compra (Costo Proveedor) <span class="text-primary">*</span></label>
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">
+                                Precio de Compra (Costo Proveedor) <span class="text-error">*</span>
+                            </label>
                             <div class="relative">
-                                <span
-                                    class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">$</span>
-                                <input id="purchaseInput" type="number" formControlName="purchasePrice"
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">$</span>
+                                <input id="purchaseInput" type="number" formControlName="purchasePrice" min="1" step="1"
                                     class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right"
-                                    placeholder="0.00">
+                                    placeholder="Ej: 5000">
                             </div>
+                            @if (inventoryForm.get('purchasePrice')?.invalid && inventoryForm.get('purchasePrice')?.touched) {
+                            <p class="text-[10px] text-error font-bold mt-1 ml-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs">error</span>
+                                {{ inventoryForm.get('purchasePrice')?.errors?.['required'] ? 'El precio de compra es obligatorio.' : 'Debe ser mayor a $0.' }}
+                            </p>
+                            }
                         </div>
                         }
 
+                        <!-- Costo de Producción (ELABORADO / TRANSFORMADO) — solo lectura -->
                         @if (inventoryForm.get('type')?.value === 'ELABORADO' || inventoryForm.get('type')?.value === 'TRANSFORMADO') {
-                        <div class="space-y-2" [class.opacity-80]="inventoryForm.get('productionCost')?.disabled">
+                        <div class="space-y-2 opacity-80">
                             <label for="costInput"
                                 class="flex items-center justify-between text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">
-                                <span>Costo de Producción</span>
-
+                                <span>Costo de Producción (calculado)</span>
                             </label>
                             <div class="relative">
-                                <span
-                                    class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">$</span>
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">$</span>
                                 <input id="costInput" type="number" formControlName="productionCost"
-                                    class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right disabled:bg-stone-50/50 cursor-not-allowed"
+                                    class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface font-medium text-right disabled:bg-stone-50/50 cursor-not-allowed"
                                     placeholder="Calculando...">
                             </div>
                         </div>
                         }
 
-                        @if (inventoryForm.get('type')?.value !== 'INSUMO') {
+                        <!-- Precio de Venta (no-INSUMO) -->
+                        @if (inventoryForm.get('type')?.value !== 'INSUMO' && inventoryForm.get('type')?.value !== '') {
                         <div class="space-y-2">
                             <label for="priceInput"
-                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">Precio de Venta</label>
+                                class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">
+                                Precio de Venta
+                                <span class="text-error">*</span>
+                            </label>
                             <div class="relative">
-                                <span
-                                    class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">$</span>
-                                <input id="priceInput" type="number" formControlName="salePrice" step="0.01"
-                                    class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">$</span>
+                                <input id="priceInput" type="number" formControlName="salePrice" step="1" min="1"
+                                    class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right"
+                                    placeholder="Ej: 15000">
                             </div>
+                            @if (inventoryForm.get('salePrice')?.invalid && inventoryForm.get('salePrice')?.touched) {
+                            <p class="text-[10px] text-error font-bold mt-1 ml-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs">error</span>
+                                {{ inventoryForm.get('salePrice')?.errors?.['required'] ? 'El precio de venta es obligatorio.' : 'Debe ser mayor a $0.' }}
+                            </p>
+                            }
                         </div>
                         }
 
+                        <!-- % Sobrante (INSUMO) -->
                         @if (inventoryForm.get('type')?.value === 'INSUMO') {
                         <div class="space-y-2 md:col-span-2">
-                            <label for="wasteInput" class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">% Sobrante o Residuos (Solo Insumos)</label>
+                            <label for="wasteInput" class="block text-sm font-bold text-stone-500 uppercase tracking-wider text-[11px]">
+                                % Sobrante o Residuos <span class="text-stone-300">(Opcional)</span>
+                            </label>
                             <div class="relative">
-                                <span
-                                    class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">recycling</span>
-                                <input id="wasteInput" type="number" formControlName="wastePercent" step="0.1" max="100"
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">recycling</span>
+                                <input id="wasteInput" type="number" formControlName="wastePercent" step="0.1" max="100" min="0"
                                     class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium text-right">
-                                <span
-                                    class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">%</span>
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-stone-400 text-sm">%</span>
                             </div>
+                            @if (inventoryForm.get('wastePercent')?.invalid && inventoryForm.get('wastePercent')?.touched) {
+                            <p class="text-[10px] text-error font-bold mt-1 ml-1 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-xs">error</span>
+                                El porcentaje no puede superar 100%.
+                            </p>
+                            }
                         </div>
                         }
                     </div>
                 </section>
 
-                <!-- Sección 3: Componentes (Dinámico) -->
+                <!-- Sección 3: Componentes (ELABORADO / TRANSFORMADO) -->
                 @if (inventoryForm.get('type')?.value === 'ELABORADO' || inventoryForm.get('type')?.value === 'TRANSFORMADO') {
                 <section class="animate-[dropdownFadeIn_0.3s_ease-out] space-y-6">
                     <div>
-                        <h2 class="text-xl font-bold tracking-tight text-on-surface mb-1">Componentes del Artículo <span class="text-error">*</span></h2>
-                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">AGREGAR ARTÍCULO DEL INVENTARIO</p>
+                        <h2 class="text-xl font-bold tracking-tight text-on-surface mb-1">Componentes del Artículo</h2>
+                        <p class="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Busca y añade los insumos que componen este artículo</p>
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-3">
                         <div class="relative flex-1 group">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">search</span>
-                            <input type="text" 
+                            <input type="text"
                                    [matAutocomplete]="autoInsumo"
                                    [(ngModel)]="selectedInsumoId"
                                    [ngModelOptions]="{standalone: true}"
                                    placeholder="Buscar artículo..."
                                    class="w-full bg-white border border-stone-200 rounded-xl py-4 pl-12 pr-4 text-sm font-medium text-on-surface focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all shadow-sm">
-                            
+
                             <mat-autocomplete #autoInsumo="matAutocomplete" [displayWith]="getInsumoName.bind(this)">
                                 @for (insumo of getFilteredInsumos(selectedInsumoId); track insumo.idProducto) {
                                     <mat-option [value]="insumo.idProducto" class="!h-auto !py-3">
@@ -281,13 +344,30 @@
                 </section>
                 }
 
-                <div class="pt-8 border-t border-orange-100 flex items-center justify-end gap-4">
+                <!-- Acciones -->
+                <div class="pt-8 border-t border-orange-100 flex flex-col sm:flex-row items-center justify-end gap-4">
+                    <!-- Indicador de campos incompletos -->
+                    @if (inventoryForm.invalid) {
+                    <p class="text-[11px] text-stone-400 font-bold mr-auto flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm text-amber-500">info</span>
+                        Completa los campos marcados con <span class="text-error ml-1">*</span>
+                    </p>
+                    }
                     <button (click)="onCancel()" type="button"
                         class="px-8 py-3.5 rounded-xl text-stone-500 font-bold hover:bg-stone-50 transition-all">
                         Cancelar
                     </button>
-                    <button type="submit" [disabled]="inventoryForm.invalid"
-                        class="px-12 py-3.5 rounded-xl bg-gradient-to-r from-[#c25e23] to-[#f28b4b] text-white font-bold shadow-lg shadow-orange-900/20 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed">
+                    <!-- El botón siempre es clickeable; onSubmit() hace markAllAsTouched si el form es inválido -->
+                    <button type="submit"
+                        class="px-12 py-3.5 rounded-xl font-bold shadow-lg active:scale-95 transition-all"
+                        [class.bg-gradient-to-r]="inventoryForm.valid"
+                        [class.from-orange-700]="inventoryForm.valid"
+                        [class.to-orange-400]="inventoryForm.valid"
+                        [class.text-white]="inventoryForm.valid"
+                        [class.shadow-orange-900\/20]="inventoryForm.valid"
+                        [class.bg-stone-200]="inventoryForm.invalid"
+                        [class.text-stone-400]="inventoryForm.invalid"
+                        [class.cursor-pointer]="true">
                         {{ mode === 'add' ? 'Registrar Artículo' : 'Guardar Cambios' }}
                     </button>
                 </div>
@@ -296,8 +376,7 @@
 
         <!-- Sidebar Informativo -->
         <aside class="lg:col-span-4 space-y-6">
-            <div
-                class="bg-white rounded-2xl p-6 border border-orange-100 shadow-sm animate-[dropdownFadeIn_0.4s_ease-out]">
+            <div class="bg-white rounded-2xl p-6 border border-orange-100 shadow-sm animate-[dropdownFadeIn_0.4s_ease-out]">
                 <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600 mb-4">
                     <span class="material-symbols-outlined">lightbulb</span>
                 </div>
@@ -305,17 +384,69 @@
                 <ul class="space-y-3">
                     <li class="flex gap-3 items-start">
                         <span class="w-1.5 h-1.5 rounded-full bg-orange-400 mt-1.5 shrink-0"></span>
-                        <p class="text-xs text-stone-500 leading-relaxed">Mantén un <span
-                                class="text-orange-700 font-bold">stock mínimo</span> realista para recibir alertas de
-                            reabastecimiento a tiempo.</p>
+                        <p class="text-xs text-stone-500 leading-relaxed">Mantén un <span class="text-orange-700 font-bold">stock mínimo</span> realista para recibir alertas de reabastecimiento a tiempo.</p>
                     </li>
                     <li class="flex gap-3 items-start">
                         <span class="w-1.5 h-1.5 rounded-full bg-orange-400 mt-1.5 shrink-0"></span>
-                        <p class="text-xs text-stone-500 leading-relaxed">Los artículos <span
-                                class="text-orange-700 font-bold">Elaborados</span> calculan su costo base sumando sus
-                            insumos.</p>
+                        <p class="text-xs text-stone-500 leading-relaxed">Los artículos <span class="text-orange-700 font-bold">Elaborados</span> calculan su costo base sumando sus insumos.</p>
+                    </li>
+                    <li class="flex gap-3 items-start">
+                        <span class="w-1.5 h-1.5 rounded-full bg-orange-400 mt-1.5 shrink-0"></span>
+                        <p class="text-xs text-stone-500 leading-relaxed">Los precios deben ser <span class="text-orange-700 font-bold">mayores a $0</span> para que el artículo pueda usarse en pedidos.</p>
                     </li>
                 </ul>
+            </div>
+
+            <!-- Resumen del estado del form -->
+            <div class="bg-white rounded-2xl p-6 border border-stone-100 shadow-sm">
+                <h3 class="font-bold text-on-surface mb-3 text-sm uppercase tracking-widest">Estado del formulario</h3>
+                <div class="space-y-2">
+                    @for (field of [
+                        {key: 'name', label: 'Nombre'},
+                        {key: 'type', label: 'Tipo'},
+                        {key: 'unit', label: 'Unidad'},
+                        {key: 'minStock', label: 'Stock mínimo'}
+                    ]; track field.key) {
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-stone-500 font-medium">{{ field.label }}</span>
+                        @if (inventoryForm.get(field.key)?.valid) {
+                            <span class="material-symbols-outlined text-sm text-green-500">check_circle</span>
+                        } @else {
+                            <span class="material-symbols-outlined text-sm text-stone-300">radio_button_unchecked</span>
+                        }
+                    </div>
+                    }
+                    @if (inventoryForm.get('type')?.value === 'INSUMO' || inventoryForm.get('type')?.value === 'REVENTA') {
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-stone-500 font-medium">Precio de compra</span>
+                        @if (inventoryForm.get('purchasePrice')?.valid || inventoryForm.get('purchasePrice')?.disabled) {
+                            <span class="material-symbols-outlined text-sm text-green-500">check_circle</span>
+                        } @else {
+                            <span class="material-symbols-outlined text-sm text-stone-300">radio_button_unchecked</span>
+                        }
+                    </div>
+                    }
+                    @if (inventoryForm.get('type')?.value !== 'INSUMO' && inventoryForm.get('type')?.value !== '') {
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-stone-500 font-medium">Precio de venta</span>
+                        @if (inventoryForm.get('salePrice')?.valid || inventoryForm.get('salePrice')?.disabled) {
+                            <span class="material-symbols-outlined text-sm text-green-500">check_circle</span>
+                        } @else {
+                            <span class="material-symbols-outlined text-sm text-stone-300">radio_button_unchecked</span>
+                        }
+                    </div>
+                    }
+                </div>
+                <div class="mt-4 pt-4 border-t border-stone-100">
+                    @if (inventoryForm.valid) {
+                    <p class="text-xs text-green-600 font-bold flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">check_circle</span>
+                        Listo para guardar
+                    </p>
+                    } @else {
+                    <p class="text-xs text-stone-400 font-medium">Completa todos los campos requeridos</p>
+                    }
+                </div>
             </div>
         </aside>
     </div>

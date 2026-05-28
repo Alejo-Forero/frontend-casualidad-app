@@ -308,3 +308,8 @@ body {
     overflow-y: auto !important;
   }
 }
+
+.mat-drawer-content .mat-sidenav-content {
+  padding: 0 !important;
+  background: #d4d1ca !important;
+}

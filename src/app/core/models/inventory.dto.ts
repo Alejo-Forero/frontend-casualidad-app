@@ -45,3 +45,36 @@ export interface ProductDTO {
   composition?: CompositionItem[] | null;
 }
 
+export interface InsumoFaltante {
+  idInsumo: number;
+  nombre: string;
+  unidadMedida: string;
+  requerido: number;
+  disponible: number;
+  faltante: number;
+}
+
+export interface DisponibilidadProductoDto {
+  idProducto: number;
+  nombre: string;
+  tipo: ProductType;
+  puedeFabricar: boolean;
+  maxUnidadesPosibles: number;
+  insumosFaltantes: InsumoFaltante[];
+}
+
+export interface ComposicionInsumoDto {
+  idInsumo: number;
+  nombre: string;
+  cantidadUsada: number;
+  precioUnitarioCompra: number;
+  subtotal: number;
+}
+
+export interface ComposicionProductoDto {
+  idProductoPadre: number;
+  nombreProducto: string;
+  costoTotalProduccion: number;
+  insumos: ComposicionInsumoDto[];
+}
+

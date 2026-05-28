@@ -30,7 +30,8 @@ import { ProductDTO } from '../../../core/models/inventory.dto';
             <form [formGroup]="entradaForm" (ngSubmit)="submit()" class="space-y-5">
                 <div class="space-y-2">
                     <label class="text-xs font-bold uppercase tracking-wider text-stone-500">Cantidad a ingresar *</label>
-                    <input formControlName="cantidad" type="number" step="0.001" min="0.001"
+                    <input formControlName="cantidad" type="number" step="0.001" min="0.001" minlength="1" maxlength="4"
+                        oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);"
                         class="w-full bg-surface-container border-none rounded-lg p-4 focus:ring-2 focus:ring-primary/40 transition-all font-body"
                         placeholder="Ej: 50" />
                 </div>

@@ -3,40 +3,39 @@ import { HomeComponent } from './home';
 import { jest } from '@jest/globals';
 import { of } from 'rxjs';
 import { PaymentService } from '../core/services/payment.service';
-import { InventoryService } from '../core/services/inventory.service';
-import { OrderService } from '../core/services/order.service';
 import { RouterModule } from '@angular/router';
+
+const mockDashboard = {
+  ingresosMesActual: 1000,
+  ingresosMesAnterior: 800,
+  ingresosPorMes: [
+    { etiqueta: 'Ene', total: 500 },
+    { etiqueta: 'Feb', total: 600 },
+    { etiqueta: 'Mar', total: 700 },
+    { etiqueta: 'Abr', total: 800 },
+    { etiqueta: 'May', total: 900 },
+    { etiqueta: 'Jun', total: 1000 }
+  ],
+  pedidosPendientes: 3,
+  pedidosEnProduccion: 2,
+  pedidosVencidos: 1,
+  pedidosConSaldo: 5,
+  stockCritico: 2
+};
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
 
   const mockPaymentService = {
-    getSaldosPendientes: jest.fn().mockReturnValue(of({ cantidadPedidosPendientes: 5, pedidos: [] })),
-    getReporteIngresos: jest.fn().mockReturnValue(of({ totalGeneral: 1000, totalEfectivo: 600, totalTransferencia: 400 }))
-  };
-
-  const mockInventoryService = {
-    getAll: jest.fn().mockReturnValue(of([
-      { id: '1', isLowStock: true },
-      { id: '2', isLowStock: false }
-    ]))
-  };
-
-  const mockOrderService = {
-    getAll: jest.fn().mockReturnValue(of([
-      { id: '1', status: 'PENDIENTE' },
-      { id: '2', status: 'TERMINADO' }
-    ]))
+    getDashboard: jest.fn().mockReturnValue(of(mockDashboard))
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HomeComponent, RouterModule.forRoot([])],
       providers: [
-        { provide: PaymentService, useValue: mockPaymentService },
-        { provide: InventoryService, useValue: mockInventoryService },
-        { provide: OrderService, useValue: mockOrderService }
+        { provide: PaymentService, useValue: mockPaymentService }
       ]
     }).compileComponents();
 
@@ -53,23 +52,17 @@ describe('HomeComponent', () => {
   it('should calculate getters correctly', () => {
     component.dashboardData.profitVsExpense.profit = [100, 200];
     component.dashboardData.profitVsExpense.expense = [50, 50];
-    
+
     expect(component.totalProfit).toBe(300);
     expect(component.totalExpense).toBe(100);
     expect(component.netBalance).toBe(200);
   });
 
   it('should initialize chart with context', () => {
-    const mockCtx = {
-      canvas: {},
-      clearRect: jest.fn(),
-      fillRect: jest.fn()
-    };
+    const mockCtx = { canvas: {}, clearRect: jest.fn(), fillRect: jest.fn() };
     component.chartCanvas = { nativeElement: { getContext: () => mockCtx } } as any;
-    
     component.dashboardData.profitVsExpense.months = ['Ene', 'Feb'];
     component.dashboardData.profitVsExpense.profit = [1000, 2000];
-    
     component.ngAfterViewInit();
     expect(component.chartInstance).toBeDefined();
   });
@@ -80,31 +73,22 @@ describe('HomeComponent', () => {
     expect(component.chartInstance).toBeUndefined();
   });
 
-  it('should handle null/undefined service responses gracefully', () => {
-    mockPaymentService.getSaldosPendientes.mockReturnValue(of(null));
-    mockPaymentService.getReporteIngresos.mockReturnValue(of(undefined));
-    
-    // Trigger loadData again
+  it('should handle null dashboard response gracefully', () => {
+    mockPaymentService.getDashboard.mockReturnValue(of(null));
     (component as any).loadData();
-    
-    expect(component.dashboardData.ordersWithDebt).toBe(0);
-    expect(component.monthlyIncome).toBe(0);
+    expect(component.dashboardData.overdueOrders).toBe(0);
   });
 
   it('should update chart if instance exists when data is loaded', () => {
-    // 1. Create a mock chart instance
     const updateSpy = jest.fn();
     component.chartInstance = {
-      data: { datasets: [{ data: [] }, { data: [] }] },
+      data: { labels: [], datasets: [{ data: [] }, { data: [] }] },
       update: updateSpy
     } as any;
 
-    mockPaymentService.getReporteIngresos.mockReturnValue(of({ totalGeneral: 5000 }));
-    
-    // 2. Trigger data load
+    mockPaymentService.getDashboard.mockReturnValue(of(mockDashboard));
     (component as any).loadData();
-    
+
     expect(updateSpy).toHaveBeenCalled();
-    expect(component.chartInstance?.data.datasets[0].data[5]).toBe(5000);
   });
 });

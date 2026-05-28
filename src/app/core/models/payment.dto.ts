@@ -1,5 +1,5 @@
 export type PaymentType = 'EFECTIVO' | 'TRANSFERENCIA';
-export type PaymentStatus = 'TERMINADO' | 'PENDIENTE' | 'CANCELADO';
+export type PaymentStatus = 'PENDIENTE' | 'EN_PRODUCCION' | 'LISTO' | 'ENTREGADO' | 'CANCELADO' | 'TERMINADO';
 
 export interface PaymentDTO {
   id: string;

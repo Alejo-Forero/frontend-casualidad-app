@@ -16,6 +16,9 @@ import { ConfirmDialogComponent } from '../shared/components/confirm-dialog/conf
 import { HelpDialogComponent } from '../shared/components/help-dialog/help-dialog.component';
 import { OrderService } from '../core/services/order.service';
 import { InventoryService } from '../core/services/inventory.service';
+import { PaymentService } from '../core/services/payment.service';
+import { STATUS_MAP } from '../shared/constants/ui-constants';
+import { diffDaysFromToday, parseLocalDate } from '../shared/utils/date-helpers';
 
 @Component({
   selector: 'app-layout',
@@ -40,12 +43,16 @@ export class LayoutComponent implements OnInit {
 
   lowStockProducts: any[] = [];
   expiringOrders: any[] = [];
+  overdueOrders: any[] = [];
+  saldosPendientesTotal = 0;
+  readonly statusMap = STATUS_MAP;
 
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   private readonly orderService = inject(OrderService);
   private readonly inventoryService = inject(InventoryService);
+  private readonly paymentService = inject(PaymentService);
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   readonly screenSize = inject(ScreenSizeService);
@@ -88,25 +95,59 @@ export class LayoutComponent implements OnInit {
     this.loadNotifications();
   }
 
+  get totalNotifications(): number {
+    return this.expiringOrders.length + this.overdueOrders.length + this.lowStockProducts.length;
+  }
+
   loadNotifications(): void {
     this.inventoryService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(products => {
       this.lowStockProducts = products.filter(p => p.isLowStock);
       this.cdr.detectChanges();
     });
-    
+
     this.orderService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(orders => {
-      // Pedidos por vencer: pendientes ordenados por fecha
-      this.expiringOrders = orders
-        .filter(o => o.status === 'PENDIENTE' || o.status === 'EN_PRODUCCION')
-        .sort((a, b) => new Date(a.deliveryDate).getTime() - new Date(b.deliveryDate).getTime())
-        .slice(0, 5); // top 5
+      const ESTADOS_ABIERTOS = ["PENDIENTE", "EN_PRODUCCION", "LISTO"];
+      const activos = orders.filter(o => ESTADOS_ABIERTOS.includes(o.status));
+
+      this.overdueOrders = activos
+        .filter(o => {
+          const diff = diffDaysFromToday(o.deliveryDate ?? o.fechaEntrega);
+          return diff !== null && diff < 0;
+        })
+        .sort((a, b) => {
+          const da = parseLocalDate(a.deliveryDate ?? a.fechaEntrega);
+          const db = parseLocalDate(b.deliveryDate ?? b.fechaEntrega);
+          return (da?.getTime() ?? 0) - (db?.getTime() ?? 0);
+        })
+        .slice(0, 5);
+
+      this.expiringOrders = activos
+        .filter(o => {
+          const diff = diffDaysFromToday(o.deliveryDate ?? o.fechaEntrega);
+          return diff !== null && diff >= 0 && diff <= 7;
+        })
+        .sort((a, b) => {
+          const da = parseLocalDate(a.deliveryDate ?? a.fechaEntrega);
+          const db = parseLocalDate(b.deliveryDate ?? b.fechaEntrega);
+          return (da?.getTime() ?? 0) - (db?.getTime() ?? 0);
+        })
+        .slice(0, 5);
+
       this.cdr.detectChanges();
     });
-  }
 
+    this.paymentService.getSaldosPendientes().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (res) => {
+        this.saldosPendientesTotal = Number(res?.totalPorCobrar ?? 0);
+        this.cdr.detectChanges();
+      },
+      error: () => {}
+    });
+  }
   toggleProfileDropdown(event: Event): void {
     event.stopPropagation();
     this.showProfileDropdown = !this.showProfileDropdown;
+    this.showNotificationsDropdown = false;
   }
 
   closeProfileDropdown(): void {
@@ -117,7 +158,7 @@ export class LayoutComponent implements OnInit {
     event.stopPropagation();
     this.showNotificationsDropdown = !this.showNotificationsDropdown;
     this.showProfileDropdown = false;
-    
+
     // Refresh notifications every time the user opens the dropdown
     if (this.showNotificationsDropdown) {
       this.loadNotifications();

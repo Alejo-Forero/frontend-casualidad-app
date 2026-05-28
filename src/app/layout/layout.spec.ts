@@ -102,16 +102,22 @@ describe('LayoutComponent', () => {
   });
 
   it('should filter and sort notifications correctly', () => {
+    const today = new Date();
+    const in3Days = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3);
+    const in6Days = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 6);
+    const toISO = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+
     const mockOrders = [
-      { idPedido: 1, status: 'PENDIENTE', deliveryDate: '2026-05-10' },
-      { idPedido: 2, status: 'ENTREGADO', deliveryDate: '2026-05-01' },
-      { idPedido: 3, status: 'EN_PRODUCCION', deliveryDate: '2026-05-05' }
+      { idPedido: 1, status: 'PENDIENTE',     deliveryDate: toISO(in6Days) },
+      { idPedido: 2, status: 'ENTREGADO',     deliveryDate: toISO(in3Days) },
+      { idPedido: 3, status: 'EN_PRODUCCION', deliveryDate: toISO(in3Days) }
     ];
     mockOrderService.getAll.mockReturnValue(of(mockOrders));
-    
+
     component.loadNotifications();
+    // idPedido 2 es ENTREGADO → excluido; idPedido 1 y 3 son activos dentro de 7 días
     expect(component.expiringOrders.length).toBe(2);
-    expect(component.expiringOrders[0].idPedido).toBe(3); // 2026-05-05 comes before 2026-05-10
+    expect(component.expiringOrders[0].idPedido).toBe(3); // in3Days antes que in6Days
   });
 
   it('should toggle profile dropdown on button click', () => {
