@@ -339,6 +339,7 @@ export class InventarioFormComponent implements OnInit, OnChanges, OnDestroy {
 
     const raw = this.inventoryForm.getRawValue();
     const payload = this.buildSubmitPayload(raw);
+    console.log('Payload a enviar:', payload);
 
     const request$ = this.mode === 'edit'
       ? this.inventoryService.update(raw.id, payload)

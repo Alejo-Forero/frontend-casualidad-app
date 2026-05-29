@@ -308,7 +308,7 @@
                         <div class="relative flex-1">
                             <span
                                 class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-stone-400">phone</span>
-                            <input [id]="'phone-' + i" [formControlName]="i" type="tel" placeholder="000 000 0000"
+                            <input [id]="'phone-' + i" [formControlName]="i" type="tel" placeholder="000 000 0000" maxlength="10"
                                 class="w-full bg-surface-container border-none rounded-xl py-3.5 pl-12 pr-4 text-on-surface focus:ring-2 focus:ring-primary/40 transition-all font-medium">
                             <label [for]="'phone-' + i"
                                 class="absolute -top-2 left-3 px-1 bg-white text-[9px] font-black text-primary uppercase tracking-widest">
