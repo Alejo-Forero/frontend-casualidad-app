@@ -113,6 +113,7 @@ export class InventoryService {
    * se omiten si son null/0 para no violar @Min(1) del backend.
    */
   create(data: any): Observable<number> {
+    console.log('Data recibida para creación:', data);
     const payload = this.buildProductoPayload(data, 'create');
     return this.http.post<any>(this.apiUrl, payload).pipe(
       map(res => res.data)
@@ -145,7 +146,7 @@ export class InventoryService {
 
     if (op === 'create') {
       payload.tipo = data.tipo ?? data.type ?? 'INSUMO';
-      payload.cantidad = this.toNumberOrZero(data.cantidadDisponible ?? data.stock);
+      payload.cantidad = this.toNumberOrZero(data.cantidad ?? 0);
     }
 
     // Unidad de medida — mutuamente excluyente
